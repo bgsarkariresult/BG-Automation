@@ -2,60 +2,83 @@
 <html lang="hi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>BG Control Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>BG Control Dashboard Pro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    :root {
+    :root, [data-theme="dark"] {
       --bg: #0a0e17; --surface: #111827; --surface2: #1a2332; --border: #243044;
       --text: #e8eef7; --muted: #8b9bb4; --accent: #3b82f6; --accent2: #8b5cf6;
       --success: #22c55e; --warning: #f59e0b; --danger: #ef4444; --running: #06b6d4;
       --radius: 12px; --shadow: 0 8px 32px rgba(0,0,0,0.4);
+      --card-hover: #3b4a66;
+    }
+    [data-theme="light"] {
+      --bg: #f1f5f9; --surface: #ffffff; --surface2: #e2e8f0; --border: #cbd5e1;
+      --text: #0f172a; --muted: #64748b; --accent: #2563eb; --accent2: #7c3aed;
+      --success: #16a34a; --warning: #d97706; --danger: #dc2626; --running: #0891b2;
+      --shadow: 0 8px 32px rgba(0,0,0,0.08);
+      --card-hover: #94a3b8;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.45; }
+    body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.45; transition: background 0.3s, color 0.3s; }
     .bg-glow { position: fixed; inset: 0; pointer-events: none; z-index: 0;
-      background: radial-gradient(ellipse 80% 50% at 15% -15%, rgba(59,130,246,0.18), transparent),
-                  radial-gradient(ellipse 50% 40% at 85% 0%, rgba(139,92,246,0.1), transparent); }
-    .container { max-width: 1280px; margin: 0 auto; padding: 16px 12px 48px; position: relative; z-index: 1; }
+      background: radial-gradient(ellipse 80% 50% at 15% -15%, rgba(59,130,246,0.15), transparent),
+                  radial-gradient(ellipse 50% 40% at 85% 0%, rgba(139,92,246,0.08), transparent); }
+    .container { max-width: 1400px; margin: 0 auto; padding: 14px 12px 60px; position: relative; z-index: 1; }
 
+    /* Header */
     header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
-      margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+      margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
     .logo { display: flex; align-items: center; gap: 10px; }
     .logo-icon { width: 40px; height: 40px; border-radius: 11px; background: linear-gradient(135deg, var(--accent), var(--accent2));
-      display: grid; place-items: center; font-size: 16px; font-weight: 800; color: #fff; flex-shrink: 0; }
+      display: grid; place-items: center; font-size: 15px; font-weight: 800; color: #fff; flex-shrink: 0; }
     .logo h1 { font-size: 1.15rem; font-weight: 700; }
-    .logo span { color: var(--muted); font-size: 0.72rem; }
+    .logo span { color: var(--muted); font-size: 0.7rem; }
     .header-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
     .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 13px; border-radius: 9px;
-      font-weight: 600; font-size: 0.82rem; border: none; cursor: pointer; transition: all 0.2s; }
+      font-weight: 600; font-size: 0.82rem; border: none; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
     .btn-primary { background: linear-gradient(135deg, var(--accent), #2563eb); color: #fff; box-shadow: 0 4px 12px rgba(59,130,246,0.3); }
     .btn-primary:hover:not(:disabled) { transform: translateY(-1px); }
     .btn-ghost { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
     .btn-ghost:hover { background: var(--border); }
+    .btn-success { background: rgba(34,197,94,0.15); color: var(--success); border: 1px solid rgba(34,197,94,0.3); }
     .btn-danger { background: rgba(239,68,68,0.12); color: #fca5a5; border: 1px solid rgba(239,68,68,0.25); }
+    .btn-warning { background: rgba(245,158,11,0.12); color: var(--warning); border: 1px solid rgba(245,158,11,0.3); }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-sm { padding: 5px 10px; font-size: 0.74rem; border-radius: 7px; }
+    .btn-lg { padding: 12px 20px; font-size: 0.95rem; border-radius: 11px; }
     .token-status { font-size: 0.74rem; padding: 4px 10px; border-radius: 16px; background: var(--surface2); border: 1px solid var(--border); }
     .token-status.ok { color: var(--success); border-color: rgba(34,197,94,0.3); }
     .token-status.no { color: var(--warning); }
     .auto-badge { font-size: 0.7rem; padding: 3px 8px; border-radius: 12px; background: rgba(6,182,212,0.12); color: var(--running); }
 
-    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-bottom: 18px; }
+    /* Nav tabs */
+    .nav-tabs { display: flex; gap: 4px; overflow-x: auto; margin-bottom: 16px; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
+    .nav-tab { padding: 8px 14px; border-radius: 9px; font-size: 0.8rem; font-weight: 600; cursor: pointer;
+      background: transparent; border: 1px solid transparent; color: var(--muted); white-space: nowrap; transition: all 0.2s; }
+    .nav-tab:hover { color: var(--text); background: var(--surface2); }
+    .nav-tab.active { background: var(--surface); border-color: var(--border); color: var(--accent); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* Stats */
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 16px; }
     .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; }
     .stat-card .label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
     .stat-card .value { font-size: 1.35rem; font-weight: 700; margin-top: 2px; }
     .stat-card .value.success { color: var(--success); }
     .stat-card .value.running { color: var(--running); }
     .stat-card .value.danger { color: var(--danger); }
+    .stat-card .sub { font-size: 0.68rem; color: var(--muted); margin-top: 2px; }
 
-    .grid-main { display: grid; grid-template-columns: 1fr 320px; gap: 16px; }
-    @media (max-width: 900px) { .grid-main { grid-template-columns: 1fr; } }
+    .grid-main { display: grid; grid-template-columns: 1fr 340px; gap: 16px; }
+    @media (max-width: 960px) { .grid-main { grid-template-columns: 1fr; } }
 
-    .section-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .section-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; justify-content: space-between; }
     .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 14px; }
-    .panel h3 { font-size: 0.9rem; margin-bottom: 10px; }
+    .panel h3 { font-size: 0.9rem; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
 
     .form-row { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
     .form-row label { font-size: 0.74rem; color: var(--muted); font-weight: 500; }
@@ -65,10 +88,11 @@
     .form-actions { display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
     .hint { font-size: 0.7rem; color: var(--muted); margin-top: 8px; }
 
-    .bots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; margin-bottom: 16px; }
+    /* Bots */
+    .bots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; margin-bottom: 16px; }
     .bot-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;
       transition: border-color 0.2s, transform 0.2s; position: relative; overflow: hidden; }
-    .bot-card:hover { border-color: #3b4a66; }
+    .bot-card:hover { border-color: var(--card-hover); }
     .bot-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
       background: linear-gradient(90deg, var(--accent), var(--accent2)); opacity: 0.55; }
     .bot-card.running::before, .bot-card.in_progress::before, .bot-card.queued::before { background: var(--running); }
@@ -88,22 +112,28 @@
     .badge-running, .badge-in_progress, .badge-queued { background: rgba(6,182,212,0.15); color: var(--running); animation: pulse 1.5s infinite; }
     .badge-success, .badge-completed { background: rgba(34,197,94,0.15); color: var(--success); }
     .badge-failed, .badge-failure { background: rgba(239,68,68,0.15); color: var(--danger); }
+    .badge-online { background: rgba(34,197,94,0.15); color: var(--success); }
+    .badge-offline { background: rgba(239,68,68,0.15); color: var(--danger); }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.55} }
     .bot-meta { font-size: 0.72rem; color: var(--muted); margin-top: 5px; }
     .bot-actions { display: flex; gap: 5px; margin-top: 10px; flex-wrap: wrap; }
+    .bot-check { position: absolute; top: 12px; right: 12px; width: 18px; height: 18px; cursor: pointer; }
 
+    /* History & Logs */
     .history-item { padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.82rem; }
     .history-item:last-child { border-bottom: none; }
     .history-item .time { color: var(--muted); font-size: 0.7rem; }
     .log-box { background: #080c14; border: 1px solid var(--border); border-radius: 9px; padding: 10px;
-      font-family: ui-monospace, monospace; font-size: 0.7rem; max-height: 160px; overflow-y: auto; color: #9db0c8; white-space: pre-wrap; }
+      font-family: ui-monospace, monospace; font-size: 0.7rem; max-height: 180px; overflow-y: auto; color: #9db0c8; white-space: pre-wrap; }
+    [data-theme="light"] .log-box { background: #1e293b; color: #cbd5e1; }
 
+    /* Side panel */
     .side-panel { display: flex; flex-direction: column; gap: 12px; }
     .channel-tabs { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
     .channel-tab { font-size: 0.7rem; padding: 4px 9px; border-radius: 14px; border: 1px solid var(--border);
       background: var(--surface2); color: var(--muted); cursor: pointer; font-weight: 600; }
     .channel-tab.active { background: rgba(59,130,246,0.15); color: #93c5fd; border-color: rgba(59,130,246,0.35); }
-    .trending-list { list-style: none; max-height: 340px; overflow-y: auto; }
+    .trending-list { list-style: none; max-height: 320px; overflow-y: auto; }
     .trending-list li { padding: 8px 10px; border-radius: 9px; background: var(--surface2); margin-bottom: 6px;
       font-size: 0.78rem; display: flex; flex-direction: column; gap: 4px; border: 1px solid transparent; }
     .trending-list li:hover { border-color: var(--border); }
@@ -115,6 +145,55 @@
       background: rgba(59,130,246,0.15); color: #93c5fd; border: none; font-weight: 600; text-decoration: none; }
     .use-btn:hover { background: rgba(59,130,246,0.3); }
 
+    /* Website cards */
+    .site-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+    .site-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+    .site-card h4 { font-size: 0.95rem; margin-bottom: 6px; }
+    .site-url { font-size: 0.75rem; color: var(--muted); word-break: break-all; margin-bottom: 10px; }
+    .site-status-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 0.8rem; }
+
+    /* Error center */
+    .error-item { padding: 12px; border-radius: 10px; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);
+      margin-bottom: 10px; }
+    .error-item .err-title { font-weight: 600; font-size: 0.88rem; color: var(--danger); }
+    .error-item .err-msg { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+    .error-item .err-actions { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
+
+    /* Analytics bars */
+    .bar-chart { display: flex; align-items: flex-end; gap: 6px; height: 120px; padding: 10px 0; }
+    .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .bar { width: 100%; max-width: 36px; border-radius: 6px 6px 0 0; background: linear-gradient(180deg, var(--accent), var(--accent2)); min-height: 4px; transition: height 0.4s; }
+    .bar-label { font-size: 0.62rem; color: var(--muted); }
+    .bar-val { font-size: 0.68rem; font-weight: 600; }
+
+    /* Scheduler */
+    .sched-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0;
+      border-bottom: 1px solid var(--border); font-size: 0.84rem; flex-wrap: wrap; gap: 6px; }
+    .sched-item:last-child { border-bottom: none; }
+    .sched-cron { font-family: monospace; font-size: 0.75rem; color: var(--accent); background: var(--surface2); padding: 2px 8px; border-radius: 6px; }
+
+    /* YouTube */
+    .yt-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+    .yt-item:last-child { border-bottom: none; }
+    .yt-thumb { width: 80px; height: 45px; border-radius: 6px; background: var(--surface2); flex-shrink: 0; display: grid; place-items: center; font-size: 0.7rem; color: var(--muted); }
+    .yt-info { flex: 1; min-width: 0; }
+    .yt-title { font-size: 0.84rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .yt-meta { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+
+    /* Telegram */
+    .tg-status { display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 10px; background: var(--surface2); margin-bottom: 10px; font-size: 0.84rem; }
+
+    /* Settings */
+    .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .settings-row:last-child { border-bottom: none; }
+    .settings-label { font-size: 0.88rem; font-weight: 500; }
+    .settings-desc { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+    .toggle { width: 44px; height: 24px; border-radius: 12px; background: var(--border); position: relative; cursor: pointer; transition: background 0.2s; border: none; }
+    .toggle.on { background: var(--accent); }
+    .toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: left 0.2s; }
+    .toggle.on::after { left: 23px; }
+
+    /* Modal */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.72); backdrop-filter: blur(6px);
       display: none; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
     .modal-overlay.show { display: flex; }
@@ -136,106 +215,342 @@
     a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
 
+    /* PIN lock */
+    #pinLock { position: fixed; inset: 0; background: var(--bg); z-index: 999; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
+    #pinLock.show { display: flex; }
+    .pin-dots { display: flex; gap: 12px; margin: 16px 0; }
+    .pin-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--border); background: transparent; }
+    .pin-dot.filled { background: var(--accent); border-color: var(--accent); }
+    .pin-pad { display: grid; grid-template-columns: repeat(3, 70px); gap: 10px; }
+    .pin-key { width: 70px; height: 70px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface);
+      color: var(--text); font-size: 1.4rem; font-weight: 600; cursor: pointer; }
+    .pin-key:hover { background: var(--surface2); }
+
+    /* One-click all */
+    .all-bots-bar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; padding: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+
     @media (max-width: 600px) {
       .logo h1 { font-size: 1rem; }
       .stats { grid-template-columns: repeat(3, 1fr); }
       .bots-grid { grid-template-columns: 1fr; }
       .btn { padding: 8px 11px; font-size: 0.78rem; }
+      .nav-tab { padding: 7px 11px; font-size: 0.75rem; }
+      .site-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
   <div class="bg-glow"></div>
+
+  <!-- PIN Lock Screen -->
+  <div id="pinLock">
+    <div class="logo-icon" style="width:56px;height:56px;font-size:20px;">BG</div>
+    <h2 style="font-size:1.2rem;">Enter PIN</h2>
+    <div class="pin-dots" id="pinDots">
+      <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+    </div>
+    <div class="pin-pad" id="pinPad"></div>
+    <p style="color:var(--muted);font-size:0.8rem;margin-top:8px;">Dashboard lock</p>
+  </div>
+
   <div class="container">
     <header>
       <div class="logo">
         <div class="logo-icon">BG</div>
         <div>
-          <h1>BG Control Dashboard</h1>
-          <span>Bots • Video • Trending • Auto-refresh</span>
+          <h1>BG Control Dashboard Pro</h1>
+          <span>Bots • Video • Sites • Analytics • Alerts</span>
         </div>
       </div>
       <div class="header-actions">
-        <span id="autoBadge" class="auto-badge" style="display:none">⟳ Auto-refresh ON</span>
+        <span id="autoBadge" class="auto-badge" style="display:none">⟳ Auto-refresh</span>
         <span id="tokenStatus" class="token-status no">🔑 Token not set</span>
+        <button class="btn btn-ghost btn-sm" onclick="toggleTheme()" title="Theme">🌓</button>
         <button class="btn btn-ghost" onclick="openTokenModal()">Set Token</button>
         <button class="btn btn-ghost" onclick="refreshAll(true)">↻ Refresh</button>
       </div>
     </header>
 
-    <div class="stats">
-      <div class="stat-card"><div class="label">Total Bots</div><div class="value" id="statBots">0</div></div>
-      <div class="stat-card"><div class="label">Running</div><div class="value running" id="statRunning">0</div></div>
-      <div class="stat-card"><div class="label">Success</div><div class="value success" id="statSuccess">0</div></div>
-      <div class="stat-card"><div class="label">Failed</div><div class="value danger" id="statFailed">0</div></div>
-      <div class="stat-card"><div class="label">Daily Runs</div><div class="value" id="statLimit">0</div></div>
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs" id="navTabs">
+      <button class="nav-tab active" data-tab="dashboard">📊 Dashboard</button>
+      <button class="nav-tab" data-tab="bots">🤖 Bots</button>
+      <button class="nav-tab" data-tab="websites">🌐 Websites</button>
+      <button class="nav-tab" data-tab="youtube">▶️ YouTube</button>
+      <button class="nav-tab" data-tab="scheduler">⏰ Scheduler</button>
+      <button class="nav-tab" data-tab="telegram">✈️ Telegram</button>
+      <button class="nav-tab" data-tab="alerts">🚨 Alerts</button>
+      <button class="nav-tab" data-tab="analytics">📈 Analytics</button>
+      <button class="nav-tab" data-tab="settings">⚙️ Settings</button>
     </div>
 
-    <div class="grid-main">
-      <div>
-        <div class="panel">
-          <h3>🎬 Link डालो → Video / Job बनाओ</h3>
-          <div class="form-row">
-            <label>Select Bot / Channel</label>
-            <select id="botSelect" class="form-input" onchange="onBotChange()"></select>
+    <!-- ========== TAB: DASHBOARD ========== -->
+    <div class="tab-panel active" id="tab-dashboard">
+      <div class="stats" id="dashStats">
+        <div class="stat-card"><div class="label">Total Bots</div><div class="value" id="statBots">0</div></div>
+        <div class="stat-card"><div class="label">Running</div><div class="value running" id="statRunning">0</div></div>
+        <div class="stat-card"><div class="label">Success</div><div class="value success" id="statSuccess">0</div></div>
+        <div class="stat-card"><div class="label">Failed</div><div class="value danger" id="statFailed">0</div></div>
+        <div class="stat-card"><div class="label">Aaj ke Runs</div><div class="value" id="statToday">0</div><div class="sub" id="statTodaySub">videos / posts</div></div>
+        <div class="stat-card"><div class="label">Weekly</div><div class="value" id="statWeek">0</div><div class="sub">last 7 days</div></div>
+      </div>
+
+      <div class="grid-main">
+        <div>
+          <div class="panel">
+            <h3>🎬 Link डालो → Video / Job बनाओ</h3>
+            <div class="form-row">
+              <label>Select Bot / Channel</label>
+              <select id="botSelect" class="form-input" onchange="onBotChange()"></select>
+            </div>
+            <div class="form-row" id="linkRow">
+              <label id="linkLabel">Article / Product / Post URL</label>
+              <input type="url" id="videoLink" class="form-input" placeholder="https://..." />
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-primary" id="triggerBtn" onclick="triggerWorkflow()">▶ Run</button>
+              <button class="btn btn-ghost" onclick="clearForm()">Clear</button>
+              <button class="btn btn-ghost" onclick="enableNotif()">🔔 Notify</button>
+            </div>
+            <p class="hint">Token localStorage me. Running hone par auto-status + browser notification.</p>
           </div>
-          <div class="form-row" id="linkRow">
-            <label id="linkLabel">Article / Product / Post URL</label>
-            <input type="url" id="videoLink" class="form-input" placeholder="https://..." />
+
+          <div class="all-bots-bar">
+            <strong style="font-size:0.85rem;">One-Click:</strong>
+            <button class="btn btn-primary btn-sm" onclick="runSelectedBots()">▶ Run Selected</button>
+            <button class="btn btn-ghost btn-sm" onclick="selectAllBots(true)">Select All</button>
+            <button class="btn btn-ghost btn-sm" onclick="selectAllBots(false)">Deselect</button>
+            <button class="btn btn-ghost btn-sm" onclick="pollAllRunning()">↻ Poll Running</button>
           </div>
-          <div class="form-actions">
-            <button class="btn btn-primary" id="triggerBtn" onclick="triggerWorkflow()">▶ Run</button>
-            <button class="btn btn-ghost" onclick="clearForm()">Clear</button>
-            <button class="btn btn-ghost" onclick="enableNotif()">🔔 Notify</button>
+
+          <div class="section-title">🤖 All Bots Status</div>
+          <div class="bots-grid" id="botsGrid"></div>
+
+          <div class="panel">
+            <h3>📜 Recent Runs</h3>
+            <div id="historyList"></div>
+            <div style="margin-top:12px;">
+              <div class="section-title" style="font-size:0.84rem;">Last Log</div>
+              <div class="log-box" id="logBox">No logs yet.</div>
+            </div>
           </div>
-          <p class="hint">Token localStorage me. Running hone par auto-status har 30 sec update + browser notification.</p>
         </div>
 
-        <div class="section-title">🤖 All Bots</div>
-        <div class="bots-grid" id="botsGrid"></div>
-
-        <div class="panel">
-          <h3>📜 Recent Runs</h3>
-          <div id="historyList"></div>
-          <div style="margin-top:12px;">
-            <div class="section-title" style="font-size:0.84rem;">Last Log</div>
-            <div class="log-box" id="logBox">No logs yet.</div>
+        <div class="side-panel">
+          <div class="panel">
+            <h3>🔥 Trending Topics</h3>
+            <p style="font-size:0.72rem;color:var(--muted);margin-bottom:8px;">Live from history.json</p>
+            <div class="channel-tabs" id="channelTabs"></div>
+            <ul class="trending-list" id="trendingList"></ul>
+            <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:6px;" onclick="loadTrending(true)">↻ Refresh Topics</button>
+          </div>
+          <div class="panel">
+            <h3>🌐 Live Website Status</h3>
+            <div id="miniSiteStatus"></div>
+          </div>
+          <div class="panel">
+            <h3>⚙️ Quick Actions</h3>
+            <button class="btn btn-ghost" style="width:100%;margin-bottom:6px;" onclick="triggerTrending()">▶ Run Trending Finder</button>
+            <button class="btn btn-ghost" style="width:100%;margin-bottom:6px;" onclick="window.open('https://github.com/bgtechlab/Trending-Topic-Finder/actions','_blank')">Open Trending Actions</button>
+            <button class="btn btn-danger" style="width:100%;" onclick="clearToken()">Clear Token</button>
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="side-panel">
-        <div class="panel">
-          <h3>🔥 Trending Topics</h3>
-          <p style="font-size:0.72rem;color:var(--muted);margin-bottom:8px;">Live from history.json</p>
-          <div class="channel-tabs" id="channelTabs"></div>
-          <ul class="trending-list" id="trendingList"></ul>
-          <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:6px;" onclick="loadTrending(true)">↻ Refresh Topics</button>
+    <!-- ========== TAB: BOTS (One-Click All) ========== -->
+    <div class="tab-panel" id="tab-bots">
+      <div class="panel">
+        <h3>🤖 One-Click All Bots Control</h3>
+        <p class="hint" style="margin-bottom:12px;">Checkbox se bots select karo, phir ek click se sab run. Har bot alag se bhi run kar sakte ho.</p>
+        <div class="form-actions" style="margin-bottom:14px;">
+          <button class="btn btn-primary btn-lg" onclick="runSelectedBots()">▶ Run Selected Bots</button>
+          <button class="btn btn-ghost" onclick="selectAllBots(true)">Select All Runnable</button>
+          <button class="btn btn-ghost" onclick="selectAllBots(false)">Deselect All</button>
+          <button class="btn btn-ghost" onclick="pollAllRunning()">↻ Refresh All Status</button>
         </div>
+        <div class="bots-grid" id="botsGridFull"></div>
+      </div>
+      <div class="panel">
+        <h3>📜 Sabhi Running Workflows</h3>
+        <div id="runningList"><p style="color:var(--muted);font-size:0.84rem;">Koi running nahi.</p></div>
+      </div>
+    </div>
 
-        <div class="panel">
-          <h3>⚙️ Quick Actions</h3>
-          <button class="btn btn-ghost" style="width:100%;margin-bottom:6px;" onclick="triggerTrending()">▶ Run Trending Finder</button>
-          <button class="btn btn-ghost" style="width:100%;margin-bottom:6px;" onclick="window.open('https://github.com/bgtechlab/Trending-Topic-Finder/actions','_blank')">Open Trending Actions</button>
-          <button class="btn btn-ghost" style="width:100%;margin-bottom:6px;" onclick="pollAllRunning()">↻ Poll All Running</button>
-          <button class="btn btn-danger" style="width:100%;" onclick="clearToken()">Clear Token</button>
+    <!-- ========== TAB: WEBSITES ========== -->
+    <div class="tab-panel" id="tab-websites">
+      <div class="panel">
+        <h3>🌐 Website Management Center</h3>
+        <p class="hint" style="margin-bottom:12px;">BG Sarkari Result, SG News18, Tech Review — live status, last deploy, shortcuts.</p>
+        <div class="site-grid" id="siteGrid"></div>
+      </div>
+    </div>
+
+    <!-- ========== TAB: YOUTUBE ========== -->
+    <div class="tab-panel" id="tab-youtube">
+      <div class="panel">
+        <h3>▶️ YouTube Studio Integration</h3>
+        <p class="hint" style="margin-bottom:12px;">
+          YouTube Data API ke bina limited view. Workflow logs se recent uploads track hote hain.
+          Full integration ke liye YouTube API key Settings me daalo (optional).
+        </p>
+        <div class="form-row">
+          <label>YouTube API Key (optional)</label>
+          <input type="password" id="ytApiKey" class="form-input" placeholder="AIza..." />
         </div>
+        <div class="form-row">
+          <label>Channel ID</label>
+          <input type="text" id="ytChannelId" class="form-input" placeholder="UCxxxxxxxx" />
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="saveYtSettings()">Save &amp; Fetch</button>
+          <button class="btn btn-ghost" onclick="loadYtFromHistory()">Load from Run History</button>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Latest Uploads / Pending</h3>
+        <div id="ytList"><p style="color:var(--muted);font-size:0.84rem;">API key daalo ya history se load karo.</p></div>
+      </div>
+    </div>
 
-        <div class="panel">
-          <h3>📌 How it works</h3>
-          <ol style="font-size:0.74rem;color:var(--muted);padding-left:16px;line-height:1.7;">
-            <li>GitHub PAT (repo + workflow)</li>
-            <li>Bot select → Link → Run</li>
-            <li>workflow_dispatch trigger</li>
-            <li>Auto-refresh jab running ho</li>
-            <li>Notification jab complete</li>
-          </ol>
+    <!-- ========== TAB: SCHEDULER ========== -->
+    <div class="tab-panel" id="tab-scheduler">
+      <div class="panel">
+        <h3>⏰ Automation Scheduler</h3>
+        <p class="hint" style="margin-bottom:12px;">Schedules GitHub Actions workflows me configure hote hain. Dashboard status dikhata hai. Change ke liye Actions → workflow file edit karo.</p>
+        <div id="schedList"></div>
+      </div>
+      <div class="panel">
+        <h3>Manual vs Automatic Runs</h3>
+        <div class="stats" style="margin-bottom:0;">
+          <div class="stat-card"><div class="label">Manual (aaj)</div><div class="value" id="statManual">0</div></div>
+          <div class="stat-card"><div class="label">Scheduled (aaj)</div><div class="value" id="statScheduled">0</div></div>
+          <div class="stat-card"><div class="label">Total History</div><div class="value" id="statTotalHist">0</div></div>
         </div>
       </div>
     </div>
-    <footer>BG Control Dashboard • Auto-refresh • Mobile ready • Token stays in browser</footer>
+
+    <!-- ========== TAB: TELEGRAM ========== -->
+    <div class="tab-panel" id="tab-telegram">
+      <div class="panel">
+        <h3>✈️ Telegram Control Center</h3>
+        <div class="tg-status" id="tgConnStatus">
+          <span class="badge badge-idle">Unknown</span>
+          <span>Telegram ↔ GitHub connection status</span>
+        </div>
+        <p class="hint" style="margin-bottom:12px;">
+          SG-News18 aur dusre bots Telegram se article links lete hain (schedule har 5 min).
+          Workflow complete/fail hone par Telegram notification bhejta hai (bot code me).
+        </p>
+        <div class="form-row">
+          <label>Test Notification Message</label>
+          <input type="text" id="tgTestMsg" class="form-input" placeholder="Dashboard se test message..." />
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="sendTgTestNote()">📌 Note: Telegram send server-side hota hai</button>
+          <button class="btn btn-ghost" onclick="window.open('https://github.com/bgsarkariresult/SG-News18/actions','_blank')">SG-News18 Actions</button>
+        </div>
+        <div class="hint" style="margin-top:12px;">
+          Dashboard se seedha Telegram message nahi bhej sakte (bot token secrets me hai).
+          Workflow fail/success pe already Telegram notify hota hai. Connection status GitHub Actions runs se infer hota hai.
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Recent Telegram-triggered Runs</h3>
+        <div id="tgRunsList"><p style="color:var(--muted);font-size:0.84rem;">History se schedule runs dikhenge.</p></div>
+      </div>
+    </div>
+
+    <!-- ========== TAB: ALERTS ========== -->
+    <div class="tab-panel" id="tab-alerts">
+      <div class="panel">
+        <h3>🚨 Smart Alerts &amp; Error Center</h3>
+        <p class="hint" style="margin-bottom:12px;">Failed bots, error reason, GitHub log shortcut, re-run button.</p>
+        <div id="errorCenter"><p style="color:var(--muted);font-size:0.84rem;">Koi failed run nahi.</p></div>
+      </div>
+      <div class="panel">
+        <h3>Notification Settings</h3>
+        <div class="settings-row">
+          <div><div class="settings-label">Browser Notifications</div><div class="settings-desc">Workflow complete hone par</div></div>
+          <button class="toggle" id="toggleNotif" onclick="toggleNotifSetting()"></button>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-label">Auto-poll Running</div><div class="settings-desc">Har 30 sec status check</div></div>
+          <button class="toggle on" id="togglePoll" onclick="togglePollSetting()"></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== TAB: ANALYTICS ========== -->
+    <div class="tab-panel" id="tab-analytics">
+      <div class="panel">
+        <h3>📈 Analytics &amp; Reports</h3>
+        <p class="hint" style="margin-bottom:8px;">Daily / weekly runs (local history based)</p>
+        <div class="bar-chart" id="weekChart"></div>
+      </div>
+      <div class="panel">
+        <h3>Bot-wise Success / Failure</h3>
+        <div id="botAnalytics"></div>
+      </div>
+      <div class="panel">
+        <h3>Summary</h3>
+        <div class="stats">
+          <div class="stat-card"><div class="label">Total Runs</div><div class="value" id="anTotal">0</div></div>
+          <div class="stat-card"><div class="label">Success Rate</div><div class="value success" id="anRate">0%</div></div>
+          <div class="stat-card"><div class="label">Articles → Videos</div><div class="value" id="anVideos">0</div></div>
+          <div class="stat-card"><div class="label">This Month</div><div class="value" id="anMonth">0</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== TAB: SETTINGS ========== -->
+    <div class="tab-panel" id="tab-settings">
+      <div class="panel">
+        <h3>🔐 Security &amp; Settings</h3>
+        <div class="settings-row">
+          <div><div class="settings-label">GitHub Token</div><div class="settings-desc" id="tokenValidity">Not set</div></div>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-ghost btn-sm" onclick="openTokenModal()">Set</button>
+            <button class="btn btn-danger btn-sm" onclick="clearToken()">Clear</button>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-label">Dashboard PIN Lock</div><div class="settings-desc">4-digit PIN se protect</div></div>
+          <button class="btn btn-ghost btn-sm" onclick="setupPin()">Set PIN</button>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-label">Dark / Light Mode</div><div class="settings-desc">Theme toggle</div></div>
+          <button class="toggle" id="toggleThemeBtn" onclick="toggleTheme()"></button>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-label">Clear All History</div><div class="settings-desc">Local run history wipe</div></div>
+          <button class="btn btn-danger btn-sm" onclick="clearHistory()">Clear</button>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>⚠️ Security Note</h3>
+        <p style="font-size:0.82rem;color:var(--muted);line-height:1.6;">
+          GitHub token <b>localStorage</b> me rehta hai — browser me safe, lekin shared device pe risk.
+          Production ke liye server-side token + backend proxy better hai.
+          Classic PAT: <code>repo</code> + <code>workflow</code> scope chahiye.
+        </p>
+      </div>
+      <div class="panel">
+        <h3>📌 How it works</h3>
+        <ol style="font-size:0.78rem;color:var(--muted);padding-left:18px;line-height:1.8;">
+          <li>GitHub PAT daalo (repo + workflow)</li>
+          <li>Bot select → Link paste → Run</li>
+          <li>workflow_dispatch se Actions chalega</li>
+          <li>Auto-refresh jab running ho</li>
+          <li>Notification jab complete / fail</li>
+        </ol>
+      </div>
+    </div>
+
+    <footer>BG Control Dashboard Pro • Mobile ready • Dark/Light • Token stays in browser</footer>
   </div>
 
+  <!-- Token Modal -->
   <div class="modal-overlay" id="tokenModal">
     <div class="modal">
       <h2>🔑 GitHub Personal Access Token</h2>
@@ -247,17 +562,40 @@
       </div>
     </div>
   </div>
+
+  <!-- PIN Setup Modal -->
+  <div class="modal-overlay" id="pinModal">
+    <div class="modal">
+      <h2>🔐 Set Dashboard PIN</h2>
+      <p>4-digit PIN. Empty chhod do to lock band.</p>
+      <input type="password" id="pinInput" placeholder="1234" maxlength="4" pattern="[0-9]*" inputmode="numeric" />
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-primary" style="flex:1;" onclick="savePin()">Save PIN</button>
+        <button class="btn btn-ghost" onclick="document.getElementById('pinModal').classList.remove('show')">Cancel</button>
+        <button class="btn btn-danger" onclick="removePin()">Remove</button>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
 <script>
+/* ========== DATA ========== */
 const BOTS = [
-  { id:'SG-News18', name:'SG-News18', owner:'bgsarkariresult', repo:'SG-News18', workflow:'news-bot.yml', inputKey:'article_url', type:'video', typeLabel:'News Video', desc:'News → YouTube video' },
-  { id:'TechGlow-India', name:'TechGlow India', owner:'bgsarkariresult', repo:'TechGlow-India', workflow:'tech-review-bot.yml', inputKey:'article_url', type:'video', typeLabel:'Tech Review', desc:'Tech article → video' },
-  { id:'Bk-growup', name:'BK GrowUp', owner:'bgsarkariresult', repo:'Bk-growup-', workflow:'run-job-bot.yml', inputKey:'post_url', type:'job', typeLabel:'Sarkari Job', desc:'Blogger post → job video' },
-  { id:'BG-Reels-Bot', name:'BG Reels Bot', owner:'bgtechlab', repo:'BG-Reels-Bot', workflow:'reels-bot.yml', inputKey:'product_url', type:'video', typeLabel:'Reels', desc:'Product → multi-platform reel' },
-  { id:'Trending-Topic-Finder', name:'Trending Finder', owner:'bgtechlab', repo:'Trending-Topic-Finder', workflow:'daily-auto-run.yml', inputKey:null, type:'trending', typeLabel:'Trending', desc:'Daily topics → Telegram' },
-  { id:'bgtech', name:'BG Tech (Amazon)', owner:'bgtechlab', repo:'bgtech', workflow:null, inputKey:null, type:'product', typeLabel:'Product Site', desc:'amazon_to_blogger → site (manual/local)' },
-  { id:'bgsarkariresult', name:'BG Sarkari Result', owner:'bgsarkariresult', repo:'bgsarkariresult', workflow:'static.yml', inputKey:null, type:'site', typeLabel:'Website', desc:'Sarkari Result site' },
+  { id:'SG-News18', name:'SG-News18', owner:'bgsarkariresult', repo:'SG-News18', workflow:'news-bot.yml', inputKey:'article_url', type:'video', typeLabel:'News Video', desc:'News → YouTube video', schedule:'*/5 * * * *' },
+  { id:'TechGlow-India', name:'TechGlow India', owner:'bgsarkariresult', repo:'TechGlow-India', workflow:'tech-review-bot.yml', inputKey:'article_url', type:'video', typeLabel:'Tech Review', desc:'Tech article → video', schedule:'manual' },
+  { id:'Bk-growup', name:'BK GrowUp', owner:'bgsarkariresult', repo:'Bk-growup-', workflow:'run-job-bot.yml', inputKey:'post_url', type:'job', typeLabel:'Sarkari Job', desc:'Blogger post → job video', schedule:'manual' },
+  { id:'BG-Reels-Bot', name:'BG Reels Bot', owner:'bgtechlab', repo:'BG-Reels-Bot', workflow:'reels-bot.yml', inputKey:'product_url', type:'video', typeLabel:'Reels', desc:'Product → multi-platform reel', schedule:'manual' },
+  { id:'Trending-Topic-Finder', name:'Trending Finder', owner:'bgtechlab', repo:'Trending-Topic-Finder', workflow:'daily-auto-run.yml', inputKey:null, type:'trending', typeLabel:'Trending', desc:'Daily topics → Telegram', schedule:'0 6 * * *' },
+  { id:'bgtech', name:'BG Tech (Amazon)', owner:'bgtechlab', repo:'bgtech', workflow:null, inputKey:null, type:'product', typeLabel:'Product Site', desc:'amazon_to_blogger → site (local)', schedule:'—' },
+  { id:'bgsarkariresult', name:'BG Sarkari Result', owner:'bgsarkariresult', repo:'bgsarkariresult', workflow:'static.yml', inputKey:null, type:'site', typeLabel:'Website', desc:'Sarkari Result site', schedule:'on push' },
+];
+
+const WEBSITES = [
+  { id:'sarkari', name:'BG Sarkari Result', url:'https://bgsarkariresult.github.io/bgsarkariresult/', repo:'bgsarkariresult/bgsarkariresult', actions:'https://github.com/bgsarkariresult/bgsarkariresult/actions' },
+  { id:'sgnews', name:'SG News18', url:'https://bgsarkariresult.github.io/SG-News18/', repo:'bgsarkariresult/SG-News18', actions:'https://github.com/bgsarkariresult/SG-News18/actions' },
+  { id:'techglow', name:'TechGlow India', url:'https://bgsarkariresult.github.io/TechGlow-India/', repo:'bgsarkariresult/TechGlow-India', actions:'https://github.com/bgsarkariresult/TechGlow-India/actions' },
+  { id:'bgtech', name:'BG Tech', url:'https://bgtechlab.github.io/bgtech/', repo:'bgtechlab/bgtech', actions:'https://github.com/bgtechlab/bgtech/actions' },
 ];
 
 const CHANNEL_LABELS = {
@@ -270,11 +608,49 @@ const CHANNEL_LABELS = {
 
 let history = JSON.parse(localStorage.getItem('bg_history') || '[]');
 let botStatus = {};
+let selectedBots = {};
 let trendingByChannel = {};
 let activeChannel = '';
 let pollTimer = null;
+let autoPollEnabled = localStorage.getItem('bg_autopoll') !== '0';
 let notifEnabled = localStorage.getItem('bg_notif') === '1';
+let siteStatus = {};
+let pinBuffer = '';
 
+/* ========== THEME ========== */
+function initTheme() {
+  const t = localStorage.getItem('bg_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  const btn = document.getElementById('toggleThemeBtn');
+  if (btn) btn.classList.toggle('on', t === 'light');
+}
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('bg_theme', next);
+  const btn = document.getElementById('toggleThemeBtn');
+  if (btn) btn.classList.toggle('on', next === 'light');
+}
+
+/* ========== TABS ========== */
+document.getElementById('navTabs').addEventListener('click', function(e) {
+  const tab = e.target.closest('.nav-tab');
+  if (!tab) return;
+  document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  tab.classList.add('active');
+  document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  if (tab.dataset.tab === 'analytics') renderAnalytics();
+  if (tab.dataset.tab === 'alerts') renderErrorCenter();
+  if (tab.dataset.tab === 'scheduler') renderScheduler();
+  if (tab.dataset.tab === 'websites') renderWebsites();
+  if (tab.dataset.tab === 'bots') { renderBotsFull(); renderRunningList(); }
+  if (tab.dataset.tab === 'telegram') renderTelegram();
+  if (tab.dataset.tab === 'youtube') loadYtFromHistory();
+});
+
+/* ========== TOKEN ========== */
 function getToken() { return localStorage.getItem('gh_pat') || ''; }
 function saveToken() {
   const t = document.getElementById('tokenInput').value.trim();
@@ -286,16 +662,72 @@ function saveToken() {
 function clearToken() { localStorage.removeItem('gh_pat'); updateTokenUI(); showToast('Token cleared', 'success'); }
 function updateTokenUI() {
   const el = document.getElementById('tokenStatus');
-  if (getToken()) { el.textContent = '🔑 Token set'; el.className = 'token-status ok'; }
-  else { el.textContent = '🔑 Token not set'; el.className = 'token-status no'; }
+  const val = document.getElementById('tokenValidity');
+  if (getToken()) {
+    el.textContent = '🔑 Token set'; el.className = 'token-status ok';
+    if (val) val.textContent = 'Set (localStorage) — validity API se check hota hai on refresh';
+  } else {
+    el.textContent = '🔑 Token not set'; el.className = 'token-status no';
+    if (val) val.textContent = 'Not set';
+  }
 }
 function openTokenModal() { document.getElementById('tokenModal').classList.add('show'); document.getElementById('tokenInput').value = getToken(); }
 function closeTokenModal() { document.getElementById('tokenModal').classList.remove('show'); }
 
+/* ========== PIN ========== */
+function setupPin() { document.getElementById('pinModal').classList.add('show'); document.getElementById('pinInput').value = ''; }
+function savePin() {
+  const p = document.getElementById('pinInput').value.trim();
+  if (p && !/^\d{4}$/.test(p)) { showToast('4 digit PIN chahiye', 'error'); return; }
+  if (p) localStorage.setItem('bg_pin', p);
+  else localStorage.removeItem('bg_pin');
+  document.getElementById('pinModal').classList.remove('show');
+  showToast(p ? 'PIN set ✅' : 'PIN removed', 'success');
+}
+function removePin() { localStorage.removeItem('bg_pin'); document.getElementById('pinModal').classList.remove('show'); showToast('PIN removed', 'success'); }
+function checkPinLock() {
+  const pin = localStorage.getItem('bg_pin');
+  if (!pin) return;
+  if (sessionStorage.getItem('bg_unlocked') === '1') return;
+  document.getElementById('pinLock').classList.add('show');
+  const pad = document.getElementById('pinPad');
+  pad.innerHTML = '';
+  [1,2,3,4,5,6,7,8,9,'',0,'⌫'].forEach(function(k) {
+    const b = document.createElement('button');
+    b.className = 'pin-key';
+    b.textContent = k === '' ? '' : k;
+    if (k === '') { b.style.visibility = 'hidden'; }
+    else b.onclick = function() { pinKey(k); };
+    pad.appendChild(b);
+  });
+}
+function pinKey(k) {
+  if (k === '⌫') { pinBuffer = pinBuffer.slice(0, -1); }
+  else if (pinBuffer.length < 4) pinBuffer += k;
+  updatePinDots();
+  if (pinBuffer.length === 4) {
+    if (pinBuffer === localStorage.getItem('bg_pin')) {
+      sessionStorage.setItem('bg_unlocked', '1');
+      document.getElementById('pinLock').classList.remove('show');
+      pinBuffer = '';
+    } else {
+      showToast('Wrong PIN', 'error');
+      pinBuffer = '';
+      updatePinDots();
+    }
+  }
+}
+function updatePinDots() {
+  document.querySelectorAll('#pinDots .pin-dot').forEach(function(d, i) {
+    d.classList.toggle('filled', i < pinBuffer.length);
+  });
+}
+
+/* ========== NOTIFICATIONS ========== */
 function enableNotif() {
   if (!('Notification' in window)) { showToast('Browser notifications support nahi', 'error'); return; }
   Notification.requestPermission().then(function(p) {
-    if (p === 'granted') { notifEnabled = true; localStorage.setItem('bg_notif','1'); showToast('Notifications ON 🔔', 'success'); }
+    if (p === 'granted') { notifEnabled = true; localStorage.setItem('bg_notif','1'); updateNotifToggle(); showToast('Notifications ON 🔔', 'success'); }
     else showToast('Permission denied', 'error');
   });
 }
@@ -304,7 +736,24 @@ function notify(title, body) {
     try { new Notification(title, { body: body, icon: 'https://github.githubassets.com/favicons/favicon.png' }); } catch(e) {}
   }
 }
+function toggleNotifSetting() {
+  if (!notifEnabled) enableNotif();
+  else { notifEnabled = false; localStorage.setItem('bg_notif','0'); updateNotifToggle(); showToast('Notifications OFF', 'success'); }
+}
+function updateNotifToggle() {
+  const t = document.getElementById('toggleNotif');
+  if (t) t.classList.toggle('on', notifEnabled);
+}
+function togglePollSetting() {
+  autoPollEnabled = !autoPollEnabled;
+  localStorage.setItem('bg_autopoll', autoPollEnabled ? '1' : '0');
+  document.getElementById('togglePoll').classList.toggle('on', autoPollEnabled);
+  if (!autoPollEnabled) stopAutoPoll();
+  else startAutoPoll();
+  showToast(autoPollEnabled ? 'Auto-poll ON' : 'Auto-poll OFF', 'success');
+}
 
+/* ========== BOT SELECT / FORM ========== */
 function populateSelect() {
   const sel = document.getElementById('botSelect');
   sel.innerHTML = BOTS.filter(function(b){ return b.workflow || b.type === 'product'; }).map(function(b) {
@@ -325,8 +774,8 @@ function onBotChange() {
   } else if (bot.type === 'product') {
     linkRow.style.display = '';
     label.textContent = 'Amazon / Flipkart Product URL';
-    input.placeholder = 'https://amazon.in/... ya flipkart.com/... (local amazon_to_blogger)';
-    btn.textContent = '▶ Info (local script)';
+    input.placeholder = 'https://amazon.in/... ya flipkart.com/... (local script)';
+    btn.textContent = '▶ Info (local)';
   } else {
     linkRow.style.display = '';
     if (bot.inputKey === 'product_url') { label.textContent = 'Product / Review Page URL'; input.placeholder = 'https://... product URL'; }
@@ -343,36 +792,121 @@ function statusBadgeClass(status) {
   return 'badge-idle';
 }
 
+/* ========== RENDER BOTS ========== */
+function botCardHtml(b, withCheck) {
+  var st = botStatus[b.id] || history.find(function(h){ return h.bot === b.id; }) || {};
+  var status = st.status || 'idle';
+  var typeClass = b.type === 'trending' ? 'trending' : b.type === 'site' ? 'site' : b.type === 'job' ? 'job' : b.type === 'product' ? 'product' : '';
+  var check = '';
+  if (withCheck && b.workflow) {
+    check = '<input type="checkbox" class="bot-check" data-id="' + b.id + '" ' + (selectedBots[b.id] ? 'checked' : '') + ' onchange="toggleBotSelect(\'' + b.id + '\', this.checked)" />';
+  }
+  var actions = '<button class="btn btn-ghost btn-sm" onclick="viewActions(\'' + b.owner + '\',\'' + b.repo + '\')">Actions</button>';
+  if (b.workflow) {
+    actions += '<button class="btn btn-ghost btn-sm" onclick="selectBot(\'' + b.id + '\')">Select</button>';
+    actions += '<button class="btn btn-primary btn-sm" onclick="quickRun(\'' + b.id + '\')">▶ Run</button>';
+    actions += '<button class="btn btn-ghost btn-sm" onclick="fetchRuns(\'' + b.id + '\')">↻</button>';
+  } else if (b.type === 'product') {
+    actions += '<button class="btn btn-ghost btn-sm" onclick="selectBot(\'' + b.id + '\')">Select</button>';
+  } else {
+    actions += '<a class="btn btn-ghost btn-sm" href="https://github.com/' + b.owner + '/' + b.repo + '" target="_blank">Repo</a>';
+  }
+  return '<div class="bot-card ' + status + '">' + check +
+    '<div class="bot-header"><div><div class="bot-name">' + b.name + '</div>' +
+    '<div class="bot-repo">' + b.owner + '/' + b.repo + '</div><span class="bot-type ' + typeClass + '">' + b.typeLabel + '</span></div>' +
+    '<span class="badge ' + statusBadgeClass(status) + '">' + status + '</span></div>' +
+    '<div class="bot-meta">' + (st.msg || b.desc) + (st.time ? ' • ' + st.time : '') + '</div>' +
+    '<div class="bot-actions">' + actions + '</div></div>';
+}
+
 function renderBots() {
-  document.getElementById('botsGrid').innerHTML = BOTS.map(function(b) {
-    var st = botStatus[b.id] || history.find(function(h){ return h.bot === b.id; }) || {};
-    var status = st.status || 'idle';
-    var typeClass = b.type === 'trending' ? 'trending' : b.type === 'site' ? 'site' : b.type === 'job' ? 'job' : b.type === 'product' ? 'product' : '';
-    var actions = '<button class="btn btn-ghost btn-sm" onclick="viewActions(\'' + b.owner + '\',\'' + b.repo + '\')">Actions</button>';
-    if (b.workflow || b.type === 'product') actions += '<button class="btn btn-ghost btn-sm" onclick="selectBot(\'' + b.id + '\')">Select</button>';
-    else actions += '<a class="btn btn-ghost btn-sm" href="https://github.com/' + b.owner + '/' + b.repo + '" target="_blank">Repo</a>';
-    if (b.workflow) actions += '<button class="btn btn-ghost btn-sm" onclick="fetchRuns(\'' + b.id + '\')">↻ Status</button>';
-    return '<div class="bot-card ' + status + '"><div class="bot-header"><div><div class="bot-name">' + b.name + '</div>' +
-      '<div class="bot-repo">' + b.owner + '/' + b.repo + '</div><span class="bot-type ' + typeClass + '">' + b.typeLabel + '</span></div>' +
-      '<span class="badge ' + statusBadgeClass(status) + '">' + status + '</span></div>' +
-      '<div class="bot-meta">' + (st.msg || b.desc) + (st.time ? ' • ' + st.time : '') + '</div>' +
-      '<div class="bot-actions">' + actions + '</div></div>';
-  }).join('');
+  document.getElementById('botsGrid').innerHTML = BOTS.map(function(b){ return botCardHtml(b, true); }).join('');
+}
+function renderBotsFull() {
+  document.getElementById('botsGridFull').innerHTML = BOTS.map(function(b){ return botCardHtml(b, true); }).join('');
+}
+function toggleBotSelect(id, checked) { selectedBots[id] = checked; }
+function selectAllBots(on) {
+  BOTS.forEach(function(b){ if (b.workflow) selectedBots[b.id] = on; });
+  renderBots(); renderBotsFull();
+  showToast(on ? 'All selected' : 'Deselected', 'success');
+}
+
+async function runSelectedBots() {
+  var ids = Object.keys(selectedBots).filter(function(k){ return selectedBots[k]; });
+  if (!ids.length) { showToast('Pehle bots select karo', 'error'); return; }
+  if (!getToken()) { showToast('Token set karo', 'error'); openTokenModal(); return; }
+  showToast('Triggering ' + ids.length + ' bot(s)...', 'success');
+  for (var i = 0; i < ids.length; i++) {
+    await quickRun(ids[i], true);
+    await new Promise(function(r){ setTimeout(r, 800); });
+  }
+  showToast('Selected bots triggered!', 'success');
+}
+
+async function quickRun(botId, silent) {
+  var bot = BOTS.find(function(b){ return b.id === botId; });
+  if (!bot || !bot.workflow) return;
+  if (bot.inputKey && !silent) {
+    document.getElementById('botSelect').value = botId;
+    onBotChange();
+    showToast(bot.name + ' selected — URL daalo aur Run dabao', 'success');
+    return;
+  }
+  // trending / no-input bots can run directly
+  var token = getToken();
+  if (!token) { if (!silent) { showToast('Token chahiye', 'error'); openTokenModal(); } return; }
+  var url = 'https://api.github.com/repos/' + bot.owner + '/' + bot.repo + '/actions/workflows/' + bot.workflow + '/dispatches';
+  try {
+    var res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Accept': 'application/vnd.github+json', 'Authorization': 'Bearer ' + token, 'X-GitHub-Api-Version': '2022-11-28' },
+      body: JSON.stringify({ ref: 'main' })
+    });
+    if (res.status === 204 || res.ok) {
+      var entry = { bot: bot.id, status: 'queued', time: new Date().toLocaleString('en-IN'), date: new Date().toDateString(),
+        link: null, msg: 'Quick run / One-click', runUrl: 'https://github.com/' + bot.owner + '/' + bot.repo + '/actions', source: 'manual' };
+      history.unshift(entry);
+      botStatus[bot.id] = { status: 'queued', time: entry.time, msg: entry.msg };
+      saveHistory();
+      if (!silent) showToast(bot.name + ' triggered!', 'success');
+      renderBots(); renderHistory(); updateStats();
+      setTimeout(function(){ fetchRuns(bot.id); }, 5000);
+    } else {
+      var err = await res.json().catch(function(){ return {}; });
+      if (!silent) showToast('Error: ' + (err.message || res.status), 'error');
+    }
+  } catch (e) {
+    if (!silent) showToast('Network error', 'error');
+  }
 }
 
 function renderHistory() {
   var el = document.getElementById('historyList');
   if (!history.length) { el.innerHTML = '<p style="color:var(--muted);font-size:0.82rem;">No runs yet.</p>'; return; }
-  el.innerHTML = history.slice(0, 12).map(function(h) {
+  el.innerHTML = history.slice(0, 15).map(function(h) {
     return '<div class="history-item"><div style="display:flex;justify-content:space-between;gap:6px;align-items:center;">' +
       '<strong>' + h.bot + '</strong><span class="badge ' + statusBadgeClass(h.status) + '">' + h.status + '</span></div>' +
       '<div class="time">' + (h.time || '') +
       (h.link ? ' • <a href="' + h.link + '" target="_blank">Link</a>' : '') +
-      (h.runUrl ? ' • <a href="' + h.runUrl + '" target="_blank">Run</a>' : '') + '</div>' +
+      (h.runUrl ? ' • <a href="' + h.runUrl + '" target="_blank">Run</a>' : '') +
+      (h.source ? ' • ' + h.source : '') + '</div>' +
       '<div style="color:var(--muted);margin-top:2px;font-size:0.78rem;">' + (h.msg || '') + '</div></div>';
   }).join('');
 }
 
+function renderRunningList() {
+  var running = history.filter(function(h){ return ['queued','running','in_progress'].indexOf(h.status) >= 0; });
+  var el = document.getElementById('runningList');
+  if (!running.length) { el.innerHTML = '<p style="color:var(--muted);font-size:0.84rem;">Koi running nahi.</p>'; return; }
+  el.innerHTML = running.map(function(h) {
+    return '<div class="history-item"><strong>' + h.bot + '</strong> <span class="badge ' + statusBadgeClass(h.status) + '">' + h.status + '</span>' +
+      '<div class="time">' + h.time + (h.runUrl ? ' • <a href="' + h.runUrl + '" target="_blank">Open</a>' : '') +
+      ' • <button class="btn btn-ghost btn-sm" onclick="fetchRuns(\'' + h.bot + '\')">↻</button></div></div>';
+  }).join('');
+}
+
+/* ========== TRENDING ========== */
 function renderTrending() {
   var keys = Object.keys(trendingByChannel);
   var tabs = document.getElementById('channelTabs');
@@ -396,9 +930,26 @@ function renderTrending() {
       '<button class="use-btn" onclick="useTopic(\'' + activeChannel + '\',' + i + ')">Use</button></div></li>';
   }).join('');
 }
-
 function setChannel(k) { activeChannel = k; renderTrending(); }
+function useTopic(channel, i) {
+  var items = trendingByChannel[channel] || [];
+  var t = items[i];
+  if (!t) return;
+  var botMap = { 'sg-news-automation':'SG-News18', 'tech-review-bot':'TechGlow-India', 'bg-auto-job-bot':'Bk-growup', 'reels-bot':'BG-Reels-Bot' };
+  var botId = botMap[channel] || 'SG-News18';
+  document.getElementById('botSelect').value = botId;
+  onBotChange();
+  if (t.url) document.getElementById('videoLink').value = t.url;
+  else { document.getElementById('videoLink').value = ''; document.getElementById('videoLink').placeholder = 'Topic: ' + (t.title || ''); }
+  // switch to dashboard tab
+  document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelector('[data-tab="dashboard"]').classList.add('active');
+  document.getElementById('tab-dashboard').classList.add('active');
+  showToast('Selected: ' + (t.title || '').slice(0, 40), 'success');
+}
 
+/* ========== STATS ========== */
 function updateStats() {
   document.getElementById('statBots').textContent = BOTS.length;
   var running = history.filter(function(h){ return ['running','queued','in_progress'].indexOf(h.status) >= 0; }).length;
@@ -406,44 +957,57 @@ function updateStats() {
   document.getElementById('statSuccess').textContent = history.filter(function(h){ return ['success','completed'].indexOf(h.status) >= 0; }).length;
   document.getElementById('statFailed').textContent = history.filter(function(h){ return ['failed','failure'].indexOf(h.status) >= 0; }).length;
   var today = new Date().toDateString();
-  document.getElementById('statLimit').textContent = history.filter(function(h){ return h.date === today; }).length;
+  var todayCount = history.filter(function(h){ return h.date === today; }).length;
+  document.getElementById('statToday').textContent = todayCount;
+  var weekAgo = Date.now() - 7 * 86400000;
+  var weekCount = history.filter(function(h) {
+    try { return new Date(h.time).getTime() > weekAgo || h.date === today; } catch(e){ return false; }
+  }).length;
+  document.getElementById('statWeek').textContent = weekCount;
   var badge = document.getElementById('autoBadge');
-  if (running > 0) { badge.style.display = ''; startAutoPoll(); }
-  else { badge.style.display = 'none'; stopAutoPoll(); }
+  if (running > 0 && autoPollEnabled) { badge.style.display = ''; startAutoPoll(); }
+  else { badge.style.display = 'none'; if (!running) stopAutoPoll(); }
+  // scheduler stats
+  var sm = document.getElementById('statManual');
+  if (sm) {
+    sm.textContent = history.filter(function(h){ return h.date === today && h.source !== 'schedule'; }).length;
+    document.getElementById('statScheduled').textContent = history.filter(function(h){ return h.date === today && h.source === 'schedule'; }).length;
+    document.getElementById('statTotalHist').textContent = history.length;
+  }
 }
 
-function saveHistory() { localStorage.setItem('bg_history', JSON.stringify(history.slice(0, 60))); }
-
-function selectBot(id) { document.getElementById('botSelect').value = id; onBotChange(); showToast('Selected: ' + id, 'success'); }
+function saveHistory() { localStorage.setItem('bg_history', JSON.stringify(history.slice(0, 80))); }
+function selectBot(id) {
+  document.getElementById('botSelect').value = id;
+  onBotChange();
+  document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelector('[data-tab="dashboard"]').classList.add('active');
+  document.getElementById('tab-dashboard').classList.add('active');
+  showToast('Selected: ' + id, 'success');
+}
 function clearForm() { document.getElementById('videoLink').value = ''; }
 function viewActions(owner, repo) { window.open('https://github.com/' + owner + '/' + repo + '/actions', '_blank'); }
-
-function useTopic(channel, i) {
-  var items = trendingByChannel[channel] || [];
-  var t = items[i];
-  if (!t) return;
-  // Map channel to bot
-  var botMap = { 'sg-news-automation':'SG-News18', 'tech-review-bot':'TechGlow-India', 'bg-auto-job-bot':'Bk-growup', 'reels-bot':'BG-Reels-Bot' };
-  var botId = botMap[channel] || 'SG-News18';
-  document.getElementById('botSelect').value = botId;
-  onBotChange();
-  if (t.url) document.getElementById('videoLink').value = t.url;
-  else { document.getElementById('videoLink').value = ''; document.getElementById('videoLink').placeholder = 'Topic: ' + (t.title || ''); }
-  showToast('Selected: ' + (t.title || '').slice(0, 40), 'success');
+function clearHistory() {
+  if (!confirm('Saari run history clear karein?')) return;
+  history = []; botStatus = {}; saveHistory();
+  renderHistory(); renderBots(); updateStats(); renderErrorCenter(); renderAnalytics();
+  showToast('History cleared', 'success');
 }
 
+/* ========== TRIGGER WORKFLOW ========== */
 async function triggerWorkflow() {
   var botId = document.getElementById('botSelect').value;
   var link = document.getElementById('videoLink').value.trim();
   var bot = BOTS.find(function(b){ return b.id === botId; });
   if (!bot) { showToast('Bot not found', 'error'); return; }
   if (bot.type === 'product') {
-    showToast('Amazon→Site local script se chalta hai (amazon_to_blogger.py). Dashboard se GitHub Actions nahi.', 'error');
-    document.getElementById('logBox').textContent = 'BG Tech / amazon_to_blogger.py local machine pe chalao.\nProduct URL: ' + link + '\nYe script scrape → AI review → build.py → git push karta hai.';
+    showToast('Amazon→Site local script se chalta hai (amazon_to_blogger.py)', 'error');
+    document.getElementById('logBox').textContent = 'BG Tech / amazon_to_blogger.py local machine pe chalao.\nProduct URL: ' + link;
     return;
   }
-  if (bot.type === 'video' || bot.type === 'job') {
-    if (!link) { showToast('Please enter a URL', 'error'); return; }
+  if ((bot.type === 'video' || bot.type === 'job') && bot.inputKey && !link) {
+    showToast('Please enter a URL', 'error'); return;
   }
   if (!bot.workflow) { showToast('Is repo me workflow nahi', 'error'); return; }
   var token = getToken();
@@ -465,24 +1029,24 @@ async function triggerWorkflow() {
     if (res.status === 204 || res.ok) {
       var entry = { bot: bot.id, status: 'queued', time: new Date().toLocaleString('en-IN'), date: new Date().toDateString(),
         link: link || null, msg: link ? ('Triggered: ' + link.slice(0, 48)) : 'Triggered',
-        runUrl: 'https://github.com/' + bot.owner + '/' + bot.repo + '/actions' };
+        runUrl: 'https://github.com/' + bot.owner + '/' + bot.repo + '/actions', source: 'manual' };
       history.unshift(entry);
       botStatus[bot.id] = { status: 'queued', time: entry.time, msg: entry.msg };
       saveHistory();
       document.getElementById('logBox').textContent = '[' + entry.time + '] Triggered ' + bot.workflow + '\nRepo: ' + bot.owner + '/' + bot.repo +
         (link ? ('\nInput (' + bot.inputKey + '): ' + link) : '') + '\nStatus: queued — auto-refresh ON';
-      showToast('Workflow triggered! ✅ Auto-refresh ON', 'success');
+      showToast('Workflow triggered! ✅', 'success');
       renderBots(); renderHistory(); updateStats();
       setTimeout(function(){ fetchRuns(bot.id); }, 6000);
     } else {
       var err = await res.json().catch(function(){ return {}; });
       var msg = err.message || ('HTTP ' + res.status);
-      document.getElementById('logBox').textContent = '[ERROR] ' + msg + '\nURL: ' + url + '\n\nTips:\n- Token: repo + workflow\n- Input: ' + (bot.inputKey || 'none') + '\n- Repo access check karo';
+      document.getElementById('logBox').textContent = '[ERROR] ' + msg + '\nURL: ' + url + '\n\nTips:\n- Token: repo + workflow\n- Input: ' + (bot.inputKey || 'none');
       showToast('Error: ' + msg, 'error');
     }
   } catch (e) {
     document.getElementById('logBox').textContent = '[NETWORK] ' + e.message;
-    showToast('Network error', 'error');
+    showToast('Network error (CORS?)', 'error');
   }
   btn.disabled = false; onBotChange();
 }
@@ -499,14 +1063,14 @@ async function fetchRuns(botId) {
   var token = getToken();
   if (!token) { showToast('Token chahiye', 'error'); return; }
   try {
-    var url = 'https://api.github.com/repos/' + bot.owner + '/' + bot.repo + '/actions/workflows/' + bot.workflow + '/runs?per_page=3';
+    var url = 'https://api.github.com/repos/' + bot.owner + '/' + bot.repo + '/actions/workflows/' + bot.workflow + '/runs?per_page=5';
     var res = await fetch(url, {
       headers: { 'Accept': 'application/vnd.github+json', 'Authorization': 'Bearer ' + token, 'X-GitHub-Api-Version': '2022-11-28' }
     });
     if (!res.ok) {
       var errBody = await res.json().catch(function(){ return {}; });
       showToast('Status failed: ' + res.status + (errBody.message ? ' — ' + errBody.message : ''), 'error');
-      if (res.status === 401) document.getElementById('logBox').textContent = '401 Bad credentials\n→ Clear Token → naya Classic PAT (repo + workflow)\n→ bgsarkariresult account se banao';
+      if (res.status === 401) document.getElementById('logBox').textContent = '401 Bad credentials\n→ Clear Token → naya Classic PAT (repo + workflow)';
       return;
     }
     var data = await res.json();
@@ -516,15 +1080,17 @@ async function fetchRuns(botId) {
       var prev = (botStatus[bot.id] || {}).status;
       var status = r.conclusion || r.status || 'unknown';
       botStatus[bot.id] = { status: status, time: new Date(r.updated_at || r.created_at).toLocaleString('en-IN'), msg: r.display_title || r.name || '' };
-      var hist = history.find(function(h){ return h.bot === botId && ['queued','running','in_progress'].indexOf(h.status) >= 0; });
-      if (hist) { hist.status = status; hist.runUrl = r.html_url; hist.time = botStatus[bot.id].time; saveHistory(); }
-      // Also update any matching recent entry
-      for (var i = 0; i < Math.min(history.length, 5); i++) {
-        if (history[i].bot === botId) { history[i].status = status; history[i].runUrl = r.html_url; break; }
+      // update history
+      for (var i = 0; i < Math.min(history.length, 8); i++) {
+        if (history[i].bot === botId && ['queued','running','in_progress'].indexOf(history[i].status) >= 0) {
+          history[i].status = status; history[i].runUrl = r.html_url; history[i].time = botStatus[bot.id].time;
+          if (r.event === 'schedule') history[i].source = 'schedule';
+          break;
+        }
       }
       saveHistory();
       document.getElementById('logBox').textContent = '[STATUS] ' + bot.name + '\nLatest: ' + status + '\n' + (r.display_title || r.name) + '\n' + r.html_url;
-      renderBots(); renderHistory(); updateStats();
+      renderBots(); renderHistory(); updateStats(); renderErrorCenter();
       if (['success','completed','failure','failed','cancelled'].indexOf(status) >= 0 && ['queued','running','in_progress'].indexOf(prev) >= 0) {
         notify(bot.name + ' → ' + status, r.display_title || 'Workflow finished');
         showToast(bot.name + ': ' + status, status.indexOf('fail') >= 0 ? 'error' : 'success');
@@ -546,9 +1112,8 @@ function pollAllRunning() {
   list.forEach(function(id) { fetchRuns(id); });
   showToast('Polling ' + list.length + ' bot(s)...', 'success');
 }
-
 function startAutoPoll() {
-  if (pollTimer) return;
+  if (pollTimer || !autoPollEnabled) return;
   pollTimer = setInterval(function() { pollAllRunning(); }, 30000);
 }
 function stopAutoPoll() {
@@ -571,7 +1136,7 @@ async function loadTrending(showMsg) {
       return;
     }
   } catch (e) {}
-  if (showMsg) showToast('history.json load fail — demo fallback', 'error');
+  if (showMsg) showToast('history.json load fail — demo', 'error');
   if (!Object.keys(trendingByChannel).length) {
     trendingByChannel = { 'demo': [
       { title: 'SSC CGL 2026 Notification', score: 91 },
@@ -581,10 +1146,262 @@ async function loadTrending(showMsg) {
   }
 }
 
+/* ========== WEBSITES ========== */
+async function checkSite(site) {
+  try {
+    // Use no-cors or just assume — fetch often CORS blocks. We try HEAD via image or simple fetch
+    var controller = new AbortController();
+    var t = setTimeout(function(){ controller.abort(); }, 5000);
+    var res = await fetch(site.url, { method: 'HEAD', mode: 'no-cors', signal: controller.signal });
+    clearTimeout(t);
+    // no-cors always opaque — if no network error, treat as online
+    siteStatus[site.id] = { online: true, checked: new Date().toLocaleTimeString('en-IN') };
+  } catch (e) {
+    siteStatus[site.id] = { online: false, checked: new Date().toLocaleTimeString('en-IN'), err: e.message };
+  }
+}
+
+function renderWebsites() {
+  var grid = document.getElementById('siteGrid');
+  grid.innerHTML = WEBSITES.map(function(s) {
+    var st = siteStatus[s.id] || {};
+    var badge = st.online === true ? '<span class="badge badge-online">Online</span>' :
+                st.online === false ? '<span class="badge badge-offline">Offline / CORS</span>' :
+                '<span class="badge badge-idle">Check...</span>';
+    return '<div class="site-card"><h4>' + s.name + '</h4>' +
+      '<div class="site-url">' + s.url + '</div>' +
+      '<div class="site-status-row">' + badge +
+      (st.checked ? '<span style="color:var(--muted);font-size:0.72rem;">' + st.checked + '</span>' : '') + '</div>' +
+      '<div class="bot-actions">' +
+      '<a class="btn btn-ghost btn-sm" href="' + s.url + '" target="_blank">Open Site</a>' +
+      '<a class="btn btn-ghost btn-sm" href="' + s.actions + '" target="_blank">GitHub Actions</a>' +
+      '<a class="btn btn-ghost btn-sm" href="https://github.com/' + s.repo + '" target="_blank">Repo</a>' +
+      '<button class="btn btn-ghost btn-sm" onclick="checkAndRenderSite(\'' + s.id + '\')">↻ Check</button>' +
+      '</div></div>';
+  }).join('');
+  renderMiniSites();
+}
+
+function renderMiniSites() {
+  var el = document.getElementById('miniSiteStatus');
+  if (!el) return;
+  el.innerHTML = WEBSITES.map(function(s) {
+    var st = siteStatus[s.id] || {};
+    var badge = st.online === true ? 'badge-online">●' : st.online === false ? 'badge-offline">●' : 'badge-idle">○';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:0.8rem;border-bottom:1px solid var(--border);">' +
+      '<span>' + s.name + '</span><span class="badge ' + badge + '</span></div>';
+  }).join('');
+}
+
+async function checkAndRenderSite(id) {
+  var site = WEBSITES.find(function(s){ return s.id === id; });
+  if (!site) return;
+  showToast('Checking ' + site.name + '...', 'success');
+  await checkSite(site);
+  renderWebsites();
+}
+
+async function checkAllSites() {
+  for (var i = 0; i < WEBSITES.length; i++) await checkSite(WEBSITES[i]);
+  renderWebsites();
+}
+
+/* ========== SCHEDULER ========== */
+function renderScheduler() {
+  var el = document.getElementById('schedList');
+  el.innerHTML = BOTS.filter(function(b){ return b.workflow; }).map(function(b) {
+    var st = botStatus[b.id] || {};
+    return '<div class="sched-item"><div><strong>' + b.name + '</strong>' +
+      '<div style="font-size:0.72rem;color:var(--muted);margin-top:2px;">' + b.owner + '/' + b.repo + ' • ' + b.workflow + '</div></div>' +
+      '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' +
+      '<span class="sched-cron">' + (b.schedule || 'manual') + '</span>' +
+      '<span class="badge ' + statusBadgeClass(st.status || 'idle') + '">' + (st.status || 'idle') + '</span>' +
+      '<a class="btn btn-ghost btn-sm" href="https://github.com/' + b.owner + '/' + b.repo + '/actions" target="_blank">Actions</a>' +
+      '</div></div>';
+  }).join('');
+  updateStats();
+}
+
+/* ========== TELEGRAM ========== */
+function renderTelegram() {
+  var schedRuns = history.filter(function(h){ return h.source === 'schedule' || (h.bot === 'SG-News18' && !h.link); });
+  var el = document.getElementById('tgRunsList');
+  if (!schedRuns.length) {
+    el.innerHTML = '<p style="color:var(--muted);font-size:0.84rem;">Scheduled / Telegram-style runs history me dikhenge jab fetch status karein.</p>';
+  } else {
+    el.innerHTML = schedRuns.slice(0, 10).map(function(h) {
+      return '<div class="history-item"><strong>' + h.bot + '</strong> <span class="badge ' + statusBadgeClass(h.status) + '">' + h.status + '</span>' +
+        '<div class="time">' + h.time + (h.runUrl ? ' • <a href="' + h.runUrl + '" target="_blank">Run</a>' : '') + '</div></div>';
+    }).join('');
+  }
+  // connection heuristic
+  var sg = botStatus['SG-News18'] || history.find(function(h){ return h.bot === 'SG-News18'; });
+  var badge = document.querySelector('#tgConnStatus .badge');
+  if (sg && ['success','completed','running','queued'].indexOf(sg.status) >= 0) {
+    badge.className = 'badge badge-online'; badge.textContent = 'Active';
+  } else if (sg && ['failed','failure'].indexOf(sg.status) >= 0) {
+    badge.className = 'badge badge-failed'; badge.textContent = 'Last failed';
+  } else {
+    badge.className = 'badge badge-idle'; badge.textContent = 'Unknown';
+  }
+}
+function sendTgTestNote() {
+  showToast('Telegram messages workflow se bhejte hain (secrets). Dashboard se direct nahi.', 'success');
+}
+
+/* ========== ALERTS / ERROR CENTER ========== */
+function renderErrorCenter() {
+  var failed = history.filter(function(h){ return ['failed','failure','cancelled'].indexOf(h.status) >= 0; });
+  var el = document.getElementById('errorCenter');
+  if (!failed.length) {
+    el.innerHTML = '<p style="color:var(--muted);font-size:0.84rem;">✅ Koi failed run nahi (recent history).</p>';
+    return;
+  }
+  el.innerHTML = failed.slice(0, 12).map(function(h) {
+    var bot = BOTS.find(function(b){ return b.id === h.bot; });
+    return '<div class="error-item"><div class="err-title">❌ ' + h.bot + ' — ' + h.status + '</div>' +
+      '<div class="err-msg">' + (h.msg || 'No details') + ' • ' + (h.time || '') + '</div>' +
+      '<div class="err-actions">' +
+      (h.runUrl ? '<a class="btn btn-ghost btn-sm" href="' + h.runUrl + '" target="_blank">GitHub Log</a>' : '') +
+      (bot && bot.workflow ? '<button class="btn btn-warning btn-sm" onclick="reRunFailed(\'' + h.bot + '\',\'' + (h.link || '') + '\')">↻ Re-run</button>' : '') +
+      (bot ? '<button class="btn btn-ghost btn-sm" onclick="viewActions(\'' + bot.owner + '\',\'' + bot.repo + '\')">Actions</button>' : '') +
+      '</div></div>';
+  }).join('');
+}
+
+async function reRunFailed(botId, link) {
+  var bot = BOTS.find(function(b){ return b.id === botId; });
+  if (!bot) return;
+  if (bot.inputKey && link) {
+    document.getElementById('botSelect').value = botId;
+    onBotChange();
+    document.getElementById('videoLink').value = link;
+    document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.remove('active'); });
+    document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+    document.querySelector('[data-tab="dashboard"]').classList.add('active');
+    document.getElementById('tab-dashboard').classList.add('active');
+    await triggerWorkflow();
+  } else {
+    await quickRun(botId);
+  }
+}
+
+/* ========== ANALYTICS ========== */
+function renderAnalytics() {
+  // last 7 days bar chart
+  var days = [];
+  for (var i = 6; i >= 0; i--) {
+    var d = new Date(); d.setDate(d.getDate() - i);
+    days.push({ label: d.toLocaleDateString('en-IN', { weekday: 'short' }), date: d.toDateString(), count: 0 });
+  }
+  history.forEach(function(h) {
+    var day = days.find(function(x){ return x.date === h.date; });
+    if (day) day.count++;
+  });
+  var max = Math.max.apply(null, days.map(function(d){ return d.count; })) || 1;
+  document.getElementById('weekChart').innerHTML = days.map(function(d) {
+    var h = Math.max(4, Math.round((d.count / max) * 100));
+    return '<div class="bar-col"><div class="bar-val">' + d.count + '</div><div class="bar" style="height:' + h + 'px"></div><div class="bar-label">' + d.label + '</div></div>';
+  }).join('');
+
+  // bot-wise
+  var byBot = {};
+  history.forEach(function(h) {
+    if (!byBot[h.bot]) byBot[h.bot] = { success: 0, fail: 0, total: 0 };
+    byBot[h.bot].total++;
+    if (['success','completed'].indexOf(h.status) >= 0) byBot[h.bot].success++;
+    if (['failed','failure'].indexOf(h.status) >= 0) byBot[h.bot].fail++;
+  });
+  var ba = document.getElementById('botAnalytics');
+  var keys = Object.keys(byBot);
+  if (!keys.length) {
+    ba.innerHTML = '<p style="color:var(--muted);font-size:0.84rem;">Abhi data nahi.</p>';
+  } else {
+    ba.innerHTML = keys.map(function(k) {
+      var b = byBot[k];
+      var rate = b.total ? Math.round(b.success / b.total * 100) : 0;
+      return '<div class="sched-item"><strong>' + k + '</strong>' +
+        '<span style="font-size:0.8rem;"><span style="color:var(--success)">' + b.success + ' ok</span> / ' +
+        '<span style="color:var(--danger)">' + b.fail + ' fail</span> • ' + rate + '%</span></div>';
+    }).join('');
+  }
+
+  var total = history.length;
+  var succ = history.filter(function(h){ return ['success','completed'].indexOf(h.status) >= 0; }).length;
+  document.getElementById('anTotal').textContent = total;
+  document.getElementById('anRate').textContent = total ? Math.round(succ / total * 100) + '%' : '0%';
+  document.getElementById('anVideos').textContent = history.filter(function(h){
+    var bot = BOTS.find(function(b){ return b.id === h.bot; });
+    return bot && (bot.type === 'video' || bot.type === 'job');
+  }).length;
+  var thisMonth = new Date().getMonth();
+  document.getElementById('anMonth').textContent = history.filter(function(h) {
+    try { return new Date(h.time).getMonth() === thisMonth; } catch(e){ return false; }
+  }).length;
+}
+
+/* ========== YOUTUBE ========== */
+function saveYtSettings() {
+  localStorage.setItem('yt_key', document.getElementById('ytApiKey').value.trim());
+  localStorage.setItem('yt_channel', document.getElementById('ytChannelId').value.trim());
+  showToast('YouTube settings saved', 'success');
+  fetchYtVideos();
+}
+function loadYtFromHistory() {
+  var key = localStorage.getItem('yt_key') || '';
+  var ch = localStorage.getItem('yt_channel') || '';
+  document.getElementById('ytApiKey').value = key;
+  document.getElementById('ytChannelId').value = ch;
+  // show video-type successful runs as "uploads"
+  var videos = history.filter(function(h) {
+    var bot = BOTS.find(function(b){ return b.id === h.bot; });
+    return bot && (bot.type === 'video' || bot.type === 'job') && ['success','completed','queued','running'].indexOf(h.status) >= 0;
+  });
+  var el = document.getElementById('ytList');
+  if (!videos.length) {
+    el.innerHTML = '<p style="color:var(--muted);font-size:0.84rem;">History me video runs nahi. API key se live fetch try karo, ya bots run karo.</p>';
+    return;
+  }
+  el.innerHTML = videos.slice(0, 15).map(function(h) {
+    return '<div class="yt-item"><div class="yt-thumb">▶</div><div class="yt-info">' +
+      '<div class="yt-title">' + (h.msg || h.bot) + '</div>' +
+      '<div class="yt-meta">' + h.bot + ' • ' + h.status + ' • ' + (h.time || '') +
+      (h.runUrl ? ' • <a href="' + h.runUrl + '" target="_blank">Run</a>' : '') +
+      (h.link ? ' • <a href="' + h.link + '" target="_blank">Source</a>' : '') +
+      '</div></div></div>';
+  }).join('');
+}
+async function fetchYtVideos() {
+  var key = localStorage.getItem('yt_key');
+  var ch = localStorage.getItem('yt_channel');
+  if (!key || !ch) { loadYtFromHistory(); return; }
+  try {
+    var res = await fetch('https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=' + encodeURIComponent(ch) + '&maxResults=8&order=date&type=video&key=' + encodeURIComponent(key));
+    if (!res.ok) { showToast('YouTube API error: ' + res.status, 'error'); loadYtFromHistory(); return; }
+    var data = await res.json();
+    var items = data.items || [];
+    document.getElementById('ytList').innerHTML = items.map(function(it) {
+      var sn = it.snippet || {};
+      var vid = (it.id && it.id.videoId) || '';
+      return '<div class="yt-item"><div class="yt-thumb">' + (sn.thumbnails && sn.thumbnails.default ? '<img src="' + sn.thumbnails.default.url + '" style="width:100%;height:100%;object-fit:cover;border-radius:6px;" />' : '▶') + '</div>' +
+        '<div class="yt-info"><div class="yt-title">' + (sn.title || '') + '</div>' +
+        '<div class="yt-meta">' + (sn.publishedAt || '').slice(0,10) +
+        (vid ? ' • <a href="https://youtube.com/watch?v=' + vid + '" target="_blank">Watch</a>' : '') +
+        '</div></div></div>';
+    }).join('') || '<p style="color:var(--muted);">No videos found.</p>';
+    showToast('YouTube videos loaded', 'success');
+  } catch (e) {
+    showToast('YouTube fetch failed', 'error');
+    loadYtFromHistory();
+  }
+}
+
+/* ========== REFRESH / TOAST ========== */
 function refreshAll(showMsg) {
   renderBots(); renderHistory(); updateStats(); updateTokenUI();
   loadTrending(false);
-  pollAllRunning();
+  checkAllSites();
+  if (autoPollEnabled) pollAllRunning();
   if (showMsg) showToast('Refreshed', 'success');
 }
 
@@ -595,15 +1412,20 @@ function showToast(msg, type) {
   setTimeout(function(){ t.classList.remove('show'); }, 3500);
 }
 
+/* ========== INIT ========== */
+initTheme();
+checkPinLock();
 updateTokenUI();
+updateNotifToggle();
+document.getElementById('togglePoll').classList.toggle('on', autoPollEnabled);
 populateSelect();
 renderBots();
 renderHistory();
 updateStats();
 loadTrending(false);
-if (!getToken()) setTimeout(function(){ openTokenModal(); }, 500);
-// Initial poll if any running in history
-setTimeout(function(){ pollAllRunning(); }, 2000);
+checkAllSites();
+if (!getToken()) setTimeout(function(){ openTokenModal(); }, 600);
+setTimeout(function(){ if (autoPollEnabled) pollAllRunning(); }, 2000);
 </script>
 </body>
 </html>
