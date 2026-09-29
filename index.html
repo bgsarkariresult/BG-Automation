@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BG Control Dashboard — Bots & Video Generator</title>
+  <title>BG Control Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0b0f19;
-      --surface: #121826;
-      --surface2: #1a2234;
+      --bg: #0a0e17;
+      --surface: #111827;
+      --surface2: #1a2332;
       --border: #243044;
       --text: #e8eef7;
       --muted: #8b9bb4;
@@ -21,7 +21,7 @@
       --danger: #ef4444;
       --running: #06b6d4;
       --radius: 14px;
-      --shadow: 0 8px 32px rgba(0,0,0,0.35);
+      --shadow: 0 8px 32px rgba(0,0,0,0.4);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -34,174 +34,185 @@
     .bg-glow {
       position: fixed; inset: 0; pointer-events: none; z-index: 0;
       background:
-        radial-gradient(ellipse 80% 50% at 20% -10%, rgba(59,130,246,0.18), transparent),
-        radial-gradient(ellipse 60% 40% at 80% 0%, rgba(139,92,246,0.12), transparent);
+        radial-gradient(ellipse 80% 50% at 15% -15%, rgba(59,130,246,0.2), transparent),
+        radial-gradient(ellipse 50% 40% at 85% 0%, rgba(139,92,246,0.12), transparent);
     }
-    .container { max-width: 1280px; margin: 0 auto; padding: 24px 20px 60px; position: relative; z-index: 1; }
+    .container { max-width: 1280px; margin: 0 auto; padding: 20px 16px 60px; position: relative; z-index: 1; }
 
-    /* Header */
     header {
       display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
-      gap: 16px; margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid var(--border);
+      gap: 14px; margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--border);
     }
     .logo { display: flex; align-items: center; gap: 12px; }
     .logo-icon {
-      width: 42px; height: 42px; border-radius: 12px;
+      width: 44px; height: 44px; border-radius: 12px;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
-      display: grid; place-items: center; font-size: 20px; font-weight: 800;
+      display: grid; place-items: center; font-size: 18px; font-weight: 800; color: #fff;
     }
-    .logo h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; }
-    .logo span { color: var(--muted); font-size: 0.8rem; font-weight: 500; }
-    .header-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .logo h1 { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.02em; }
+    .logo span { color: var(--muted); font-size: 0.78rem; font-weight: 500; }
+    .header-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
     .btn {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 10px 16px; border-radius: 10px; font-weight: 600; font-size: 0.875rem;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 15px; border-radius: 10px; font-weight: 600; font-size: 0.85rem;
       border: none; cursor: pointer; transition: all 0.2s;
     }
     .btn-primary {
       background: linear-gradient(135deg, var(--accent), #2563eb);
       color: white; box-shadow: 0 4px 14px rgba(59,130,246,0.35);
     }
-    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(59,130,246,0.45); }
+    .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(59,130,246,0.5); }
     .btn-ghost {
       background: var(--surface2); color: var(--text); border: 1px solid var(--border);
     }
     .btn-ghost:hover { background: var(--border); }
-    .btn-danger { background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+    .btn-danger { background: rgba(239,68,68,0.12); color: #fca5a5; border: 1px solid rgba(239,68,68,0.25); }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+    .btn-sm { padding: 6px 11px; font-size: 0.76rem; border-radius: 8px; }
 
-    /* Token modal */
-    .modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
-      display: none; align-items: center; justify-content: center; z-index: 100;
-      padding: 20px;
-    }
-    .modal-overlay.show { display: flex; }
-    .modal {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
-      padding: 28px; width: 100%; max-width: 440px; box-shadow: var(--shadow);
-    }
-    .modal h2 { font-size: 1.2rem; margin-bottom: 8px; }
-    .modal p { color: var(--muted); font-size: 0.875rem; margin-bottom: 18px; }
-    .modal input, .modal select, .form-input {
-      width: 100%; padding: 12px 14px; border-radius: 10px;
-      background: var(--bg); border: 1px solid var(--border); color: var(--text);
-      font-size: 0.9rem; margin-bottom: 14px;
-    }
-    .modal input:focus, .form-input:focus { outline: 2px solid var(--accent); border-color: transparent; }
     .token-status {
-      font-size: 0.8rem; padding: 6px 12px; border-radius: 20px;
+      font-size: 0.78rem; padding: 5px 11px; border-radius: 20px;
       background: var(--surface2); border: 1px solid var(--border);
     }
     .token-status.ok { color: var(--success); border-color: rgba(34,197,94,0.3); }
     .token-status.no { color: var(--warning); }
 
-    /* Stats row */
     .stats {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 14px; margin-bottom: 28px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px; margin-bottom: 24px;
     }
     .stat-card {
       background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 16px 18px;
+      padding: 14px 16px;
     }
-    .stat-card .label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
-    .stat-card .value { font-size: 1.6rem; font-weight: 700; margin-top: 4px; }
+    .stat-card .label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .stat-card .value { font-size: 1.5rem; font-weight: 700; margin-top: 2px; }
     .stat-card .value.success { color: var(--success); }
     .stat-card .value.running { color: var(--running); }
     .stat-card .value.danger { color: var(--danger); }
 
-    /* Layout */
-    .grid-main {
-      display: grid; grid-template-columns: 1fr 360px; gap: 24px;
-    }
-    @media (max-width: 980px) { .grid-main { grid-template-columns: 1fr; } }
+    .grid-main { display: grid; grid-template-columns: 1fr 340px; gap: 22px; }
+    @media (max-width: 960px) { .grid-main { grid-template-columns: 1fr; } }
 
-    /* Bot cards */
     .section-title {
-      font-size: 1.05rem; font-weight: 700; margin-bottom: 14px;
+      font-size: 1rem; font-weight: 700; margin-bottom: 12px;
       display: flex; align-items: center; gap: 8px;
     }
+
+    .panel {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 18px; margin-bottom: 20px;
+    }
+    .panel h3 { font-size: 0.95rem; margin-bottom: 12px; }
+
+    .form-row { display: flex; flex-direction: column; gap: 5px; margin-bottom: 11px; }
+    .form-row label { font-size: 0.78rem; color: var(--muted); font-weight: 500; }
+    .form-input, select.form-input {
+      width: 100%; padding: 11px 13px; border-radius: 10px;
+      background: var(--bg); border: 1px solid var(--border); color: var(--text);
+      font-size: 0.88rem; font-family: inherit;
+    }
+    .form-input:focus { outline: 2px solid var(--accent); border-color: transparent; }
+    .form-actions { display: flex; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
+    .hint { font-size: 0.72rem; color: var(--muted); margin-top: 10px; }
+
     .bots-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 14px; margin-bottom: 28px;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px; margin-bottom: 22px;
     }
     .bot-card {
       background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 18px; transition: border-color 0.2s, transform 0.2s;
+      padding: 16px; transition: border-color 0.2s, transform 0.2s;
       position: relative; overflow: hidden;
     }
     .bot-card:hover { border-color: #3b4a66; transform: translateY(-2px); }
     .bot-card::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      opacity: 0.7;
+      background: linear-gradient(90deg, var(--accent), var(--accent2)); opacity: 0.6;
     }
     .bot-card.running::before { background: var(--running); }
     .bot-card.success::before { background: var(--success); }
     .bot-card.failed::before { background: var(--danger); }
-    .bot-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-    .bot-name { font-weight: 700; font-size: 0.95rem; }
-    .bot-repo { font-size: 0.72rem; color: var(--muted); margin-top: 2px; word-break: break-all; }
+    .bot-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+    .bot-name { font-weight: 700; font-size: 0.9rem; }
+    .bot-repo { font-size: 0.7rem; color: var(--muted); margin-top: 2px; word-break: break-all; }
+    .bot-type {
+      font-size: 0.65rem; padding: 2px 7px; border-radius: 6px; margin-top: 6px; display: inline-block;
+      background: rgba(59,130,246,0.12); color: #93c5fd;
+    }
+    .bot-type.trending { background: rgba(245,158,11,0.12); color: #fcd34d; }
+    .bot-type.site { background: rgba(139,92,246,0.12); color: #c4b5fd; }
     .badge {
-      font-size: 0.7rem; font-weight: 600; padding: 3px 9px; border-radius: 20px;
+      font-size: 0.68rem; font-weight: 600; padding: 3px 8px; border-radius: 20px;
       text-transform: uppercase; letter-spacing: 0.03em;
     }
-    .badge-idle { background: rgba(139,155,180,0.15); color: var(--muted); }
+    .badge-idle { background: rgba(139,155,180,0.12); color: var(--muted); }
     .badge-running { background: rgba(6,182,212,0.15); color: var(--running); animation: pulse 1.5s infinite; }
     .badge-success { background: rgba(34,197,94,0.15); color: var(--success); }
     .badge-failed { background: rgba(239,68,68,0.15); color: var(--danger); }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
-    .bot-meta { font-size: 0.8rem; color: var(--muted); margin-top: 8px; }
-    .bot-actions { display: flex; gap: 8px; margin-top: 14px; }
-    .btn-sm { padding: 7px 12px; font-size: 0.78rem; border-radius: 8px; }
+    .badge-queued { background: rgba(245,158,11,0.15); color: var(--warning); }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.55} }
+    .bot-meta { font-size: 0.76rem; color: var(--muted); margin-top: 6px; }
+    .bot-actions { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
 
-    /* Trigger form */
-    .panel {
-      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 20px; margin-bottom: 24px;
-    }
-    .panel h3 { font-size: 1rem; margin-bottom: 14px; }
-    .form-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
-    .form-row label { font-size: 0.8rem; color: var(--muted); font-weight: 500; }
-    .form-actions { display: flex; gap: 10px; margin-top: 8px; }
-
-    /* Sidebar */
-    .side-panel { display: flex; flex-direction: column; gap: 20px; }
-    .trending-list { list-style: none; }
-    .trending-list li {
-      padding: 10px 12px; border-radius: 10px; background: var(--surface2);
-      margin-bottom: 8px; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center;
-      border: 1px solid transparent;
-    }
-    .trending-list li:hover { border-color: var(--border); }
-    .score { font-size: 0.75rem; color: var(--accent); font-weight: 600; }
-
-    /* History */
     .history-item {
-      padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem;
+      padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 0.84rem;
     }
     .history-item:last-child { border-bottom: none; }
-    .history-item .time { color: var(--muted); font-size: 0.75rem; }
+    .history-item .time { color: var(--muted); font-size: 0.72rem; }
     .log-box {
-      background: #0a0e17; border: 1px solid var(--border); border-radius: 10px;
-      padding: 12px; font-family: ui-monospace, monospace; font-size: 0.75rem;
-      max-height: 180px; overflow-y: auto; color: #a5b4c8; white-space: pre-wrap;
+      background: #080c14; border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px; font-family: ui-monospace, 'SF Mono', monospace; font-size: 0.73rem;
+      max-height: 200px; overflow-y: auto; color: #9db0c8; white-space: pre-wrap;
     }
 
-    /* Toast */
+    .side-panel { display: flex; flex-direction: column; gap: 16px; }
+    .trending-list { list-style: none; }
+    .trending-list li {
+      padding: 9px 11px; border-radius: 10px; background: var(--surface2);
+      margin-bottom: 7px; font-size: 0.82rem; display: flex; justify-content: space-between; align-items: center;
+      border: 1px solid transparent; gap: 8px;
+    }
+    .trending-list li:hover { border-color: var(--border); }
+    .score { font-size: 0.72rem; color: var(--accent); font-weight: 600; white-space: nowrap; }
+    .use-btn {
+      font-size: 0.68rem; padding: 3px 8px; border-radius: 6px; cursor: pointer;
+      background: rgba(59,130,246,0.15); color: #93c5fd; border: none; font-weight: 600;
+    }
+    .use-btn:hover { background: rgba(59,130,246,0.3); }
+
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.72); backdrop-filter: blur(6px);
+      display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+      padding: 26px; width: 100%; max-width: 440px; box-shadow: var(--shadow);
+    }
+    .modal h2 { font-size: 1.15rem; margin-bottom: 6px; }
+    .modal p { color: var(--muted); font-size: 0.84rem; margin-bottom: 16px; }
+    .modal input {
+      width: 100%; padding: 11px 13px; border-radius: 10px;
+      background: var(--bg); border: 1px solid var(--border); color: var(--text);
+      font-size: 0.9rem; margin-bottom: 14px;
+    }
+    .modal input:focus { outline: 2px solid var(--accent); border-color: transparent; }
+
     .toast {
-      position: fixed; bottom: 24px; right: 24px; padding: 14px 20px;
+      position: fixed; bottom: 22px; right: 22px; padding: 13px 18px;
       background: var(--surface2); border: 1px solid var(--border); border-radius: 12px;
       box-shadow: var(--shadow); z-index: 200; display: none; max-width: 360px;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
     }
     .toast.show { display: block; animation: slideIn 0.3s ease; }
     .toast.success { border-color: rgba(34,197,94,0.4); }
     .toast.error { border-color: rgba(239,68,68,0.4); }
-    @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+    @keyframes slideIn { from { transform: translateY(18px); opacity: 0; } to { transform: none; opacity: 1; } }
 
-    footer { text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 40px; }
+    footer { text-align: center; color: var(--muted); font-size: 0.76rem; margin-top: 36px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -222,104 +233,89 @@
       </div>
     </header>
 
-    <!-- Stats -->
     <div class="stats">
-      <div class="stat-card"><div class="label">Total Bots</div><div class="value" id="statBots">8</div></div>
+      <div class="stat-card"><div class="label">Total Bots</div><div class="value" id="statBots">0</div></div>
       <div class="stat-card"><div class="label">Running</div><div class="value running" id="statRunning">0</div></div>
-      <div class="stat-card"><div class="label">Success (24h)</div><div class="value success" id="statSuccess">3</div></div>
-      <div class="stat-card"><div class="label">Failed (24h)</div><div class="value danger" id="statFailed">0</div></div>
-      <div class="stat-card"><div class="label">Daily Limit</div><div class="value" id="statLimit">12/50</div></div>
+      <div class="stat-card"><div class="label">Success</div><div class="value success" id="statSuccess">0</div></div>
+      <div class="stat-card"><div class="label">Failed</div><div class="value danger" id="statFailed">0</div></div>
+      <div class="stat-card"><div class="label">Daily Runs</div><div class="value" id="statLimit">0</div></div>
     </div>
 
     <div class="grid-main">
       <div>
-        <!-- Trigger Form -->
         <div class="panel">
           <h3>🎬 Link डालो → Video बनाओ</h3>
           <div class="form-row">
             <label>Select Bot / Channel</label>
-            <select id="botSelect" class="form-input">
-              <option value="SG-News18">SG-News18 (News)</option>
-              <option value="TechGlow-India">TechGlow-India</option>
-              <option value="Bk-growup">Bk-growup</option>
-              <option value="bgsarkariresult">bgsarkariresult</option>
-              <option value="BG-Reels-Bot">BG-Reels-Bot</option>
-              <option value="youtube-live-bot">youtube-live-bot</option>
-              <option value="bgtech">bgtech</option>
-            </select>
+            <select id="botSelect" class="form-input" onchange="onBotChange()"></select>
           </div>
-          <div class="form-row">
-            <label>Video / Topic Link (YouTube, News URL, etc.)</label>
-            <input type="url" id="videoLink" class="form-input" placeholder="https://youtube.com/watch?v=... या कोई भी topic link" />
-          </div>
-          <div class="form-row">
-            <label>Optional Title / Notes</label>
-            <input type="text" id="videoTitle" class="form-input" placeholder="Custom title (optional)" />
+          <div class="form-row" id="linkRow">
+            <label id="linkLabel">Article / Product URL</label>
+            <input type="url" id="videoLink" class="form-input" placeholder="https://... article ya product page link" />
           </div>
           <div class="form-actions">
             <button class="btn btn-primary" id="triggerBtn" onclick="triggerWorkflow()">▶ Video बनाएँ</button>
             <button class="btn btn-ghost" onclick="clearForm()">Clear</button>
           </div>
-          <p style="font-size:0.75rem;color:var(--muted);margin-top:12px;">
-            ⚠️ Token localStorage में save होता है। GitHub Actions workflow_dispatch trigger होगा।
+          <p class="hint">
+            Token sirf browser (localStorage) me rehta hai. Workflow_dispatch se GitHub Actions chalega.
           </p>
         </div>
 
-        <!-- Bot Cards -->
         <div class="section-title">🤖 All Bots Status</div>
         <div class="bots-grid" id="botsGrid"></div>
 
-        <!-- Run History -->
         <div class="panel">
-          <h3>📜 Recent Runs & Logs</h3>
+          <h3>📜 Recent Runs</h3>
           <div id="historyList"></div>
           <div style="margin-top:14px;">
-            <div class="section-title" style="font-size:0.9rem;">Last Log</div>
+            <div class="section-title" style="font-size:0.88rem;">Last Log</div>
             <div class="log-box" id="logBox">No logs yet. Trigger a run to see output.</div>
           </div>
         </div>
       </div>
 
-      <!-- Sidebar -->
       <div class="side-panel">
         <div class="panel">
           <h3>🔥 Trending Topics</h3>
-          <p style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">From Trending-Topic-Finder (demo data)</p>
+          <p style="font-size:0.76rem;color:var(--muted);margin-bottom:10px;">Trending-Topic-Finder se (demo + refresh)</p>
           <ul class="trending-list" id="trendingList"></ul>
-          <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px;" onclick="loadTrending()">↻ Refresh Topics</button>
+          <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:6px;" onclick="loadTrending()">↻ Refresh Topics</button>
         </div>
 
         <div class="panel">
           <h3>⚙️ Quick Actions</h3>
-          <button class="btn btn-ghost" style="width:100%;margin-bottom:8px;" onclick="triggerTrending()">Run Trending Finder</button>
-          <button class="btn btn-ghost" style="width:100%;margin-bottom:8px;" onclick="window.open('https://github.com/bgtechlab/Trending-Topic-Finder/actions','_blank')">Open Actions</button>
+          <button class="btn btn-ghost" style="width:100%;margin-bottom:7px;" onclick="triggerTrending()">▶ Run Trending Finder</button>
+          <button class="btn btn-ghost" style="width:100%;margin-bottom:7px;" onclick="window.open('https://github.com/bgtechlab/Trending-Topic-Finder/actions','_blank')">Open Trending Actions</button>
           <button class="btn btn-danger" style="width:100%;" onclick="clearToken()">Clear Token</button>
         </div>
 
         <div class="panel">
           <h3>📌 How it works</h3>
-          <ol style="font-size:0.8rem;color:var(--muted);padding-left:18px;line-height:1.7;">
-            <li>Browser में GitHub PAT डालो (repo + workflow scope)</li>
-            <li>Link डालो → Bot चुनो → Video बनाएँ</li>
-            <li>Website GitHub API से workflow_dispatch चलाती है</li>
-            <li>Actions video बनाकर upload करती है</li>
-            <li>Status, logs, result यहाँ दिखते हैं</li>
+          <ol style="font-size:0.78rem;color:var(--muted);padding-left:16px;line-height:1.75;">
+            <li>GitHub PAT daalo (repo + workflow scope)</li>
+            <li>Bot select → Link paste → Video बनाएँ</li>
+            <li>Website API se workflow_dispatch chalati hai</li>
+            <li>Actions video bana ke upload karti hai</li>
+            <li>Status yahan update hota hai</li>
           </ol>
         </div>
       </div>
     </div>
 
     <footer>
-      BG Control Dashboard • Demo for GitHub Pages • Token never leaves your browser
+      BG Control Dashboard • Token never leaves your browser • Host on GitHub Pages
     </footer>
   </div>
 
-  <!-- Token Modal -->
   <div class="modal-overlay" id="tokenModal">
     <div class="modal">
       <h2>🔑 GitHub Personal Access Token</h2>
-      <p>Fine-grained या classic PAT with <code>repo</code> + <code>workflow</code> permissions. Token सिर्फ आपके browser (localStorage) में रहता है।</p>
-      <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxx" />
+      <p>
+        Classic PAT with <code>repo</code> + <code>workflow</code> permissions.<br>
+        Token sirf aapke browser me save hota hai — code me nahi.
+      </p>
+      <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off" />
       <div style="display:flex;gap:10px;">
         <button class="btn btn-primary" style="flex:1;" onclick="saveToken()">Save Token</button>
         <button class="btn btn-ghost" onclick="closeTokenModal()">Cancel</button>
@@ -330,25 +326,77 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    // ========== CONFIG: Your repos ==========
     const BOTS = [
-      { id: 'SG-News18', name: 'SG-News18', owner: 'bgsarkariresult', repo: 'SG-News18', workflow: 'news-bot.yml', type: 'news' },
-      { id: 'TechGlow-India', name: 'TechGlow India', owner: 'bgsarkariresult', repo: 'TechGlow-India', workflow: 'tech-bot.yml', type: 'tech' },
-      { id: 'Bk-growup', name: 'Bk Growup', owner: 'bgsarkariresult', repo: 'Bk-growup', workflow: 'growup.yml', type: 'job' },
-      { id: 'bgsarkariresult', name: 'BG Sarkari Result', owner: 'bgsarkariresult', repo: 'bgsarkariresult', workflow: 'main.yml', type: 'result' },
-      { id: 'youtube-live-bot', name: 'YouTube Live Bot', owner: 'bgsarkariresult', repo: 'youtube-live-bot', workflow: 'live.yml', type: 'live' },
-      { id: 'bgtech', name: 'BG Tech', owner: 'bgtechlab', repo: 'bgtech', workflow: 'build.yml', type: 'site' },
-      { id: 'Trending-Topic-Finder', name: 'Trending Finder', owner: 'bgtechlab', repo: 'Trending-Topic-Finder', workflow: 'daily-auto-run.yml', type: 'trending' },
-      { id: 'BG-Reels-Bot', name: 'BG Reels Bot', owner: 'bgtechlab', repo: 'BG-Reels-Bot', workflow: 'reels-bot.yml', type: 'reels' },
+      {
+        id: 'SG-News18',
+        name: 'SG-News18',
+        owner: 'bgsarkariresult',
+        repo: 'SG-News18',
+        workflow: 'news-bot.yml',
+        inputKey: 'article_url',
+        type: 'video',
+        typeLabel: 'News Video',
+        desc: 'News article → YouTube video'
+      },
+      {
+        id: 'TechGlow-India',
+        name: 'TechGlow India',
+        owner: 'bgsarkariresult',
+        repo: 'TechGlow-India',
+        workflow: 'tech-review-bot.yml',
+        inputKey: 'article_url',
+        type: 'video',
+        typeLabel: 'Tech Review',
+        desc: 'Tech article → YouTube video'
+      },
+      {
+        id: 'BG-Reels-Bot',
+        name: 'BG Reels Bot',
+        owner: 'bgtechlab',
+        repo: 'BG-Reels-Bot',
+        workflow: 'reels-bot.yml',
+        inputKey: 'product_url',
+        type: 'video',
+        typeLabel: 'Reels',
+        desc: 'Product URL → Multi-platform reel'
+      },
+      {
+        id: 'Trending-Topic-Finder',
+        name: 'Trending Finder',
+        owner: 'bgtechlab',
+        repo: 'Trending-Topic-Finder',
+        workflow: 'daily-auto-run.yml',
+        inputKey: null,
+        type: 'trending',
+        typeLabel: 'Trending',
+        desc: 'Daily trending topics → Telegram'
+      },
+      {
+        id: 'bgsarkariresult',
+        name: 'BG Sarkari Result',
+        owner: 'bgsarkariresult',
+        repo: 'bgsarkariresult',
+        workflow: 'static.yml',
+        inputKey: null,
+        type: 'site',
+        typeLabel: 'Website',
+        desc: 'Sarkari Result static site'
+      },
+      {
+        id: 'bgtech',
+        name: 'BG Tech',
+        owner: 'bgtechlab',
+        repo: 'bgtech',
+        workflow: null,
+        inputKey: null,
+        type: 'site',
+        typeLabel: 'Website',
+        desc: 'Tech reviews site (build.py)'
+      },
     ];
 
-    // Demo history & status (will be replaced by real API when token is set)
-    let history = [
-      { bot: 'SG-News18', status: 'success', time: '2 hours ago', link: 'https://youtube.com/watch?v=demo1', msg: 'Video uploaded successfully' },
-      { bot: 'BG-Reels-Bot', status: 'success', time: '5 hours ago', link: 'https://youtube.com/shorts/demo2', msg: 'Reel posted' },
-      { bot: 'Trending-Topic-Finder', status: 'success', time: 'Today 6:00 AM', link: null, msg: 'Topics sent to Telegram' },
-      { bot: 'TechGlow-India', status: 'failed', time: 'Yesterday', link: null, msg: 'Timeout on download' },
-    ];
+    let history = JSON.parse(localStorage.getItem('bg_history') || '[]');
+    let botStatus = {};
 
     let trending = [
       { title: 'iPhone 17 Pro Max Leaks', score: 94 },
@@ -359,7 +407,6 @@
       { title: 'Railway Group D Latest Update', score: 79 },
     ];
 
-    // ========== Token ==========
     function getToken() { return localStorage.getItem('gh_pat') || ''; }
     function saveToken() {
       const t = document.getElementById('tokenInput').value.trim();
@@ -367,7 +414,7 @@
       localStorage.setItem('gh_pat', t);
       closeTokenModal();
       updateTokenUI();
-      showToast('Token saved in browser ✅', 'success');
+      showToast('Token saved ✅', 'success');
       refreshAll();
     }
     function clearToken() {
@@ -393,84 +440,133 @@
       document.getElementById('tokenModal').classList.remove('show');
     }
 
-    // ========== Render ==========
+    function populateSelect() {
+      const sel = document.getElementById('botSelect');
+      sel.innerHTML = BOTS.filter(b => b.type === 'video' || b.type === 'trending').map(b =>
+        '<option value="' + b.id + '">' + b.name + ' — ' + b.typeLabel + '</option>'
+      ).join('');
+      onBotChange();
+    }
+
+    function onBotChange() {
+      const bot = BOTS.find(b => b.id === document.getElementById('botSelect').value);
+      const linkRow = document.getElementById('linkRow');
+      const label = document.getElementById('linkLabel');
+      const input = document.getElementById('videoLink');
+      const btn = document.getElementById('triggerBtn');
+      if (!bot) return;
+      if (bot.type === 'trending') {
+        linkRow.style.display = 'none';
+        btn.textContent = '▶ Trending Run करें';
+      } else {
+        linkRow.style.display = '';
+        label.textContent = bot.inputKey === 'product_url' ? 'Product / Review Page URL' : 'Article / Page URL';
+        input.placeholder = bot.inputKey === 'product_url'
+          ? 'https://... product page URL'
+          : 'https://... article URL (GitHub Pages / blog)';
+        btn.textContent = '▶ Video बनाएँ';
+      }
+    }
+
     function renderBots() {
       const grid = document.getElementById('botsGrid');
       grid.innerHTML = BOTS.map(b => {
-        const last = history.find(h => h.bot === b.id || h.bot === b.name);
-        const status = last ? last.status : 'idle';
-        const badgeClass = status === 'running' ? 'badge-running' : status === 'success' ? 'badge-success' : status === 'failed' ? 'badge-failed' : 'badge-idle';
-        return `
-          <div class="bot-card ${status}">
-            <div class="bot-header">
-              <div>
-                <div class="bot-name">${b.name}</div>
-                <div class="bot-repo">${b.owner}/${b.repo}</div>
-              </div>
-              <span class="badge ${badgeClass}">${status}</span>
-            </div>
-            <div class="bot-meta">
-              Last: ${last ? last.time : 'Never'} ${last && last.msg ? '• ' + last.msg : ''}
-            </div>
-            <div class="bot-actions">
-              <button class="btn btn-ghost btn-sm" onclick="viewActions('${b.owner}','${b.repo}')">Actions</button>
-              <button class="btn btn-ghost btn-sm" onclick="selectBot('${b.id}')">Select</button>
-            </div>
-          </div>`;
+        const st = botStatus[b.id] || history.find(h => h.bot === b.id) || {};
+        const status = st.status || 'idle';
+        const badgeClass = (status === 'running' || status === 'queued' || status === 'in_progress') ? 'badge-running'
+          : (status === 'success' || status === 'completed') ? 'badge-success'
+          : (status === 'failed' || status === 'failure') ? 'badge-failed'
+          : 'badge-idle';
+        const typeClass = b.type === 'trending' ? 'trending' : b.type === 'site' ? 'site' : '';
+        return '<div class="bot-card ' + status + '">' +
+          '<div class="bot-header"><div>' +
+          '<div class="bot-name">' + b.name + '</div>' +
+          '<div class="bot-repo">' + b.owner + '/' + b.repo + '</div>' +
+          '<span class="bot-type ' + typeClass + '">' + b.typeLabel + '</span></div>' +
+          '<span class="badge ' + badgeClass + '">' + status + '</span></div>' +
+          '<div class="bot-meta">' + (st.msg || b.desc) + (st.time ? ' • ' + st.time : '') + '</div>' +
+          '<div class="bot-actions">' +
+          '<button class="btn btn-ghost btn-sm" onclick="viewActions(\\'' + b.owner + '\\',\\'' + b.repo + '\\')">Actions</button>' +
+          ((b.type === 'video' || b.type === 'trending')
+            ? '<button class="btn btn-ghost btn-sm" onclick="selectBot(\\'' + b.id + '\\')">Select</button>'
+            : '<a class="btn btn-ghost btn-sm" href="https://github.com/' + b.owner + '/' + b.repo + '" target="_blank">Repo</a>') +
+          (b.workflow ? '<button class="btn btn-ghost btn-sm" onclick="fetchRuns(\\'' + b.id + '\\')">↻ Status</button>' : '') +
+          '</div></div>';
       }).join('');
     }
 
     function renderHistory() {
       const el = document.getElementById('historyList');
-      el.innerHTML = history.slice(0, 8).map(h => `
-        <div class="history-item">
-          <div style="display:flex;justify-content:space-between;">
-            <strong>${h.bot}</strong>
-            <span class="badge badge-${h.status === 'success' ? 'success' : h.status === 'failed' ? 'failed' : 'running'}">${h.status}</span>
-          </div>
-          <div class="time">${h.time} ${h.link ? '• <a href="'+h.link+'" target="_blank" style="color:var(--accent)">Video</a>' : ''}</div>
-          <div style="color:var(--muted);margin-top:2px;">${h.msg || ''}</div>
-        </div>`).join('');
+      if (!history.length) {
+        el.innerHTML = '<p style="color:var(--muted);font-size:0.84rem;">No runs yet.</p>';
+        return;
+      }
+      el.innerHTML = history.slice(0, 10).map(h => {
+        const badge = (h.status === 'success' || h.status === 'completed') ? 'success'
+          : (h.status === 'failed' || h.status === 'failure') ? 'failed'
+          : (h.status === 'running' || h.status === 'queued' || h.status === 'in_progress') ? 'running' : 'idle';
+        return '<div class="history-item">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">' +
+          '<strong>' + h.bot + '</strong>' +
+          '<span class="badge badge-' + badge + '">' + h.status + '</span></div>' +
+          '<div class="time">' + (h.time || '') +
+          (h.link ? ' • <a href="' + h.link + '" target="_blank">Link</a>' : '') +
+          (h.runUrl ? ' • <a href="' + h.runUrl + '" target="_blank">Run</a>' : '') + '</div>' +
+          '<div style="color:var(--muted);margin-top:2px;font-size:0.8rem;">' + (h.msg || '') + '</div></div>';
+      }).join('');
     }
 
     function renderTrending() {
-      document.getElementById('trendingList').innerHTML = trending.map(t =>
-        `<li><span>${t.title}</span><span class="score">${t.score}</span></li>`
+      document.getElementById('trendingList').innerHTML = trending.map((t, i) =>
+        '<li><span style="flex:1;">' + t.title + '</span><span class="score">' + t.score +
+        '</span><button class="use-btn" onclick="useTopic(' + i + ')">Use</button></li>'
       ).join('');
     }
 
     function updateStats() {
       document.getElementById('statBots').textContent = BOTS.length;
-      const running = history.filter(h => h.status === 'running').length;
+      const running = history.filter(h => ['running','queued','in_progress'].includes(h.status)).length;
       document.getElementById('statRunning').textContent = running;
-      document.getElementById('statSuccess').textContent = history.filter(h => h.status === 'success').length;
-      document.getElementById('statFailed').textContent = history.filter(h => h.status === 'failed').length;
+      document.getElementById('statSuccess').textContent = history.filter(h => ['success','completed'].includes(h.status)).length;
+      document.getElementById('statFailed').textContent = history.filter(h => ['failed','failure'].includes(h.status)).length;
+      const today = new Date().toDateString();
+      document.getElementById('statLimit').textContent = history.filter(h => h.date === today).length;
     }
 
-    // ========== Actions ==========
+    function saveHistory() {
+      localStorage.setItem('bg_history', JSON.stringify(history.slice(0, 50)));
+    }
+
     function selectBot(id) {
       document.getElementById('botSelect').value = id;
+      onBotChange();
       showToast('Selected: ' + id, 'success');
     }
-    function clearForm() {
-      document.getElementById('videoLink').value = '';
-      document.getElementById('videoTitle').value = '';
-    }
+    function clearForm() { document.getElementById('videoLink').value = ''; }
     function viewActions(owner, repo) {
-      window.open(`https://github.com/${owner}/${repo}/actions`, '_blank');
+      window.open('https://github.com/' + owner + '/' + repo + '/actions', '_blank');
+    }
+    function useTopic(i) {
+      const t = trending[i];
+      if (!t) return;
+      document.getElementById('botSelect').value = 'SG-News18';
+      onBotChange();
+      document.getElementById('videoLink').value = '';
+      document.getElementById('videoLink').placeholder = 'Topic: ' + t.title + ' — yahan article URL daalo';
+      showToast('Topic selected: ' + t.title, 'success');
     }
 
     async function triggerWorkflow() {
       const botId = document.getElementById('botSelect').value;
       const link = document.getElementById('videoLink').value.trim();
-      const title = document.getElementById('videoTitle').value.trim();
       const bot = BOTS.find(b => b.id === botId);
       if (!bot) { showToast('Bot not found', 'error'); return; }
-      if (!link) { showToast('Please enter a link', 'error'); return; }
+      if (bot.type === 'video' && !link) { showToast('Please enter a URL', 'error'); return; }
+      if (!bot.workflow) { showToast('Is repo me workflow nahi hai', 'error'); return; }
 
       const token = getToken();
       if (!token) {
-        showToast('First set your GitHub Token', 'error');
+        showToast('Pehle GitHub Token set karo', 'error');
         openTokenModal();
         return;
       }
@@ -479,100 +575,140 @@
       btn.disabled = true;
       btn.textContent = '⏳ Triggering...';
 
-      // Demo: simulate (real API below)
-      try {
-        // Real GitHub API call for workflow_dispatch
-        // Note: workflow file name must exist and have workflow_dispatch
-        const url = `https://api.github.com/repos/${bot.owner}/${bot.repo}/actions/workflows/${bot.workflow}/dispatches`;
-        const body = {
-          ref: 'main',
-          inputs: {
-            link: link,
-            title: title || '',
-            source: 'dashboard'
-          }
-        };
+      const url = 'https://api.github.com/repos/' + bot.owner + '/' + bot.repo + '/actions/workflows/' + bot.workflow + '/dispatches';
+      const body = { ref: 'main' };
+      if (bot.inputKey && link) {
+        body.inputs = {};
+        body.inputs[bot.inputKey] = link;
+      }
 
+      try {
         const res = await fetch(url, {
           method: 'POST',
           headers: {
             'Accept': 'application/vnd.github+json',
-            'Authorization': `Bearer ${token}`,
+            'Authorization': 'Bearer ' + token,
             'X-GitHub-Api-Version': '2022-11-28'
           },
           body: JSON.stringify(body)
         });
 
         if (res.status === 204 || res.ok) {
-          history.unshift({
+          const entry = {
             bot: bot.id,
-            status: 'running',
-            time: 'Just now',
-            link: null,
-            msg: 'Triggered with link: ' + link.slice(0, 40) + '...'
-          });
+            status: 'queued',
+            time: new Date().toLocaleString('en-IN'),
+            date: new Date().toDateString(),
+            link: link || null,
+            msg: link ? 'Triggered: ' + link.slice(0, 50) + '...' : 'Triggered trending run',
+            runUrl: 'https://github.com/' + bot.owner + '/' + bot.repo + '/actions'
+          };
+          history.unshift(entry);
+          botStatus[bot.id] = { status: 'queued', time: entry.time, msg: entry.msg };
+          saveHistory();
           document.getElementById('logBox').textContent =
-            `[${new Date().toLocaleTimeString()}] Triggered ${bot.workflow} on ${bot.owner}/${bot.repo}\nLink: ${link}\nTitle: ${title || '(none)'}\nStatus: queued`;
-          showToast('Workflow triggered! ✅ Check Actions tab', 'success');
+            '[' + entry.time + '] Triggered ' + bot.workflow + '\\nRepo: ' + bot.owner + '/' + bot.repo + '\\n' +
+            (link ? 'Input (' + bot.inputKey + '): ' + link + '\\n' : 'No inputs\\n') +
+            'Status: queued → check Actions tab';
+          showToast('Workflow triggered! ✅', 'success');
           renderBots();
           renderHistory();
           updateStats();
+          setTimeout(function() { fetchRuns(bot.id); }, 8000);
         } else {
-          const err = await res.json().catch(() => ({}));
-          // Fallback demo mode if workflow doesn't support inputs or 404
-          if (res.status === 404 || res.status === 422) {
-            history.unshift({
-              bot: bot.id,
-              status: 'running',
-              time: 'Just now (demo)',
-              link: null,
-              msg: 'Demo mode — real workflow may need workflow_dispatch + inputs'
-            });
-            document.getElementById('logBox').textContent =
-              `[DEMO] Would call: POST ${url}\nBody: ${JSON.stringify(body, null, 2)}\n\nGitHub returned ${res.status}. Make sure workflow has:\non:\n  workflow_dispatch:\n    inputs:\n      link:\n        type: string`;
-            showToast('Demo triggered (workflow may need update)', 'success');
-            renderBots();
-            renderHistory();
-            updateStats();
-          } else {
-            showToast('Error: ' + (err.message || res.status), 'error');
-            document.getElementById('logBox').textContent = JSON.stringify(err, null, 2);
-          }
+          const err = await res.json().catch(function() { return {}; });
+          const msg = err.message || ('HTTP ' + res.status);
+          document.getElementById('logBox').textContent =
+            '[ERROR] ' + msg + '\\n\\nURL: ' + url + '\\nBody: ' + JSON.stringify(body, null, 2) +
+            '\\n\\nTips:\\n- Token me repo + workflow scope hona chahiye\\n- Workflow file default branch (main) pe hona chahiye\\n- Input name: ' + (bot.inputKey || 'none');
+          showToast('Error: ' + msg, 'error');
         }
       } catch (e) {
-        // Network / CORS — still show demo
-        history.unshift({
-          bot: bot.id,
-          status: 'running',
-          time: 'Just now (demo)',
-          link: null,
-          msg: 'Demo — ' + link.slice(0, 50)
-        });
         document.getElementById('logBox').textContent =
-          `[DEMO MODE] ${e.message}\n\nIn production on GitHub Pages, use a small proxy or ensure CORS.\nOr trigger via repository_dispatch.\n\nBot: ${bot.name}\nLink: ${link}`;
-        showToast('Demo mode (CORS/network). UI ready!', 'success');
-        renderBots();
-        renderHistory();
-        updateStats();
+          '[NETWORK/CORS] ' + e.message + '\\n\\nBrowser se seedha GitHub API kabhi-kabhi CORS block karta hai.\\nAgar aaye to Cloudflare Worker proxy use karo.';
+        showToast('Network/CORS error — log dekho', 'error');
       }
 
       btn.disabled = false;
-      btn.textContent = '▶ Video बनाएँ';
+      onBotChange();
     }
 
     async function triggerTrending() {
-      const bot = BOTS.find(b => b.id === 'Trending-Topic-Finder');
-      if (!getToken()) { openTokenModal(); return; }
-      showToast('Triggering Trending Finder...', 'success');
-      // same pattern as above
-      history.unshift({ bot: 'Trending-Topic-Finder', status: 'running', time: 'Just now', msg: 'Daily trending run started' });
-      renderBots(); renderHistory(); updateStats();
+      document.getElementById('botSelect').value = 'Trending-Topic-Finder';
+      onBotChange();
+      await triggerWorkflow();
     }
 
-    function loadTrending() {
-      // In future: fetch from history.json of Trending-Topic-Finder via raw.githubusercontent
-      showToast('Trending refreshed (demo)', 'success');
+    async function fetchRuns(botId) {
+      const bot = BOTS.find(b => b.id === botId);
+      if (!bot || !bot.workflow) return;
+      const token = getToken();
+      if (!token) { showToast('Token chahiye status ke liye', 'error'); return; }
+
+      try {
+        const url = 'https://api.github.com/repos/' + bot.owner + '/' + bot.repo + '/actions/workflows/' + bot.workflow + '/runs?per_page=3';
+        const res = await fetch(url, {
+          headers: {
+            'Accept': 'application/vnd.github+json',
+            'Authorization': 'Bearer ' + token,
+            'X-GitHub-Api-Version': '2022-11-28'
+          }
+        });
+        if (!res.ok) {
+          showToast('Status fetch failed: ' + res.status, 'error');
+          return;
+        }
+        const data = await res.json();
+        const runs = data.workflow_runs || [];
+        if (runs.length) {
+          const r = runs[0];
+          const status = r.conclusion || r.status || 'unknown';
+          botStatus[bot.id] = {
+            status: status,
+            time: new Date(r.updated_at || r.created_at).toLocaleString('en-IN'),
+            msg: r.display_title || r.name || ''
+          };
+          const hist = history.find(h => h.bot === botId && ['queued','running','in_progress'].includes(h.status));
+          if (hist) {
+            hist.status = status;
+            hist.runUrl = r.html_url;
+            hist.time = botStatus[bot.id].time;
+            saveHistory();
+          }
+          document.getElementById('logBox').textContent =
+            '[STATUS] ' + bot.name + '\\nLatest: ' + status + '\\nTitle: ' + (r.display_title || r.name) +
+            '\\nRun: ' + r.html_url + '\\nUpdated: ' + botStatus[bot.id].time;
+          renderBots();
+          renderHistory();
+          updateStats();
+          showToast(bot.name + ': ' + status, 'success');
+        }
+      } catch (e) {
+        showToast('Status error: ' + e.message, 'error');
+      }
+    }
+
+    async function loadTrending() {
+      try {
+        const res = await fetch('https://raw.githubusercontent.com/bgtechlab/Trending-Topic-Finder/main/history.json');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data)) {
+            trending = data.slice(0, 8).map(function(t, i) {
+              return { title: t.title || t.topic || t.name || JSON.stringify(t).slice(0, 40), score: t.score || (95 - i * 3) };
+            });
+          } else if (data.topics && Array.isArray(data.topics)) {
+            trending = data.topics.slice(0, 8).map(function(t, i) {
+              return { title: t.title || t.topic || String(t), score: t.score || (95 - i * 3) };
+            });
+          }
+          renderTrending();
+          showToast('Trending updated from repo', 'success');
+          return;
+        }
+      } catch (e) {}
       renderTrending();
+      showToast('Demo topics (history.json not reachable)', 'success');
     }
 
     function refreshAll() {
@@ -584,23 +720,22 @@
       showToast('Refreshed', 'success');
     }
 
-    function showToast(msg, type = '') {
+    function showToast(msg, type) {
       const t = document.getElementById('toast');
       t.textContent = msg;
-      t.className = 'toast show ' + type;
-      setTimeout(() => t.classList.remove('show'), 3500);
+      t.className = 'toast show ' + (type || '');
+      setTimeout(function() { t.classList.remove('show'); }, 3200);
     }
 
-    // Init
     updateTokenUI();
+    populateSelect();
     renderBots();
     renderHistory();
     renderTrending();
     updateStats();
 
-    // Auto open token if none
     if (!getToken()) {
-      setTimeout(() => openTokenModal(), 800);
+      setTimeout(function() { openTokenModal(); }, 600);
     }
   </script>
 </body>
