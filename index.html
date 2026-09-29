@@ -486,11 +486,11 @@
           '<span class="badge ' + badgeClass + '">' + status + '</span></div>' +
           '<div class="bot-meta">' + (st.msg || b.desc) + (st.time ? ' • ' + st.time : '') + '</div>' +
           '<div class="bot-actions">' +
-          '<button class="btn btn-ghost btn-sm" onclick="viewActions(\\'' + b.owner + '\\',\\'' + b.repo + '\\')">Actions</button>' +
+          '<button class="btn btn-ghost btn-sm" onclick="viewActions(\'' + b.owner + '\',\'' + b.repo + '\')">Actions</button>' +
           ((b.type === 'video' || b.type === 'trending')
-            ? '<button class="btn btn-ghost btn-sm" onclick="selectBot(\\'' + b.id + '\\')">Select</button>'
+            ? '<button class="btn btn-ghost btn-sm" onclick="selectBot(\'' + b.id + '\')">Select</button>'
             : '<a class="btn btn-ghost btn-sm" href="https://github.com/' + b.owner + '/' + b.repo + '" target="_blank">Repo</a>') +
-          (b.workflow ? '<button class="btn btn-ghost btn-sm" onclick="fetchRuns(\\'' + b.id + '\\')">↻ Status</button>' : '') +
+          (b.workflow ? '<button class="btn btn-ghost btn-sm" onclick="fetchRuns(\'' + b.id + '\')">↻ Status</button>' : '') +
           '</div></div>';
       }).join('');
     }
@@ -607,8 +607,8 @@
           botStatus[bot.id] = { status: 'queued', time: entry.time, msg: entry.msg };
           saveHistory();
           document.getElementById('logBox').textContent =
-            '[' + entry.time + '] Triggered ' + bot.workflow + '\\nRepo: ' + bot.owner + '/' + bot.repo + '\\n' +
-            (link ? 'Input (' + bot.inputKey + '): ' + link + '\\n' : 'No inputs\\n') +
+            '[' + entry.time + '] Triggered ' + bot.workflow + '\nRepo: ' + bot.owner + '/' + bot.repo + '\n' +
+            (link ? 'Input (' + bot.inputKey + '): ' + link + '\n' : 'No inputs\\n') +
             'Status: queued → check Actions tab';
           showToast('Workflow triggered! ✅', 'success');
           renderBots();
@@ -619,13 +619,13 @@
           const err = await res.json().catch(function() { return {}; });
           const msg = err.message || ('HTTP ' + res.status);
           document.getElementById('logBox').textContent =
-            '[ERROR] ' + msg + '\\n\\nURL: ' + url + '\\nBody: ' + JSON.stringify(body, null, 2) +
-            '\\n\\nTips:\\n- Token me repo + workflow scope hona chahiye\\n- Workflow file default branch (main) pe hona chahiye\\n- Input name: ' + (bot.inputKey || 'none');
+            '[ERROR] ' + msg + '\n\\nURL: ' + url + '\nBody: ' + JSON.stringify(body, null, 2) +
+            '\n\\nTips:\\n- Token me repo + workflow scope hona chahiye\\n- Workflow file default branch (main) pe hona chahiye\\n- Input name: ' + (bot.inputKey || 'none');
           showToast('Error: ' + msg, 'error');
         }
       } catch (e) {
         document.getElementById('logBox').textContent =
-          '[NETWORK/CORS] ' + e.message + '\\n\\nBrowser se seedha GitHub API kabhi-kabhi CORS block karta hai.\\nAgar aaye to Cloudflare Worker proxy use karo.';
+          '[NETWORK/CORS] ' + e.message + '\n\\nBrowser se seedha GitHub API kabhi-kabhi CORS block karta hai.\\nAgar aaye to Cloudflare Worker proxy use karo.';
         showToast('Network/CORS error — log dekho', 'error');
       }
 
@@ -676,8 +676,8 @@
             saveHistory();
           }
           document.getElementById('logBox').textContent =
-            '[STATUS] ' + bot.name + '\\nLatest: ' + status + '\\nTitle: ' + (r.display_title || r.name) +
-            '\\nRun: ' + r.html_url + '\\nUpdated: ' + botStatus[bot.id].time;
+            '[STATUS] ' + bot.name + '\nLatest: ' + status + '\nTitle: ' + (r.display_title || r.name) +
+            '\nRun: ' + r.html_url + '\nUpdated: ' + botStatus[bot.id].time;
           renderBots();
           renderHistory();
           updateStats();
