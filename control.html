@@ -1,25 +1,16 @@
 <!DOCTYPE html>
-<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>BG Automation — Control</title><link rel="stylesheet" href="app.css"></head><body><script src="app.js"></script>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Actions Control</title><link rel="stylesheet" href="app.css"></head><body><script src="app.js"></script>
 <script>
-const WORKER_URL = 'https://bg-runf.garhwalbhavesh2002.workers.dev/';
+boot('control.html','GitHub Actions Control Center',d=>{
+ const run=d.bots.filter(b=>['in_progress','queued'].includes(b.status)),fails=d.bots.filter(b=>b.failed);
+ $('#main').innerHTML=`<div class="card"><h2>⏳ Chal rahe</h2>${run.map(b=>`<div class="li"><span>${esc(b.name)}</span><a class="t" href="${esc(b.url)}" target="_blank" rel="noopener">Dekho</a></div>`).join('')||'<small>Abhi koi automation nahi chal raha.</small>'}</div>
+ <div class="card"><h2>❌ Asafal + Errors</h2>${fails.map(b=>`<div class="li"><span><b>${esc(b.name)}</b><br><small>Fail: ${esc(b.failed.job)} → ${esc(b.failed.step)} • ${ago(b.failed.t)}</small></span><a class="btn g t" href="${esc(b.failed.url)}" target="_blank" rel="noopener">Log / Re-run</a></div>`).join('')||'<small>Koi asafal run nahi.</small>'}<small>Re-run: us page par "Re-run failed jobs" dabao.</small></div>
+ <div class="sites">${d.bots.map((b,i)=>`<div class="site"><div class="row"><div><b>${esc(b.name)}</b><br><small>${b.runs.filter(okRun).length} safal • ${b.runs.filter(r=>r.s==='failure').length} fail (pichhle ${b.runs.length} run)</small></div>${chip(b.status)}</div>
+  <input class="lk" id="lk${i}" placeholder="Link dalo (article / product URL)"><div class="r"><a class="btn g" href="${esc(b.site||'https://github.com/'+b.repo)}" target="_blank" rel="noopener">Open</a><button class="btn" onclick="runBot(${i})">Run</button><button class="btn g" onclick="tg(${i})">Status</button></div>
+  <small class="hn" id="hn${i}"></small><div class="rs" id="rs${i}" hidden>${b.runs.slice(0,5).map(r=>`<div class="li"><span class="dot s-${esc(r.s)}">${st(r.s)}</span><span>${esc(r.n)}<br><small>${esc(r.s)} • ${ago(r.t)}</small></span><a class="t" href="${esc(r.u)}" target="_blank" rel="noopener">Log</a></div>`).join('')||'<small>Koi run nahi.</small>'}</div></div>`).join('')}</div>`});
+function tg(i){const e=document.getElementById('rs'+i);e.hidden=!e.hidden}
+function runBot(i){const b=window.D.bots[i],v=document.getElementById('lk'+i).value.trim(),hn=document.getElementById('hn'+i);
+ window.open('https://github.com/'+b.repo+'/actions'+(b.workflow?'/workflows/'+b.workflow:''),'_blank');
+ if(v&&navigator.clipboard)navigator.clipboard.writeText(v).then(()=>hn.textContent='Link copy ho gaya — "Run workflow" me paste karo',()=>hn.textContent='Link khud paste karo');else hn.textContent='GitHub page khul gaya — Run workflow dabao'}
 
-async function runNow(btn) {
-  btn.disabled = true;
-  btn.textContent = '⏳ Chalu ho raha hai...';
-  try {
-    const r = await fetch(WORKER_URL, { method: 'POST' });
-    const j = await r.json();
-    btn.textContent = j.ok ? '✅ Run shuru ho gaya (1-2 min baad refresh karo)' : '❌ ' + (j.error || 'Fail (code ' + j.status + ')');
-  } catch (e) {
-    btn.textContent = '❌ Network error';
-  }
-  setTimeout(() => { btn.disabled = false; btn.textContent = '▶ Sync Abhi Chalao'; }, 6000);
-}
-
-boot('control.html','Control — Run karo',d=>{
- $('#main').innerHTML=`<div class="card"><h2>🎛 Control</h2><small>Yahan se automation haath se chalao.</small><br><br>
- <button onclick="runNow(this)">▶ Sync Abhi Chalao</button>
- <br><br><small>Sync har 15 minute me apne aap bhi chalta hai. Nateeja Dashboard page par 1-2 minute baad dikhega.</small></div>
- <div class="card"><h2>Kaam ka Link</h2>
- <a href="https://github.com/bgsarkariresult/BG-Automation/actions/workflows/sync.yml" target="_blank">GitHub Actions me logs dekho</a></div>`});
 </script></body></html>
