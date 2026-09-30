@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Kharcha & Report</title><link rel="stylesheet" href="app.css"></head><body><script src="app.js"></script>
+<script>
+boot('reports.html','Kharcha & Performance Report',d=>{
+ const days=[...Array(7)].map((_,i)=>dayOf(Date.now()-i*864e5)),M=TD().slice(0,8)+'01',m=stats(d,M),c=x=>'₹'+x.toFixed(1);
+ const S=(l,v,x)=>`<div class="stat"><div><small>${l}</small><b>${v}</b><small>${x}</small></div></div>`;
+ $('#main').innerHTML=`<div class="stats">${S('Is mahine safal',m.ok,'automation')}${S('Is mahine video',m.vid,'ban gaye')}${S('Actions minutes',m.min,'anumaan (mahina)')}${S('AI kharcha (anumaan)',c(m.cost),m.vid?'Har video ~'+c(m.cost/m.vid):'video nahi')}</div>
+ <div class="card"><h2 class="hd">📅 Dainik Report (7 din)</h2><div class="tbw"><table class="tb"><tr><th>Tareekh</th><th>Safal</th><th>Fail</th><th>Video</th><th>Minutes</th><th>Kharcha</th></tr>${days.map(x=>{const s=stats(d,x,x);return `<tr><td>${x}</td><td>${s.ok}</td><td>${s.bad}</td><td>${s.vid}</td><td>${s.min}</td><td>${c(s.cost)}</td></tr>`}).join('')}</table></div></div>
+ <div class="card"><small>Actions minutes run ke samay se anumaan hain (har run ~minute me round). Public repo par standard runner free hota hai; asli upyog: <a href="https://github.com/settings/billing" target="_blank" rel="noopener">GitHub Billing</a>. AI kharcha = safal run × config.json me bot ka "cost" (₹, aap khud daalo; free tier ho to 0). Data sirf har repo ke pichhle 100 run ka hai.</small></div>`});
+
+</script></body></html>
