@@ -15,7 +15,7 @@ const INPUT_MAP = {
   'bgsarkariresult/TechGlow-India': 'article_url',
   'bgsarkariresult/Bk-growup-': 'post_url',
   'bgtechlab/BG-Reels-Bot': 'product_url',
-  'bgtechlab/Trending-Topic-Finder': null   // koi input nahi
+  'bgtechlab/Trending-Topic-Finder': null
 };
 
 boot('control.html', 'GitHub Actions Control Center', d => {
@@ -40,12 +40,15 @@ boot('control.html', 'GitHub Actions Control Center', d => {
 
     <div class="card">
       <h2>❌ Asafal + Errors</h2>
-      ${fails.map(b => `<div class="li">
+      ${fails.map((b, fi) => `<div class="li">
         <span><b>${esc(b.name)}</b><br>
         <small>Fail: ${esc(b.failed.job)} → ${esc(b.failed.step)} • ${ago(b.failed.t)}</small></span>
-        <a class="btn g t" href="${esc(b.failed.url)}" target="_blank" rel="noopener">Log / Re-run</a>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn" onclick="rerunFailed(${d.bots.indexOf(b)})">▶ Re-run</button>
+          <a class="btn g t" href="${esc(b.failed.url)}" target="_blank" rel="noopener">Log</a>
+        </div>
       </div>`).join('') || '<small>Koi asafal run nahi.</small>'}
-      <small>Re-run: us page par "Re-run failed jobs" dabao.</small>
+      <small id="rerunMsg"></small>
     </div>
 
     <div class="sites">
@@ -95,6 +98,15 @@ function setPat() {
   }
 }
 
+function getPat() {
+  let pat = localStorage.getItem('GH_PAT');
+  if (!pat) {
+    setPat();
+    pat = localStorage.getItem('GH_PAT');
+  }
+  return pat;
+}
+
 async function runBot(i) {
   const b = window.D.bots[i];
   const link = (document.getElementById('lk' + i).value || '').trim();
@@ -106,14 +118,10 @@ async function runBot(i) {
     return;
   }
 
-  let pat = localStorage.getItem('GH_PAT');
+  const pat = getPat();
   if (!pat) {
-    setPat();
-    pat = localStorage.getItem('GH_PAT');
-    if (!pat) {
-      hn.textContent = '⚠ Pehle PAT set karo';
-      return;
-    }
+    hn.textContent = '⚠ Pehle PAT set karo';
+    return;
   }
 
   const inputName = INPUT_MAP[b.repo] || null;
@@ -121,9 +129,6 @@ async function runBot(i) {
 
   if (inputName && link) {
     body.inputs = { [inputName]: link };
-  } else if (inputName && !link) {
-    // kuch workflows input optional rakhte hain — phir bhi bina link ke try karo
-    // agar required hai to error aayega
   }
 
   btn.disabled = true;
@@ -145,7 +150,7 @@ async function runBot(i) {
     );
 
     if (res.status === 204) {
-      hn.innerHTML = '✅ <b>Start ho gaya!</b> Status 30–60 sec baad refresh hoga. <a class="t" href="https://github.com/' + b.repo + '/actions" target="_blank">Actions dekho</a>';
+      hn.innerHTML = '✅ <b>Start ho gaya!</b> Status 30–60 sec baad refresh hoga.';
     } else if (res.status === 401 || res.status === 403) {
       hn.textContent = '❌ PAT galat / expired / permission kam hai (repo + workflow chahiye)';
       localStorage.removeItem('GH_PAT');
@@ -162,6 +167,74 @@ async function runBot(i) {
     hn.textContent = '❌ Network error: ' + e.message;
   } finally {
     btn.disabled = false;
+  }
+}
+
+/* ========== NEW: Direct Re-run failed jobs (GitHub page nahi khulega) ========== */
+async function rerunFailed(i) {
+  const b = window.D.bots[i];
+  const msg = document.getElementById('rerunMsg');
+  if (!b.failed || !b.failed.run_id) {
+    // agar run_id nahi mila to URL se nikalne ki koshish
+    const m = (b.failed?.url || '').match(/\/runs\/(\d+)/);
+    if (!m) {
+      msg.textContent = '❌ Run ID nahi mila. Log se manually re-run karo.';
+      return;
+    }
+    b.failed.run_id = m[1];
+  }
+
+  const pat = getPat();
+  if (!pat) {
+    msg.textContent = '⚠ Pehle PAT set karo';
+    return;
+  }
+
+  msg.textContent = '⏳ Re-run start ho raha hai...';
+
+  try {
+    // pehle failed-jobs try karo, nahi to full re-run
+    let res = await fetch(
+      `https://api.github.com/repos/${b.repo}/actions/runs/${b.failed.run_id}/rerun-failed-jobs`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + pat,
+          'Accept': 'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28'
+        }
+      }
+    );
+
+    if (res.status === 201 || res.status === 204) {
+      msg.innerHTML = '✅ <b>Re-run start ho gaya!</b> (sirf failed jobs)';
+      return;
+    }
+
+    // agar rerun-failed-jobs nahi chala to full re-run
+    res = await fetch(
+      `https://api.github.com/repos/${b.repo}/actions/runs/${b.failed.run_id}/rerun`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + pat,
+          'Accept': 'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28'
+        }
+      }
+    );
+
+    if (res.status === 201 || res.status === 204) {
+      msg.innerHTML = '✅ <b>Full Re-run start ho gaya!</b>';
+    } else if (res.status === 401 || res.status === 403) {
+      msg.textContent = '❌ PAT galat / permission kam hai';
+      localStorage.removeItem('GH_PAT');
+    } else {
+      const t = await res.text();
+      msg.textContent = '❌ Error ' + res.status + ': ' + t.slice(0, 100);
+    }
+  } catch (e) {
+    msg.textContent = '❌ Network error: ' + e.message;
   }
 }
 </script>
