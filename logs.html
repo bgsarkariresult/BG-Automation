@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Logs</title><link rel="stylesheet" href="app.css"></head><body><script src="app.js"></script>
+<script>
+boot('logs.html','Live Logs & Telegram',d=>{
+ const ev=d.bots.flatMap(b=>b.runs.slice(0,15).map(r=>({t:r.t,s:r.s,a:b.name,x:r.n,u:r.u}))).sort((a,b)=>new Date(b.t)-new Date(a.t)).slice(0,50);
+ $('#main').innerHTML=`<div class="card"><div class="hd"><h2>💻 Live Logs</h2><span class="chip">● Live</span></div>${ev.map(e=>`<div class="li"><span class="dot s-${esc(e.s)}">${st(e.s)}</span><span><b>${esc(e.a)}</b><br><small>${esc(e.x)} — ${esc(e.s)}</small></span><a class="t" href="${esc(e.u)}" target="_blank" rel="noopener">${ago(e.t)}</a></div>`).join('')||'<small>Koi log nahi.</small>'}</div>
+ <div class="card"><h2 class="hd">✈️ Telegram Messages</h2>${d.messages.map(m=>`<div class="li"><span class="dot">✈️</span><span>${esc(m.text)}</span><span class="t">${ago(m.t)}</span></div>`).join('')||'<small>Abhi koi message nahi (bot me notify() lagao).</small>'}</div>`});
+
+</script></body></html>
