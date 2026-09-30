@@ -30,7 +30,7 @@
   {"name": "BG Tech", "repo": "bgtechlab/bgtech", "site": "https://bgtechlab.github.io/bgtech/", "tag": "Tech & Gadgets"},
   {"name": "Trending Finder", "repo": "bgtechlab/Trending-Topic-Finder", "workflow": "daily-auto-run.yml", "tag": "Trending Topics"},
   {"name": "BG Reels Bot", "repo": "bgtechlab/BG-Reels-Bot", "workflow": "reels-bot.yml", "tag": "Reels"}
-]
+],
  "websites": [
   {
    "name": "BG Sarkari Result",
