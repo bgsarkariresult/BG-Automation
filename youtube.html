@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>YouTube Studio</title><link rel="stylesheet" href="app.css"></head><body><script src="app.js"></script>
+<script>
+boot('youtube.html','YouTube Studio',d=>{
+ $('#main').innerHTML=`<div class="card"><small>Watch time sirf YouTube Analytics API (OAuth login) se milta hai, API key se nahi — isliye yahan nahi hai.</small></div><div class="sites">`+d.channels.map(c=>c.error?`<div class="card"><b>${esc(c.name)}</b><p class="err">${esc(c.error)}</p></div>`:
+ `<div class="card"><div class="row" style="justify-content:flex-start;gap:12px;margin-bottom:10px"><img src="${esc(c.icon)}" alt="" style="width:56px;height:56px;border-radius:50%"><div><b>${esc(c.name)}</b><br><a href="https://www.youtube.com/channel/${esc(c.id)}" target="_blank" rel="noopener"><small>Channel kholo ↗</small></a></div></div>
+ <div class="k"><div><small>Subscribers</small><b>${fmt(c.subs)}</b></div><div><small>Kul Views</small><b>${fmt(c.views)}</b></div><div><small>Videos</small><b>${fmt(c.videos)}</b></div><div><small>Avg views/video</small><b>${c.videos>0?fmt(c.views/c.videos):'—'}</b></div></div>
+ <h3 style="font-size:.9rem">Naye video</h3>${(c.latest||[]).map(v=>`<a class="vid" href="https://www.youtube.com/watch?v=${esc(v.id)}" target="_blank" rel="noopener">${esc(v.title)}<br><small>${esc(v.date)} • 👁 ${fmt(v.views)}</small></a>`).join('')||'<small>Koi video nahi.</small>'}</div>`).join('')+'</div>'});
+
+</script></body></html>
