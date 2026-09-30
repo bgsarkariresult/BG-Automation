@@ -1,15 +1,28 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>BG Automation</title><link rel="stylesheet" href="app.css"></head><body><script src="app.js"></script>
 <script>
+const WORKER_URL = 'https://bg-runf.garhwalbhavesh2002.workers.dev/';
+
+async function runNow(btn) {
+  btn.disabled = true;
+  btn.textContent = '⏳ Chalu ho raha hai...';
+  try {
+    const r = await fetch(WORKER_URL, { method: 'POST' });
+    const j = await r.json();
+    btn.textContent = j.ok ? '✅ Run shuru ho gaya (1-2 min baad refresh karo)' : '❌ ' + (j.error || 'Fail (code ' + j.status + ')');
+  } catch (e) {
+    btn.textContent = '❌ Network error';
+  }
+  setTimeout(() => { btn.disabled = false; btn.textContent = '▶ Abhi Run Karo'; }, 6000);
+}
 boot('index.html','Dashboard — sirf status',d=>{
  const T=TD(),s=stats(d,T,T),art=(d.sites||[]).reduce((n,x)=>n+((x.days||{})[T]||0),0);
  const run=d.bots.filter(b=>['in_progress','queued'].includes(b.status)).length,fail=d.bots.filter(b=>b.status==='failure').length;
  const last=[...d.bots].filter(b=>b.time).sort((a,b)=>new Date(b.time)-new Date(a.time))[0];
  const nx=d.bots.filter(b=>b.next).sort((a,b)=>new Date(a.next)-new Date(b.next))[0];
  const S=(i,c,l,v,x)=>`<div class="stat"><div class="ico" style="background:${c}">${i}</div><div><small>${l}</small><b>${v}</b><small>${x}</small></div></div>`;
- $('#main').innerHTML=`<div class="card"><h2>👋 Welcome, Bhavesh!</h2><small>Yahan sirf status hai. Detail left menu ke alag pages me.</small></div>
+ $('#main').innerHTML=`<div class="card"><h2>👋 Welcome, Bhavesh!</h2><small>Yahan sirf status hai. Detail left menu ke alag pages me.</small><br><br><button onclick="runNow(this)">▶ Abhi Run Karo</button></div>
  <div class="stats">${S('🗂','#1d6bff','Projects',d.bots.length,(d.bots.length-fail-run)+' theek • '+fail+' fail • '+run+' chal rahe')}${S('✔','#0e8f5d','Aaj Safal',s.ok,'automation')}${S('✖','#c4162a','Aaj Asafal',s.bad,'automation')}${S('🎬','#6d3bd6','Aaj Video',s.vid,'ban gaye')}${S('📰','#1d8fff','Aaj Lekh',art,'publish hue')}${S('🕒','#b7791f','Pichhla run',ago(last&&last.time),nx?'Agla: '+esc(nx.name)+' '+at(nx.next):'schedule nahi mila')}</div>
  <div class="card"><div class="hd"><h2>Sabhi Projects ki Sthiti</h2></div><div class="tbw"><table class="tb"><tr><th>Project</th><th>Status</th><th>Pichhla run</th><th>Agla run</th></tr>${d.bots.map(b=>`<tr><td>${esc(b.name)}</td><td>${chip(b.status)}</td><td>${ago(b.time)}</td><td>${b.next?at(b.next):'—'}</td></tr>`).join('')}</table></div>
  <small>Note: 60 sec se chhote (polling) run ginti me nahi. Video = 2 min+ ka safal run (anumaan).</small></div>`});
-
 </script></body></html>
