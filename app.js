@@ -12,7 +12,15 @@ function stats(d,from,to){const o={ok:0,bad:0,vid:0,min:0,cost:0};
   d.bots.forEach(b=>b.runs.forEach(r=>{const x=dayOf(r.t);if(x<from||x>(to||'9'))return;
     if(okRun(r)){o.ok++;o.cost+=+b.cost||0;if(b.kind==='video'&&r.d>=120)o.vid++}
     if(r.s==='failure')o.bad++;o.min+=Math.ceil(r.d/60)}));return o}
-const NAV=[['index.html','🏠','Dashboard'],['control.html','⚡','Actions Control'],['youtube.html','▶️','YouTube Studio'],['sites.html','📰','Website & Articles'],['reports.html','💰','Kharcha & Report'],['logs.html','💻','Logs & Telegram']];
+const NAV=[
+  ['index.html','🏠','Dashboard'],
+  ['control.html','⚡','Actions Control'],
+  ['youtube.html','▶️','YouTube Studio'],
+  ['sites.html','📰','Website & Articles'],
+  ['trending.html','🔥','Trending Topics'],
+  ['reports.html','💰','Kharcha & Report'],
+  ['logs.html','💻','Logs & Telegram']
+];
 const RAW='https://raw.githubusercontent.com/bgsarkariresult/BG-Automation/main/data/dashboard.json';
 function boot(key,title,render){
   document.body.innerHTML=`<div class="top"><button class="burger" onclick="document.querySelector('nav').classList.toggle('open')">☰</button><div class="logo">🚀 BG Automation<br><small>${title}</small></div><div class="pill" id="pill">…</div></div>
