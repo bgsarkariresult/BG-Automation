@@ -9,6 +9,9 @@
 <body>
 <script src="app.js"></script>
 <script>
+/* ========== CONFIG ========== */
+const WORKER_URL = 'https://bg-runf.garhwalbhavesh2002.workers.dev/';
+
 /* Har bot ke workflow input ka naam */
 const INPUT_MAP = {
   'bgsarkariresult/SG-News18': 'article_url',
@@ -25,10 +28,11 @@ boot('control.html', 'GitHub Actions Control Center', d => {
   $('#main').innerHTML = `
     <div class="card">
       <div class="hd">
-        <h2>🔑 GitHub PAT</h2>
-        <button class="btn g" onclick="setPat()">PAT Set / Change</button>
+        <h2>🔑 Worker Proxy</h2>
+        <button class="btn g" onclick="runSync()">↻ Sync Dashboard</button>
       </div>
-      <small id="patStatus">${localStorage.getItem('GH_PAT') ? '✔ PAT save hai (localStorage)' : '⚠ Pehle PAT set karo (repo + workflow scope)'}</small>
+      <small id="patStatus">✔ PAT Worker par hai (browser mein nahi). Origin: bgsarkariresult.github.io</small>
+      <small id="syncMsg" style="display:block;margin-top:6px"></small>
     </div>
 
     <div class="card">
@@ -40,15 +44,18 @@ boot('control.html', 'GitHub Actions Control Center', d => {
 
     <div class="card">
       <h2>❌ Asafal + Errors</h2>
-      ${fails.map((b, fi) => `<div class="li">
-        <span><b>${esc(b.name)}</b><br>
-        <small>Fail: ${esc(b.failed.job)} → ${esc(b.failed.step)} • ${ago(b.failed.t)}</small></span>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <button class="btn" onclick="rerunFailed(${d.bots.indexOf(b)})">▶ Re-run</button>
-          <a class="btn g t" href="${esc(b.failed.url)}" target="_blank" rel="noopener">Log</a>
-        </div>
-      </div>`).join('') || '<small>Koi asafal run nahi.</small>'}
-      <small id="rerunMsg"></small>
+      ${fails.map(b => {
+        const idx = d.bots.indexOf(b);
+        return `<div class="li">
+          <span><b>${esc(b.name)}</b><br>
+          <small>Fail: ${esc(b.failed.job)} → ${esc(b.failed.step)} • ${ago(b.failed.t)}</small></span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn" onclick="rerunBot(${idx})">▶ Re-run</button>
+            <a class="btn g t" href="${esc(b.failed.url)}" target="_blank" rel="noopener">Log</a>
+          </div>
+        </div>`;
+      }).join('') || '<small>Koi asafal run nahi.</small>'}
+      <small id="rerunMsg" style="display:block;margin-top:6px"></small>
     </div>
 
     <div class="sites">
@@ -85,28 +92,43 @@ function tg(i) {
   e.hidden = !e.hidden;
 }
 
-function setPat() {
-  const cur = localStorage.getItem('GH_PAT') || '';
-  const pat = prompt('GitHub PAT daalo (classic token, scopes: repo + workflow):\n\nPurana token clear karne ke liye blank chhod do.', cur);
-  if (pat === null) return;
-  if (!pat.trim()) {
-    localStorage.removeItem('GH_PAT');
-    document.getElementById('patStatus').textContent = '⚠ PAT hata diya';
-  } else {
-    localStorage.setItem('GH_PAT', pat.trim());
-    document.getElementById('patStatus').textContent = '✔ PAT save ho gaya';
+/* ========== Worker se workflow dispatch ========== */
+async function callWorker(payload) {
+  const res = await fetch(WORKER_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload || {})
+  });
+  let data = {};
+  try {
+    data = await res.json();
+  } catch (_) {
+    data = { ok: false, error: 'Invalid response', status: res.status };
+  }
+  return data;
+}
+
+/* Dashboard sync (default worker action) */
+async function runSync() {
+  const msg = document.getElementById('syncMsg');
+  if (msg) msg.textContent = '⏳ Sync start ho raha hai...';
+  try {
+    const data = await callWorker({
+      repo: 'bgsarkariresult/BG-Automation',
+      workflow: 'sync.yml',
+      ref: 'main'
+    });
+    if (data.ok) {
+      if (msg) msg.innerHTML = '✅ <b>Sync start ho gaya!</b> 30–60 sec baad page refresh karo.';
+    } else {
+      if (msg) msg.textContent = '❌ Sync fail: ' + (data.error || data.status || 'unknown');
+    }
+  } catch (e) {
+    if (msg) msg.textContent = '❌ Network error: ' + e.message;
   }
 }
 
-function getPat() {
-  let pat = localStorage.getItem('GH_PAT');
-  if (!pat) {
-    setPat();
-    pat = localStorage.getItem('GH_PAT');
-  }
-  return pat;
-}
-
+/* Bot run via Worker */
 async function runBot(i) {
   const b = window.D.bots[i];
   const link = (document.getElementById('lk' + i).value || '').trim();
@@ -118,123 +140,63 @@ async function runBot(i) {
     return;
   }
 
-  const pat = getPat();
-  if (!pat) {
-    hn.textContent = '⚠ Pehle PAT set karo';
-    return;
-  }
-
   const inputName = INPUT_MAP[b.repo] || null;
-  const body = { ref: 'main' };
-
+  const payload = {
+    repo: b.repo,
+    workflow: b.workflow,
+    ref: 'main'
+  };
   if (inputName && link) {
-    body.inputs = { [inputName]: link };
+    payload.inputs = { [inputName]: link };
   }
 
   btn.disabled = true;
   hn.textContent = '⏳ Workflow start ho raha hai...';
 
   try {
-    const res = await fetch(
-      `https://api.github.com/repos/${b.repo}/actions/workflows/${encodeURIComponent(b.workflow)}/dispatches`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer ' + pat,
-          'Accept': 'application/vnd.github+json',
-          'X-GitHub-Api-Version': '2022-11-28',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(body)
-      }
-    );
+    const data = await callWorker(payload);
 
-    if (res.status === 204) {
+    if (data.ok) {
       hn.innerHTML = '✅ <b>Start ho gaya!</b> Status 30–60 sec baad refresh hoga.';
-    } else if (res.status === 401 || res.status === 403) {
-      hn.textContent = '❌ PAT galat / expired / permission kam hai (repo + workflow chahiye)';
-      localStorage.removeItem('GH_PAT');
-    } else if (res.status === 404) {
-      hn.textContent = '❌ Workflow ya repo nahi mila — naam check karo: ' + b.workflow;
-    } else if (res.status === 422) {
-      const t = await res.text();
-      hn.textContent = '❌ Input missing / galat (422). Link daalo agar required hai. ' + t.slice(0, 80);
+    } else if (data.status === 401 || data.status === 403) {
+      hn.textContent = '❌ Worker / PAT permission error (GH_TOKEN check karo)';
+    } else if (data.status === 404) {
+      hn.textContent = '❌ Workflow ya repo nahi mila: ' + b.workflow;
+    } else if (data.status === 422) {
+      hn.textContent = '❌ Input missing / galat (422). Link daalo agar required hai. ' + (data.error || '').slice(0, 80);
     } else {
-      const t = await res.text();
-      hn.textContent = '❌ Error ' + res.status + ': ' + t.slice(0, 120);
+      hn.textContent = '❌ Error ' + (data.status || '') + ': ' + (data.error || 'unknown').toString().slice(0, 120);
     }
   } catch (e) {
-    hn.textContent = '❌ Network error: ' + e.message;
+    hn.textContent = '❌ Network error: ' + e.message + ' (sirf bgsarkariresult.github.io se chalega)';
   } finally {
     btn.disabled = false;
   }
 }
 
-/* ========== NEW: Direct Re-run failed jobs (GitHub page nahi khulega) ========== */
-async function rerunFailed(i) {
+/* Failed bot ko dubara same workflow se chalao (naya run) */
+async function rerunBot(i) {
   const b = window.D.bots[i];
   const msg = document.getElementById('rerunMsg');
-  if (!b.failed || !b.failed.run_id) {
-    // agar run_id nahi mila to URL se nikalne ki koshish
-    const m = (b.failed?.url || '').match(/\/runs\/(\d+)/);
-    if (!m) {
-      msg.textContent = '❌ Run ID nahi mila. Log se manually re-run karo.';
-      return;
-    }
-    b.failed.run_id = m[1];
-  }
-
-  const pat = getPat();
-  if (!pat) {
-    msg.textContent = '⚠ Pehle PAT set karo';
+  if (!b.workflow) {
+    if (msg) msg.textContent = '❌ Workflow nahi mila';
     return;
   }
-
-  msg.textContent = '⏳ Re-run start ho raha hai...';
+  if (msg) msg.textContent = '⏳ Re-run start ho raha hai...';
 
   try {
-    // pehle failed-jobs try karo, nahi to full re-run
-    let res = await fetch(
-      `https://api.github.com/repos/${b.repo}/actions/runs/${b.failed.run_id}/rerun-failed-jobs`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer ' + pat,
-          'Accept': 'application/vnd.github+json',
-          'X-GitHub-Api-Version': '2022-11-28'
-        }
-      }
-    );
-
-    if (res.status === 201 || res.status === 204) {
-      msg.innerHTML = '✅ <b>Re-run start ho gaya!</b> (sirf failed jobs)';
-      return;
-    }
-
-    // agar rerun-failed-jobs nahi chala to full re-run
-    res = await fetch(
-      `https://api.github.com/repos/${b.repo}/actions/runs/${b.failed.run_id}/rerun`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer ' + pat,
-          'Accept': 'application/vnd.github+json',
-          'X-GitHub-Api-Version': '2022-11-28'
-        }
-      }
-    );
-
-    if (res.status === 201 || res.status === 204) {
-      msg.innerHTML = '✅ <b>Full Re-run start ho gaya!</b>';
-    } else if (res.status === 401 || res.status === 403) {
-      msg.textContent = '❌ PAT galat / permission kam hai';
-      localStorage.removeItem('GH_PAT');
+    const data = await callWorker({
+      repo: b.repo,
+      workflow: b.workflow,
+      ref: 'main'
+    });
+    if (data.ok) {
+      if (msg) msg.innerHTML = '✅ <b>Re-run start ho gaya!</b> (' + esc(b.name) + ')';
     } else {
-      const t = await res.text();
-      msg.textContent = '❌ Error ' + res.status + ': ' + t.slice(0, 100);
+      if (msg) msg.textContent = '❌ Re-run fail: ' + (data.error || data.status || 'unknown');
     }
   } catch (e) {
-    msg.textContent = '❌ Network error: ' + e.message;
+    if (msg) msg.textContent = '❌ Network error: ' + e.message;
   }
 }
 </script>
