@@ -168,8 +168,14 @@ function render(d){
   $('#sysT').textContent='● System Online';$('#sysS').textContent='Last sync: '+new Date(d.updated).toLocaleString('hi-IN');
   $('#okBox').innerHTML='✔ All Systems Running<br><small>GitHub Actions • YouTube • Telegram • Websites</small>';
 }
+const RAW='https://raw.githubusercontent.com/bgsarkariresult/BG-Automation/main/data/dashboard.json';
 async function load(){
-  try{const r=await fetch('data/dashboard.json?t='+Date.now());if(!r.ok)throw 0;render(await r.json())}
+  try{
+    let r=await fetch(RAW+'?t='+Date.now()).catch(()=>null);
+    if(!r||!r.ok)r=await fetch('data/dashboard.json?t='+Date.now());
+    if(!r.ok)throw 0;
+    render(await r.json());
+  }
   catch(e){$('#pill').textContent='⚠ Actions → Sync Dashboard chalao';$('#pill').classList.add('bad')}
 }
 load();setInterval(load,60000);
