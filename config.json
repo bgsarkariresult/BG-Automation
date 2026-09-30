@@ -31,6 +31,11 @@
   {"name": "Trending Finder", "repo": "bgtechlab/Trending-Topic-Finder", "workflow": "daily-auto-run.yml", "tag": "Trending Topics"},
   {"name": "BG Reels Bot", "repo": "bgtechlab/BG-Reels-Bot", "workflow": "reels-bot.yml", "tag": "Reels"}
 ],
+ "sites": [
+  {"name": "BG Sarkari Result", "url": "https://bgsarkariresult.github.io/bgsarkariresult/", "feed": "https://bgsarkariresult.github.io/bgsarkariresult/sitemap.xml"},
+  {"name": "SG News18", "url": "SAHI_SITE_URL", "feed": "SAHI_SITE_URL/sitemap.xml"},
+  {"name": "TechGlow India", "url": "SAHI_SITE_URL", "feed": "SAHI_SITE_URL/sitemap.xml"}
+],
  "websites": [
   {
    "name": "BG Sarkari Result",
