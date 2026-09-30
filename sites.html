@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Website & Articles</title><link rel="stylesheet" href="app.css"></head><body><script src="app.js"></script>
+<script>
+boot('sites.html','Website & Article Monitor',d=>{
+ const T=TD(),wk=[...Array(7)].map((_,i)=>dayOf(Date.now()-i*864e5));
+ $('#main').innerHTML=((d.sites||[]).map(s=>{const days=s.days||{},td=days[T]||0,w=wk.reduce((n,x)=>n+(days[x]||0),0);
+  return `<div class="card"><div class="hd"><h2>${esc(s.name)}</h2><a class="btn g" href="${esc(s.url)}" target="_blank" rel="noopener">Site kholo</a></div>`+(s.error?`<p class="err">${esc(s.error)}</p>`:
+  `<div class="k"><div><small>Kul lekh</small><b>${s.total}</b></div><div><small>Aaj naye</small><b>${td}</b></div><div><small>7 din</small><b>${w}</b></div><div><small>Nayi update</small><b style="font-size:1rem">${ago(s.articles[0]&&s.articles[0].d)}</b></div></div>`+
+  s.articles.map(a=>`<a class="vid" href="${esc(a.u)}" target="_blank" rel="noopener">${esc(a.t)}<br><small>${esc(a.d)}</small></a>`).join(''))+'</div>'}).join('')||'<div class="card">config.json me "sites" jodo (neeche guide dekho).</div>')+
+  '<div class="card"><small>Pending lekh ki list site se nahi mil sakti. Bot ke queued / chal rahe kaam "Actions Control" page par dikhte hain.</small></div>'});
+
+</script></body></html>
