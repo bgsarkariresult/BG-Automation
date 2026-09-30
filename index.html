@@ -53,6 +53,9 @@ nav h4{margin:18px 12px 8px;font-size:.8rem;color:var(--mu)}
 .s-success{color:var(--ok)}.s-failure,.s-cancelled{color:var(--er)}.s-in_progress,.s-queued{color:var(--wa)}
 .logs{max-height:560px;overflow:auto}
 .ok-box{border:1px solid var(--ok);background:#0c2a24;border-radius:12px;padding:14px;font-weight:700}
+.lk{width:100%;padding:9px 10px;border-radius:8px;border:1px solid var(--bd);background:#070c1a;color:var(--tx);font:inherit}
+.site .row b{font-size:.95rem}.rs{border-top:1px solid var(--bd);padding-top:6px}.rs a.t{color:var(--ac)}
+.hn{color:var(--wa);min-height:1em}
 @media(max-width:1150px){.app{grid-template-columns:200px minmax(0,1fr);grid-template-areas:"nav main" "nav right"}}
 @media(max-width:760px){
  .burger{display:block}
@@ -94,8 +97,8 @@ nav h4{margin:18px 12px 8px;font-size:.8rem;color:var(--mu)}
   </div>
 
   <div class="card" id="sites">
-    <div class="hd"><div><h2>🌐 Websites / Projects</h2><small>Har project ki site aur repo</small></div>
-      <a class="btn" href="https://github.com/bgsarkariresult/BG-Automation/edit/main/config.json" target="_blank" rel="noopener">＋ Add Website</a></div>
+    <div class="hd"><div><h2>🚀 Websites &amp; Projects Launcher</h2><small>Open • Run (link dalo) • Status — sab 8 projects</small></div>
+      <a class="btn" href="https://github.com/bgsarkariresult/BG-Automation/edit/main/config.json" target="_blank" rel="noopener">＋ Add Project</a></div>
     <div class="sites" id="siteGrid"></div>
   </div>
 
@@ -148,10 +151,13 @@ function render(d){
     <a class="btn g" href="https://www.youtube.com/channel/${esc(c.id)}" target="_blank" rel="noopener">Open</a>`}</div>`).join('')+
     `<div class="ch add"><b>Add New Channel</b><small>Unlimited channels</small><a class="btn" href="https://github.com/bgsarkariresult/BG-Automation/edit/main/config.json" target="_blank" rel="noopener">Add Channel</a></div>`;
 
-  $('#siteGrid').innerHTML=(d.websites||[]).map(w=>`<div class="site"><b>${esc(w.name)}</b><span class="tag">${esc(w.tag)}</span>
-    <small>${esc(w.url)}</small><div class="r"><a class="btn g" href="https://github.com/${esc(w.repo)}" target="_blank" rel="noopener">Manage</a>
-    <a class="btn" href="${esc(w.url)}" target="_blank" rel="noopener">View Site ↗</a></div></div>`).join('');
-  $('#navSites').innerHTML=(d.websites||[]).map(w=>`<a href="${esc(w.url)}" target="_blank" rel="noopener"><span class="av" style="width:34px;height:34px;margin:0;font-size:.75rem">${ini(w.name)}</span><span>${esc(w.name)}<br><small>${esc(w.tag)}</small></span></a>`).join('');
+  window.D=d;
+  $('#siteGrid').innerHTML=d.bots.map((b,i)=>`<div class="site"><div class="row"><div><b>${esc(b.name)}</b><br><small>${esc(b.tag||b.repo)}</small></div><span class="chip ${b.status==='success'?'':'e'}">${esc(b.status)}</span></div>
+    <input class="lk" id="lk${i}" placeholder="Link dalo (article / product URL)">
+    <div class="r"><a class="btn g" href="${esc(b.site||'https://github.com/'+b.repo)}" target="_blank" rel="noopener">Open</a>
+    <button class="btn" onclick="runBot(${i})">Run</button><button class="btn g" onclick="tg(${i})">Status</button></div>
+    <small class="hn" id="hn${i}"></small><div class="rs" id="rs${i}" hidden>${runsHtml(b)}</div></div>`).join('');
+  $('#navSites').innerHTML=d.bots.filter(b=>b.site).map(b=>`<a href="${esc(b.site)}" target="_blank" rel="noopener"><span class="av" style="width:34px;height:34px;margin:0;font-size:.75rem">${ini(b.name)}</span><span>${esc(b.name)}<br><small>${esc(b.tag||'')}</small></span></a>`).join('');
 
   const n=x=>d.bots.filter(b=>x.includes(b.status)).length;
   $('#ov').innerHTML=`<div><small>Total Jobs</small><b>${d.bots.length}</b></div><div><small>Success</small><b class="s-success">${n(['success'])}</b></div><div><small>Failed</small><b class="s-failure">${n(['failure','cancelled'])}</b></div><div><small>Pending</small><b class="s-in_progress">${n(['in_progress','queued'])}</b></div>`;
@@ -159,22 +165,29 @@ function render(d){
   const runs=[...d.bots].filter(b=>b.time).sort((a,b)=>new Date(b.time)-new Date(a.time));
   $('#act').innerHTML=runs.slice(0,5).map(b=>`<div class="li"><span class="dot s-${esc(b.status)}">${st(b.status)}</span><span>${esc(b.name)} <small>${esc(b.status)}</small></span><span class="t">${ago(b.time)}</span></div>`).join('')||'<small>Abhi koi run nahi.</small>';
 
-  const ev=[...runs.map(b=>({t:b.time,ic:st(b.status),cl:'s-'+b.status,a:'Automation',x:b.name+' — '+b.status})),
+  const ev=[...d.bots.flatMap(b=>(b.runs||[]).map(r=>({t:r.time,ic:st(r.status),cl:'s-'+r.status,a:b.name,x:(r.title||'')+' — '+r.status}))),
     ...d.messages.map(m=>({t:m.t,ic:'✈️',cl:'',a:'Telegram',x:m.text})),
     {t:d.updated,ic:'✔',cl:'s-success',a:'GitHub',x:'Data sync ho gaya ('+d.channels.length+' channels)'}].sort((a,b)=>new Date(b.t)-new Date(a.t));
-  $('#logList').innerHTML=ev.slice(0,14).map(e=>`<div class="li"><span class="dot ${e.cl}">${e.ic}</span><span><b>${e.a}</b><br><small>${esc(e.x).slice(0,110)}</small></span><span class="t">${ago(e.t)}</span></div>`).join('');
+  $('#logList').innerHTML=ev.slice(0,20).map(e=>`<div class="li"><span class="dot ${e.cl}">${e.ic}</span><span><b>${e.a}</b><br><small>${esc(e.x).slice(0,110)}</small></span><span class="t">${ago(e.t)}</span></div>`).join('');
 
   $('#tgList').innerHTML=d.messages.slice(0,5).map(m=>`<div class="li"><span class="dot">✈️</span><span>${esc(m.text).slice(0,90)}</span><span class="t">${ago(m.t)}</span></div>`).join('')||'<small>Abhi koi message nahi.</small>';
   $('#sysT').textContent='● System Online';$('#sysS').textContent='Last sync: '+new Date(d.updated).toLocaleString('hi-IN');
   $('#okBox').innerHTML='✔ All Systems Running<br><small>GitHub Actions • YouTube • Telegram • Websites</small>';
 }
+const runsHtml=b=>(b.runs||[]).map(r=>`<div class="li"><span class="dot s-${esc(r.status)}">${st(r.status)}</span><span>${esc(r.title)}<br><small>${esc(r.status)} • ${ago(r.time)}</small></span><a class="t" href="${esc(r.url)}" target="_blank" rel="noopener">लॉग</a></div>`).join('')||'<small>Koi run nahi mila.</small>';
+function tg(i){const e=document.getElementById('rs'+i);e.hidden=!e.hidden}
+function runBot(i){const b=window.D.bots[i];const v=document.getElementById('lk'+i).value.trim();
+  window.open('https://github.com/'+b.repo+'/actions'+(b.workflow?'/workflows/'+b.workflow:''),'_blank');
+  const hn=document.getElementById('hn'+i);
+  if(v&&navigator.clipboard)navigator.clipboard.writeText(v).then(()=>hn.textContent='Link copy ho gaya — "Run workflow" me paste karo',()=>hn.textContent='Link khud copy karke paste karo');
+  else hn.textContent=v?'Link khud copy karke paste karo':'GitHub page khul gaya — Run workflow dabao';}
 const RAW='https://raw.githubusercontent.com/bgsarkariresult/BG-Automation/main/data/dashboard.json';
 async function load(){
   try{
     let r=await fetch(RAW+'?t='+Date.now()).catch(()=>null);
     if(!r||!r.ok)r=await fetch('data/dashboard.json?t='+Date.now());
     if(!r.ok)throw 0;
-    render(await r.json());
+    const d=await r.json();if(d.updated===window.LU)return;window.LU=d.updated;render(d);
   }
   catch(e){$('#pill').textContent='⚠ Actions → Sync Dashboard chalao';$('#pill').classList.add('bad')}
 }
