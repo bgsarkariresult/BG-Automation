@@ -56,6 +56,13 @@ nav h4{margin:18px 12px 8px;font-size:.8rem;color:var(--mu)}
 .lk{width:100%;padding:9px 10px;border-radius:8px;border:1px solid var(--bd);background:#070c1a;color:var(--tx);font:inherit}
 .site .row b{font-size:.95rem}.rs{border-top:1px solid var(--bd);padding-top:6px}.rs a.t{color:var(--ac)}
 .hn{color:var(--wa);min-height:1em}
+body[data-p=channels] main>:not(#channels),body[data-p=sites] main>:not(#sites),body[data-p=jobs] main>:not(#jobs){display:none}
+body[data-p=channels] .right,body[data-p=sites] .right,body[data-p=jobs] .right{display:none}
+body[data-p=tg] main,body[data-p=logs] main{display:none}
+body[data-p=tg] .right>:not(#tg),body[data-p=logs] .right>:not(#logs){display:none}
+body[data-p=tg] .right,body[data-p=logs] .right{grid-area:main}
+body[data-p=logs] .logs{max-height:none}
+body:not([data-p=tg]) #tgList .li:nth-child(n+6){display:none}
 @media(max-width:1150px){.app{grid-template-columns:200px minmax(0,1fr);grid-template-areas:"nav main" "nav right"}}
 @media(max-width:760px){
  .burger{display:block}
@@ -170,7 +177,7 @@ function render(d){
     {t:d.updated,ic:'✔',cl:'s-success',a:'GitHub',x:'Data sync ho gaya ('+d.channels.length+' channels)'}].sort((a,b)=>new Date(b.t)-new Date(a.t));
   $('#logList').innerHTML=ev.slice(0,20).map(e=>`<div class="li"><span class="dot ${e.cl}">${e.ic}</span><span><b>${e.a}</b><br><small>${esc(e.x).slice(0,110)}</small></span><span class="t">${ago(e.t)}</span></div>`).join('');
 
-  $('#tgList').innerHTML=d.messages.slice(0,5).map(m=>`<div class="li"><span class="dot">✈️</span><span>${esc(m.text).slice(0,90)}</span><span class="t">${ago(m.t)}</span></div>`).join('')||'<small>Abhi koi message nahi.</small>';
+  $('#tgList').innerHTML=d.messages.slice(0,30).map(m=>`<div class="li"><span class="dot">✈️</span><span>${esc(m.text).slice(0,90)}</span><span class="t">${ago(m.t)}</span></div>`).join('')||'<small>Abhi koi message nahi.</small>';
   $('#sysT').textContent='● System Online';$('#sysS').textContent='Last sync: '+new Date(d.updated).toLocaleString('hi-IN');
   $('#okBox').innerHTML='✔ All Systems Running<br><small>GitHub Actions • YouTube • Telegram • Websites</small>';
 }
@@ -191,6 +198,9 @@ async function load(){
   }
   catch(e){$('#pill').textContent='⚠ Actions → Sync Dashboard chalao';$('#pill').classList.add('bad')}
 }
+function route(){const p=(location.hash||'#top').slice(1)||'top';document.body.dataset.p=p;
+  document.querySelectorAll('nav a[href^="#"]').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+p));window.scrollTo(0,0);}
+addEventListener('hashchange',route);route();
 load();setInterval(load,60000);
 </script>
 </body>
