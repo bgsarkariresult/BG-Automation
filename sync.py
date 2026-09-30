@@ -56,13 +56,16 @@ if os.environ.get("GH_PAT"):
     hdr["Authorization"] = "Bearer " + os.environ["GH_PAT"]
 bots = []
 for b in cfg["bots"]:
-    row = {"name": b["name"], "repo": b["repo"], "workflow": b["workflow"], "status": "unknown"}
+    row = {"name": b["name"], "repo": b["repo"], "workflow": b.get("workflow", ""), "site": b.get("site", ""),
+           "tag": b.get("tag", ""), "status": "unknown", "runs": []}
     try:
-        u = f"https://api.github.com/repos/{b['repo']}/actions/workflows/{b['workflow']}/runs?per_page=1"
+        base = "https://api.github.com/repos/%s/actions/" % b["repo"]
+        u = base + ("workflows/%s/runs" % b["workflow"] if b.get("workflow") else "runs") + "?per_page=3"
         runs = get(u, hdr).get("workflow_runs", [])
+        row["runs"] = [{"title": r.get("display_title") or r.get("name"), "status": r.get("conclusion") or r.get("status"),
+                        "time": r.get("updated_at"), "url": r.get("html_url")} for r in runs]
         if runs:
-            r = runs[0]
-            row.update(status=r.get("conclusion") or r.get("status"), time=r.get("updated_at"), url=r.get("html_url"))
+            row.update(status=row["runs"][0]["status"], time=row["runs"][0]["time"], url=row["runs"][0]["url"])
     except Exception:
         pass
     bots.append(row)
