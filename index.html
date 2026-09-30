@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>BG Control Dashboard Pro</title>
+  <title>BG Control Dashboard Pro • Security • YT Live • Alerts</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -281,7 +281,7 @@
       <button class="nav-tab" data-tab="telegram">✈️ Telegram</button>
       <button class="nav-tab" data-tab="alerts">🚨 Alerts</button>
       <button class="nav-tab" data-tab="analytics">📈 Analytics</button>
-      <button class="nav-tab" data-tab="settings">⚙️ Settings</button>
+      <button class="nav-tab" data-tab="settings">🔐 Security</button>
     </div>
 
     <!-- ========== TAB: DASHBOARD ========== -->
@@ -389,27 +389,42 @@
     <!-- ========== TAB: YOUTUBE ========== -->
     <div class="tab-panel" id="tab-youtube">
       <div class="panel">
-        <h3>▶️ YouTube Studio Integration</h3>
+        <h3>▶️ YouTube Live Statistics</h3>
         <p class="hint" style="margin-bottom:12px;">
-          YouTube Data API ke bina limited view. Workflow logs se recent uploads track hote hain.
-          Full integration ke liye YouTube API key Settings me daalo (optional).
+          <b>Sirf Channel ID</b> daalo → public stats (Subscribers, Total Views, Videos, Latest Upload).
+          Full live data ke liye optional YouTube Data API key (Google Cloud Console se free).
+          Bina key ke history + demo cards dikhte hain. Real token kabhi dashboard pe nahi aata.
         </p>
         <div class="form-row">
-          <label>YouTube API Key (optional)</label>
-          <input type="password" id="ytApiKey" class="form-input" placeholder="AIza..." />
+          <label>YouTube Channel ID (required for live)</label>
+          <input type="text" id="ytChannelId" class="form-input" placeholder="UCxxxxxxxxxxxxxxxxxxxx" />
         </div>
         <div class="form-row">
-          <label>Channel ID</label>
-          <input type="text" id="ytChannelId" class="form-input" placeholder="UCxxxxxxxx" />
+          <label>YouTube API Key (optional — live stats ke liye)</label>
+          <input type="password" id="ytApiKey" class="form-input" placeholder="AIza... (optional)" />
         </div>
         <div class="form-actions">
-          <button class="btn btn-primary" onclick="saveYtSettings()">Save &amp; Fetch</button>
+          <button class="btn btn-primary" onclick="saveYtSettings()">Save &amp; Fetch Live</button>
           <button class="btn btn-ghost" onclick="loadYtFromHistory()">Load from Run History</button>
+          <button class="btn btn-ghost" onclick="showYtDemo()">Show Demo Cards</button>
         </div>
       </div>
+      <div class="stats" id="ytLiveStats" style="margin-bottom:14px;">
+        <div class="stat-card"><div class="label">Subscribers</div><div class="value" id="ytSubs">—</div><div class="sub">live / demo</div></div>
+        <div class="stat-card"><div class="label">Total Views</div><div class="value" id="ytViews">—</div><div class="sub">channel lifetime</div></div>
+        <div class="stat-card"><div class="label">Videos</div><div class="value" id="ytVids">—</div><div class="sub">public count</div></div>
+        <div class="stat-card"><div class="label">Latest Upload</div><div class="value" id="ytLatest" style="font-size:0.95rem;">—</div><div class="sub" id="ytLatestDate">status</div></div>
+      </div>
       <div class="panel">
-        <h3>Latest Uploads / Pending</h3>
-        <div id="ytList"><p style="color:var(--muted);font-size:0.84rem;">API key daalo ya history se load karo.</p></div>
+        <h3>Latest Uploads / Thumbnails</h3>
+        <div id="ytList"><p style="color:var(--muted);font-size:0.84rem;">Channel ID + optional API key daalo, ya history se load karo.</p></div>
+      </div>
+      <div class="panel">
+        <h3>📌 Note</h3>
+        <p style="font-size:0.78rem;color:var(--muted);line-height:1.6;">
+          YouTube API key aur OAuth tokens <b>GitHub Actions Secrets</b> me rakhte hain (bots ke liye).
+          Dashboard pe sirf Channel ID + optional public API key (browser localStorage) — real upload credentials kabhi yahan nahi.
+        </p>
       </div>
     </div>
 
@@ -439,39 +454,64 @@
           <span>Telegram ↔ GitHub connection status</span>
         </div>
         <p class="hint" style="margin-bottom:12px;">
-          SG-News18 aur dusre bots Telegram se article links lete hain (schedule har 5 min).
-          Workflow complete/fail hone par Telegram notification bhejta hai (bot code me).
+          Main Channel: <a href="https://t.me/bglarenup" target="_blank" style="color:var(--accent);">@bglarenup</a> (BG LarenUp)<br>
+          Bots Telegram se article/job links lete hain (schedule ~5 min). Complete/fail pe Telegram notification workflow se jaati hai.
+          <b>Bot Token sirf GitHub Secrets me</b> — dashboard pe real value kabhi nahi dikhegi.
         </p>
         <div class="form-row">
-          <label>Test Notification Message</label>
-          <input type="text" id="tgTestMsg" class="form-input" placeholder="Dashboard se test message..." />
+          <label>Test Notification Message (workflow trigger note)</label>
+          <input type="text" id="tgTestMsg" class="form-input" placeholder="Test alert from BG Dashboard..." />
         </div>
         <div class="form-actions">
-          <button class="btn btn-primary" onclick="sendTgTestNote()">📌 Note: Telegram send server-side hota hai</button>
+          <button class="btn btn-primary" onclick="sendTgTestNote()">🔔 Test Note (server-side only)</button>
+          <button class="btn btn-ghost" onclick="window.open('https://t.me/bglarenup','_blank')">Open Channel</button>
           <button class="btn btn-ghost" onclick="window.open('https://github.com/bgsarkariresult/SG-News18/actions','_blank')">SG-News18 Actions</button>
         </div>
         <div class="hint" style="margin-top:12px;">
-          Dashboard se seedha Telegram message nahi bhej sakte (bot token secrets me hai).
-          Workflow fail/success pe already Telegram notify hota hai. Connection status GitHub Actions runs se infer hota hai.
+          Dashboard browser se seedha Telegram message nahi bhej sakta (security). 
+          Actual send bot ke GitHub Actions secrets (TELEGRAM_BOT_TOKEN + CHAT_ID) se hota hai.
         </div>
       </div>
       <div class="panel">
-        <h3>Recent Telegram-triggered Runs</h3>
-        <div id="tgRunsList"><p style="color:var(--muted);font-size:0.84rem;">History se schedule runs dikhenge.</p></div>
+        <h3>Link Processing Status (Telegram → Bot → Video)</h3>
+        <div id="tgRunsList"><p style="color:var(--muted);font-size:0.84rem;">History se schedule / Telegram-style runs dikhenge. Success / Failed / Running yahan dikhega.</p></div>
       </div>
     </div>
 
     <!-- ========== TAB: ALERTS ========== -->
     <div class="tab-panel" id="tab-alerts">
       <div class="panel">
-        <h3>🚨 Smart Alerts &amp; Error Center</h3>
-        <p class="hint" style="margin-bottom:12px;">Failed bots, error reason, GitHub log shortcut, re-run button.</p>
+        <h3>🚨 Smart Alerts</h3>
+        <p class="hint" style="margin-bottom:12px;">
+          Bot fail, website down, ya YouTube upload problem hone par Dashboard + Browser notification.
+          Telegram alerts workflow secrets se jaate hain (server-side).
+        </p>
+        <div class="stats" style="margin-bottom:12px;">
+          <div class="stat-card"><div class="label">Failed (recent)</div><div class="value danger" id="alertFailedCount">0</div></div>
+          <div class="stat-card"><div class="label">Sites Down</div><div class="value danger" id="alertSiteDown">0</div></div>
+          <div class="stat-card"><div class="label">Running</div><div class="value running" id="alertRunning">0</div></div>
+        </div>
         <div id="errorCenter"><p style="color:var(--muted);font-size:0.84rem;">Koi failed run nahi.</p></div>
+      </div>
+      <div class="panel">
+        <h3>Alert Rules</h3>
+        <div class="settings-row">
+          <div><div class="settings-label">Bot Failed / Cancelled</div><div class="settings-desc">History me fail → alert</div></div>
+          <span class="badge badge-online">ON</span>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-label">Website Down</div><div class="settings-desc">Sites tab check fail</div></div>
+          <span class="badge badge-online">ON</span>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-label">YouTube Upload Issue</div><div class="settings-desc">Video bot fail / error log</div></div>
+          <span class="badge badge-online">ON</span>
+        </div>
       </div>
       <div class="panel">
         <h3>Notification Settings</h3>
         <div class="settings-row">
-          <div><div class="settings-label">Browser Notifications</div><div class="settings-desc">Workflow complete hone par</div></div>
+          <div><div class="settings-label">Browser Notifications</div><div class="settings-desc">Workflow complete / fail hone par</div></div>
           <button class="toggle" id="toggleNotif" onclick="toggleNotifSetting()"></button>
         </div>
         <div class="settings-row">
@@ -506,18 +546,57 @@
     <!-- ========== TAB: SETTINGS ========== -->
     <div class="tab-panel" id="tab-settings">
       <div class="panel">
-        <h3>🔐 Security &amp; Settings</h3>
+        <h3>🔐 Security Center</h3>
+        <p class="hint" style="margin-bottom:12px;">Kisi bhi token ki real value dashboard pe nahi dikhegi. Bot tokens sirf GitHub Actions Secrets me.</p>
         <div class="settings-row">
-          <div><div class="settings-label">GitHub Token</div><div class="settings-desc" id="tokenValidity">Not set</div></div>
+          <div><div class="settings-label">GitHub PAT (browser)</div><div class="settings-desc" id="tokenValidity">Not set</div></div>
           <div style="display:flex;gap:6px;">
             <button class="btn btn-ghost btn-sm" onclick="openTokenModal()">Set</button>
             <button class="btn btn-danger btn-sm" onclick="clearToken()">Clear</button>
           </div>
         </div>
         <div class="settings-row">
-          <div><div class="settings-label">Dashboard PIN Lock</div><div class="settings-desc">4-digit PIN se protect</div></div>
-          <button class="btn btn-ghost btn-sm" onclick="setupPin()">Set PIN</button>
+          <div><div class="settings-label">Token Status</div><div class="settings-desc" id="tokenMasked">—</div></div>
+          <span class="badge" id="tokenBadge">—</span>
         </div>
+        <div class="settings-row">
+          <div><div class="settings-label">Dashboard PIN Lock</div><div class="settings-desc" id="pinStatusDesc">4-digit PIN se protect</div></div>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-ghost btn-sm" onclick="setupPin()">Set / Change</button>
+            <button class="btn btn-danger btn-sm" onclick="removePin()">Remove</button>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-label">Failed PIN Attempts</div><div class="settings-desc">Is session / local</div></div>
+          <span class="badge badge-idle" id="pinFailCount">0</span>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>🔑 Secrets Availability (GitHub)</h3>
+        <p style="font-size:0.78rem;color:var(--muted);margin-bottom:10px;">Ye tokens bot repos ke <b>Settings → Secrets and variables → Actions</b> me hote hain. Dashboard unhe kabhi read nahi karta.</p>
+        <div class="settings-row">
+          <div><div class="settings-label">TELEGRAM_BOT_TOKEN</div><div class="settings-desc">Message + notification</div></div>
+          <span class="badge badge-online">Secrets me</span>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-label">TELEGRAM_CHAT_ID</div><div class="settings-desc">Channel / group target</div></div>
+          <span class="badge badge-online">Secrets me</span>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-label">YT_CLIENT_SECRETS / YT_TOKEN</div><div class="settings-desc">YouTube upload</div></div>
+          <span class="badge badge-online">Secrets me</span>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-label">GEMINI / GROQ API Keys</div><div class="settings-desc">AI script / voice</div></div>
+          <span class="badge badge-online">Secrets me</span>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-label">GitHub PAT (dashboard)</div><div class="settings-desc">Sirf browser localStorage</div></div>
+          <span class="badge" id="patLocBadge">localStorage</span>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>⚙️ Preferences</h3>
         <div class="settings-row">
           <div><div class="settings-label">Dark / Light Mode</div><div class="settings-desc">Theme toggle</div></div>
           <button class="toggle" id="toggleThemeBtn" onclick="toggleTheme()"></button>
@@ -528,26 +607,28 @@
         </div>
       </div>
       <div class="panel">
-        <h3>⚠️ Security Note</h3>
-        <p style="font-size:0.82rem;color:var(--muted);line-height:1.6;">
-          GitHub token <b>localStorage</b> me rehta hai — browser me safe, lekin shared device pe risk.
-          Production ke liye server-side token + backend proxy better hai.
-          Classic PAT: <code>repo</code> + <code>workflow</code> scope chahiye.
-        </p>
+        <h3>⚠️ Security Notes</h3>
+        <ul style="font-size:0.78rem;color:var(--muted);padding-left:18px;line-height:1.7;">
+          <li>GitHub PAT <b>localStorage</b> me — shared device pe risk. Use ke baad Clear karo.</li>
+          <li>Telegram Bot Token, YT credentials, API keys → <b>sirf GitHub Actions Secrets</b>.</li>
+          <li>Dashboard pe kabhi real secret value show nahi hoti.</li>
+          <li>Classic PAT: <code>repo</code> + <code>workflow</code> scope. Fine-grained: Actions R/W + Contents R.</li>
+          <li>PIN lock browser level protection deta hai (shared PC ke liye useful).</li>
+        </ul>
       </div>
       <div class="panel">
         <h3>📌 How it works</h3>
         <ol style="font-size:0.78rem;color:var(--muted);padding-left:18px;line-height:1.8;">
-          <li>GitHub PAT daalo (repo + workflow)</li>
-          <li>Bot select → Link paste → Run</li>
-          <li>workflow_dispatch se Actions chalega</li>
-          <li>Auto-refresh jab running ho</li>
-          <li>Notification jab complete / fail</li>
+          <li>GitHub PAT daalo (repo + workflow) — localStorage only</li>
+          <li>Bot select → Link paste → Run (workflow_dispatch)</li>
+          <li>Bot tokens / YT / Telegram → GitHub Secrets me already set</li>
+          <li>Auto-refresh jab running ho + browser notification</li>
+          <li>Telegram channel: <a href="https://t.me/bglarenup" target="_blank">@bglarenup</a></li>
         </ol>
       </div>
     </div>
 
-    <footer>BG Control Dashboard Pro • Mobile ready • Dark/Light • Token stays in browser</footer>
+    <footer>BG Control Dashboard Pro • Security Center • YouTube Live Stats • Smart Alerts • @bglarenup</footer>
   </div>
 
   <!-- Token Modal -->
@@ -647,7 +728,14 @@ document.getElementById('navTabs').addEventListener('click', function(e) {
   if (tab.dataset.tab === 'websites') renderWebsites();
   if (tab.dataset.tab === 'bots') { renderBotsFull(); renderRunningList(); }
   if (tab.dataset.tab === 'telegram') renderTelegram();
-  if (tab.dataset.tab === 'youtube') loadYtFromHistory();
+  if (tab.dataset.tab === 'youtube') {
+    var k = localStorage.getItem('yt_key') || '';
+    var c = localStorage.getItem('yt_channel') || '';
+    var ik = document.getElementById('ytApiKey'); if (ik) ik.value = k;
+    var ic = document.getElementById('ytChannelId'); if (ic) ic.value = c;
+    fetchYtChannelStats();
+    loadYtFromHistory();
+  }
 });
 
 /* ========== TOKEN ========== */
@@ -663,13 +751,30 @@ function clearToken() { localStorage.removeItem('gh_pat'); updateTokenUI(); show
 function updateTokenUI() {
   const el = document.getElementById('tokenStatus');
   const val = document.getElementById('tokenValidity');
-  if (getToken()) {
+  const masked = document.getElementById('tokenMasked');
+  const badge = document.getElementById('tokenBadge');
+  const patBadge = document.getElementById('patLocBadge');
+  const tok = getToken();
+  if (tok) {
     el.textContent = '🔑 Token set'; el.className = 'token-status ok';
-    if (val) val.textContent = 'Set (localStorage) — validity API se check hota hai on refresh';
+    if (val) val.textContent = 'Saved in localStorage only';
+    if (masked) {
+      var show = tok.length > 10 ? tok.slice(0,4) + '••••••••' + tok.slice(-4) : '••••••••';
+      masked.textContent = show + ' (never full value)';
+    }
+    if (badge) { badge.className = 'badge badge-online'; badge.textContent = 'Active'; }
+    if (patBadge) { patBadge.className = 'badge badge-online'; patBadge.textContent = 'localStorage'; }
   } else {
     el.textContent = '🔑 Token not set'; el.className = 'token-status no';
     if (val) val.textContent = 'Not set';
+    if (masked) masked.textContent = '—';
+    if (badge) { badge.className = 'badge badge-idle'; badge.textContent = 'Missing'; }
+    if (patBadge) { patBadge.className = 'badge badge-idle'; patBadge.textContent = 'not set'; }
   }
+  var pinDesc = document.getElementById('pinStatusDesc');
+  if (pinDesc) pinDesc.textContent = localStorage.getItem('bg_pin') ? 'PIN active (locked on load)' : 'PIN not set';
+  var pinFail = document.getElementById('pinFailCount');
+  if (pinFail) pinFail.textContent = String(parseInt(localStorage.getItem('bg_pin_fails') || '0', 10));
 }
 function openTokenModal() { document.getElementById('tokenModal').classList.add('show'); document.getElementById('tokenInput').value = getToken(); }
 function closeTokenModal() { document.getElementById('tokenModal').classList.remove('show'); }
@@ -711,7 +816,7 @@ function pinKey(k) {
       document.getElementById('pinLock').classList.remove('show');
       pinBuffer = '';
     } else {
-      showToast('Wrong PIN', 'error');
+      var fails = parseInt(localStorage.getItem('bg_pin_fails')||'0',10)+1; localStorage.setItem('bg_pin_fails', String(fails)); var pf=document.getElementById('pinFailCount'); if(pf) pf.textContent=String(fails); showToast('Wrong PIN', 'error');
       pinBuffer = '';
       updatePinDots();
     }
@@ -1252,6 +1357,11 @@ function sendTgTestNote() {
 /* ========== ALERTS / ERROR CENTER ========== */
 function renderErrorCenter() {
   var failed = history.filter(function(h){ return ['failed','failure','cancelled'].indexOf(h.status) >= 0; });
+  var runningN = Object.keys(botStatus).filter(function(k){ var s=botStatus[k]; return s && ['running','in_progress','queued'].indexOf(s.status)>=0; }).length;
+  var siteDown = Object.keys(siteStatus).filter(function(k){ return siteStatus[k] === 'down' || siteStatus[k] === false; }).length;
+  var af = document.getElementById('alertFailedCount'); if (af) af.textContent = String(failed.length);
+  var asd = document.getElementById('alertSiteDown'); if (asd) asd.textContent = String(siteDown);
+  var ar = document.getElementById('alertRunning'); if (ar) ar.textContent = String(runningN);
   var el = document.getElementById('errorCenter');
   if (!failed.length) {
     el.innerHTML = '<p style="color:var(--muted);font-size:0.84rem;">✅ Koi failed run nahi (recent history).</p>';
@@ -1345,7 +1455,58 @@ function saveYtSettings() {
   localStorage.setItem('yt_key', document.getElementById('ytApiKey').value.trim());
   localStorage.setItem('yt_channel', document.getElementById('ytChannelId').value.trim());
   showToast('YouTube settings saved', 'success');
+  fetchYtChannelStats();
   fetchYtVideos();
+}
+function showYtDemo() {
+  document.getElementById('ytSubs').textContent = '12.4K';
+  document.getElementById('ytViews').textContent = '1.8M';
+  document.getElementById('ytVids').textContent = '342';
+  document.getElementById('ytLatest').textContent = 'Demo Video';
+  document.getElementById('ytLatestDate').textContent = 'demo only — real nahi';
+  showToast('Demo cards (real stats nahi). Channel ID + API key daalo live ke liye.', 'success');
+}
+async function fetchYtChannelStats() {
+  var key = localStorage.getItem('yt_key');
+  var ch = localStorage.getItem('yt_channel');
+  if (!ch) {
+    document.getElementById('ytSubs').textContent = '—';
+    document.getElementById('ytViews').textContent = '—';
+    document.getElementById('ytVids').textContent = '—';
+    document.getElementById('ytLatest').textContent = 'Channel ID daalo';
+    return;
+  }
+  if (!key) {
+    document.getElementById('ytSubs').textContent = 'API key?';
+    document.getElementById('ytViews').textContent = '—';
+    document.getElementById('ytVids').textContent = '—';
+    document.getElementById('ytLatest').textContent = ch.slice(0,12)+'…';
+    document.getElementById('ytLatestDate').textContent = 'API key optional but needed for live numbers';
+    return;
+  }
+  try {
+    var res = await fetch('https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=' + encodeURIComponent(ch) + '&key=' + encodeURIComponent(key));
+    if (!res.ok) { showToast('YouTube channel API error: ' + res.status, 'error'); return; }
+    var data = await res.json();
+    var item = (data.items && data.items[0]) || null;
+    if (!item) { showToast('Channel not found', 'error'); return; }
+    var st = item.statistics || {};
+    var sn = item.snippet || {};
+    function fmt(n) {
+      n = parseInt(n, 10) || 0;
+      if (n >= 1e6) return (n/1e6).toFixed(1) + 'M';
+      if (n >= 1e3) return (n/1e3).toFixed(1) + 'K';
+      return String(n);
+    }
+    document.getElementById('ytSubs').textContent = fmt(st.subscriberCount);
+    document.getElementById('ytViews').textContent = fmt(st.viewCount);
+    document.getElementById('ytVids').textContent = fmt(st.videoCount);
+    document.getElementById('ytLatest').textContent = (sn.title || 'Channel').slice(0, 22);
+    document.getElementById('ytLatestDate').textContent = 'live • ' + (sn.publishedAt || '').slice(0,10);
+    showToast('Live channel stats loaded', 'success');
+  } catch (e) {
+    showToast('Channel stats fetch failed', 'error');
+  }
 }
 function loadYtFromHistory() {
   var key = localStorage.getItem('yt_key') || '';
@@ -1417,6 +1578,14 @@ initTheme();
 checkPinLock();
 updateTokenUI();
 updateNotifToggle();
+// Prefill YT
+(function(){
+  var k = localStorage.getItem('yt_key') || '';
+  var c = localStorage.getItem('yt_channel') || '';
+  var ik = document.getElementById('ytApiKey'); if (ik) ik.value = k;
+  var ic = document.getElementById('ytChannelId'); if (ic) ic.value = c;
+})();
+
 document.getElementById('togglePoll').classList.toggle('on', autoPollEnabled);
 populateSelect();
 renderBots();
