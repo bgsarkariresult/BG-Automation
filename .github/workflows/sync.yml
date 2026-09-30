@@ -1,0 +1,31 @@
+name: Sync Dashboard
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+  repository_dispatch:
+    types: [tg-message]
+
+permissions:
+  contents: write
+
+concurrency: sync-dashboard
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python sync.py
+        env:
+          YT_API_KEY: ${{ secrets.YT_API_KEY }}
+          GH_PAT: ${{ secrets.GH_PAT }}
+          MSG_TEXT: ${{ github.event.client_payload.text }}
+      - run: |
+          git config user.name "dashboard-bot"
+          git config user.email "dashboard-bot@users.noreply.github.com"
+          git add data
+          git diff --cached --quiet || (git commit -m "sync dashboard" && git pull --rebase -q && git push)
