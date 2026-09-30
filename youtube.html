@@ -1,10 +1,20 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>YouTube Studio</title><link rel="stylesheet" href="app.css"></head><body><script src="app.js"></script>
 <script>
-boot('youtube.html','YouTube Studio',d=>{
- $('#main').innerHTML=`<div class="card"><small>Watch time sirf YouTube Analytics API (OAuth login) se milta hai, API key se nahi — isliye yahan nahi hai.</small></div><div class="sites">`+d.channels.map(c=>c.error?`<div class="card"><b>${esc(c.name)}</b><p class="err">${esc(c.error)}</p></div>`:
- `<div class="card"><div class="row" style="justify-content:flex-start;gap:12px;margin-bottom:10px"><img src="${esc(c.icon)}" alt="" style="width:56px;height:56px;border-radius:50%"><div><b>${esc(c.name)}</b><br><a href="https://www.youtube.com/channel/${esc(c.id)}" target="_blank" rel="noopener"><small>Channel kholo ↗</small></a></div></div>
- <div class="k"><div><small>Subscribers</small><b>${fmt(c.subs)}</b></div><div><small>Kul Views</small><b>${fmt(c.views)}</b></div><div><small>Videos</small><b>${fmt(c.videos)}</b></div><div><small>Avg views/video</small><b>${c.videos>0?fmt(c.views/c.videos):'—'}</b></div></div>
- <h3 style="font-size:.9rem">Naye video</h3>${(c.latest||[]).map(v=>`<a class="vid" href="https://www.youtube.com/watch?v=${esc(v.id)}" target="_blank" rel="noopener">${esc(v.title)}<br><small>${esc(v.date)} • 👁 ${fmt(v.views)}</small></a>`).join('')||'<small>Koi video nahi.</small>'}</div>`).join('')+'</div>'});
-
+let sel='all';
+boot('youtube.html','YouTube Studio',d=>{window.YD=d;draw()});
+function pick(id){sel=id;draw()}
+function draw(){
+ const d=window.YD,ok=d.channels.filter(c=>!c.error&&c.icon),bad=d.channels.filter(c=>c.error);
+ const sum=k=>ok.reduce((n,c)=>n+(+c[k]||0),0),avg=c=>c.videos>0?fmt(c.views/c.videos):'—';
+ const T=(l,v)=>`<div class="stat"><div><small>${l}</small><b>${v}</b></div></div>`;
+ const c=ok.find(x=>x.id===sel);
+ const chips=`<div class="chs"><button class="cb ${c?'':'on'}" onclick="pick('all')">Sabhi channel</button>${ok.map(x=>`<button class="cb ${x===c?'on':''}" onclick="pick('${esc(x.id)}')"><img src="${esc(x.icon)}" alt="">${esc(x.name)}</button>`).join('')}</div>`;
+ let body;
+ if(!c){body=`<div class="stats">${T('Channels',ok.length)}${T('Kul Subscribers',fmt(sum('subs')))}${T('Kul Views',fmt(sum('views')))}${T('Kul Videos',fmt(sum('videos')))}</div>
+  <div class="card"><div class="tbw"><table class="tb"><tr><th>Channel</th><th>Subs</th><th>Views</th><th>Videos</th><th>Avg views</th><th>Naya upload</th></tr>${ok.map(x=>`<tr onclick="pick('${esc(x.id)}')" style="cursor:pointer"><td><img src="${esc(x.icon)}" alt="">${esc(x.name)}</td><td>${fmt(x.subs)}</td><td>${fmt(x.views)}</td><td>${fmt(x.videos)}</td><td>${avg(x)}</td><td>${esc((x.latest[0]||{}).date||'—')}</td></tr>`).join('')}</table></div><small>Kisi channel par dabao — uski alag detail khulegi.</small></div>`}
+ else{body=`<div class="card"><div class="row" style="justify-content:flex-start;gap:14px"><img src="${esc(c.icon)}" alt="" style="width:72px;height:72px;border-radius:50%"><div><h2>${esc(c.name)}</h2><small><a href="https://www.youtube.com/channel/${esc(c.id)}" target="_blank" rel="noopener">YouTube ↗</a> • <a href="https://studio.youtube.com/channel/${esc(c.id)}" target="_blank" rel="noopener">Studio ↗</a></small></div></div></div>
+  <div class="stats">${T('Subscribers',fmt(c.subs))}${T('Kul Views',fmt(c.views))}${T('Videos',fmt(c.videos))}${T('Avg views/video',avg(c))}</div>
+  <div class="card"><h2 class="hd">Naye video</h2><div class="vg">${(c.latest||[]).map(v=>`<a class="vc" href="https://www.youtube.com/watch?v=${esc(v.id)}" target="_blank" rel="noopener"><img src="https://i.ytimg.com/vi/${esc(v.id)}/mqdefault.jpg" alt=""><b>${esc(v.title)}</b><small>${esc(v.date)} • 👁 ${fmt(v.views)}</small></a>`).join('')||'<small>Koi video nahi.</small>'}</div></div>`}
+ $('#main').innerHTML=chips+body+(bad.length?`<div class="card"><small>Channel ID baaki: ${bad.map(x=>esc(x.name)).join(', ')} — <a href="https://github.com/bgsarkariresult/BG-Automation/edit/main/config.json" target="_blank" rel="noopener">config.json</a> me asli ID daalo.</small></div>`:'')+`<div class="card"><small>Watch time sirf YouTube Analytics API (OAuth login) se milta hai, isliye yahan nahi hai.</small></div>`}
 </script></body></html>
