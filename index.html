@@ -391,9 +391,8 @@
       <div class="panel">
         <h3>▶️ YouTube Live Statistics</h3>
         <p class="hint" style="margin-bottom:12px;">
-          <b>Sirf Channel ID</b> daalo → public stats (Subscribers, Total Views, Videos, Latest Upload).
-          Full live data ke liye optional YouTube Data API key (Google Cloud Console se free).
-          Bina key ke history + demo cards dikhte hain. Real token kabhi dashboard pe nahi aata.
+          <b>Channel ID</b> daalo (UCxxxx...). Live Subscribers / Views / Videos ke liye <b>free YouTube Data API key</b> chahiye (Google Cloud Console, ~2 min).
+          Bina key ke: <b>Show Demo Cards</b> ya <b>Load from Run History</b> use karo. Real OAuth/tokens kabhi yahan nahi aate.
         </p>
         <div class="form-row">
           <label>YouTube Channel ID (required for live)</label>
@@ -1452,9 +1451,15 @@ function renderAnalytics() {
 
 /* ========== YOUTUBE ========== */
 function saveYtSettings() {
-  localStorage.setItem('yt_key', document.getElementById('ytApiKey').value.trim());
-  localStorage.setItem('yt_channel', document.getElementById('ytChannelId').value.trim());
-  showToast('YouTube settings saved', 'success');
+  var key = document.getElementById('ytApiKey').value.trim();
+  var ch = document.getElementById('ytChannelId').value.trim();
+  localStorage.setItem('yt_key', key);
+  localStorage.setItem('yt_channel', ch);
+  if (!ch) {
+    showToast('Pehle Channel ID daalo (UCxxxx...)', 'error');
+    return;
+  }
+  showToast(key ? 'Saving + fetching live stats...' : 'Channel ID saved. Live numbers ke liye API key chahiye.', 'success');
   fetchYtChannelStats();
   fetchYtVideos();
 }
@@ -1462,50 +1467,90 @@ function showYtDemo() {
   document.getElementById('ytSubs').textContent = '12.4K';
   document.getElementById('ytViews').textContent = '1.8M';
   document.getElementById('ytVids').textContent = '342';
-  document.getElementById('ytLatest').textContent = 'Demo Video';
-  document.getElementById('ytLatestDate').textContent = 'demo only — real nahi';
-  showToast('Demo cards (real stats nahi). Channel ID + API key daalo live ke liye.', 'success');
+  document.getElementById('ytLatest').textContent = 'Demo Video Title';
+  document.getElementById('ytLatestDate').textContent = '⚠️ DEMO only — real nahi';
+  var list = document.getElementById('ytList');
+  if (list) {
+    list.innerHTML = '<div class="yt-item"><div class="yt-thumb">▶</div><div class="yt-info"><div class="yt-title">Demo: Latest Upload Example</div><div class="yt-meta">Demo • API key se real thumbnails aayenge</div></div></div>' +
+      '<div class="yt-item"><div class="yt-thumb">▶</div><div class="yt-info"><div class="yt-title">Demo: Second Video</div><div class="yt-meta">Demo data</div></div></div>' +
+      '<p style="color:var(--muted);font-size:0.78rem;margin-top:10px;">Ye demo hai. Real Subscribers / Views / Videos ke liye free YouTube Data API key chahiye (neeche steps).</p>';
+  }
+  showToast('Demo cards dikha rahe hain. Live ke liye API key daalo.', 'success');
+}
+function fmtNum(n) {
+  n = parseInt(n, 10) || 0;
+  if (n >= 1e9) return (n/1e9).toFixed(1) + 'B';
+  if (n >= 1e6) return (n/1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return (n/1e3).toFixed(1) + 'K';
+  return String(n);
 }
 async function fetchYtChannelStats() {
-  var key = localStorage.getItem('yt_key');
-  var ch = localStorage.getItem('yt_channel');
+  var key = localStorage.getItem('yt_key') || '';
+  var ch = localStorage.getItem('yt_channel') || '';
+  var subsEl = document.getElementById('ytSubs');
+  var viewsEl = document.getElementById('ytViews');
+  var vidsEl = document.getElementById('ytVids');
+  var latestEl = document.getElementById('ytLatest');
+  var dateEl = document.getElementById('ytLatestDate');
   if (!ch) {
-    document.getElementById('ytSubs').textContent = '—';
-    document.getElementById('ytViews').textContent = '—';
-    document.getElementById('ytVids').textContent = '—';
-    document.getElementById('ytLatest').textContent = 'Channel ID daalo';
+    subsEl.textContent = '—'; viewsEl.textContent = '—'; vidsEl.textContent = '—';
+    latestEl.textContent = 'Channel ID daalo';
+    dateEl.textContent = 'UCxxxx... format';
     return;
   }
+  // Channel ID set, no API key → clear helpful state + try no-key public snippet via noembed/oembed style is limited
   if (!key) {
-    document.getElementById('ytSubs').textContent = 'API key?';
-    document.getElementById('ytViews').textContent = '—';
-    document.getElementById('ytVids').textContent = '—';
-    document.getElementById('ytLatest').textContent = ch.slice(0,12)+'…';
-    document.getElementById('ytLatestDate').textContent = 'API key optional but needed for live numbers';
+    subsEl.textContent = '🔑';
+    viewsEl.textContent = '🔑';
+    vidsEl.textContent = '🔑';
+    latestEl.textContent = ch.length > 14 ? ch.slice(0, 8) + '…' + ch.slice(-4) : ch;
+    dateEl.textContent = 'API key chahiye live numbers ke liye';
+    // Show helper in list area
+    var list = document.getElementById('ytList');
+    if (list && !list.dataset.helperShown) {
+      list.innerHTML = '<div style="padding:12px;border-radius:10px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.25);font-size:0.82rem;line-height:1.55;">' +
+        '<b>Channel ID save ho gaya ✅</b><br>' +
+        'Live Subscribers / Views / Videos <b>YouTube Data API key</b> se aate hain (free).<br><br>' +
+        '<b>Free API key kaise lein (2 min):</b><br>' +
+        '1. <a href="https://console.cloud.google.com/" target="_blank" style="color:var(--accent);">Google Cloud Console</a> kholo<br>' +
+        '2. Naya project banao → <b>APIs & Services → Library</b><br>' +
+        '3. <b>YouTube Data API v3</b> search karke Enable karo<br>' +
+        '4. <b>Credentials → Create credentials → API key</b><br>' +
+        '5. API key yahan paste karo → Save & Fetch Live<br><br>' +
+        'Bina key ke: <button class="btn btn-ghost btn-sm" onclick="showYtDemo()">Show Demo Cards</button> ' +
+        '<button class="btn btn-ghost btn-sm" onclick="loadYtFromHistory()">History se uploads</button>' +
+        '</div>';
+    }
     return;
   }
   try {
+    subsEl.textContent = '…'; viewsEl.textContent = '…'; vidsEl.textContent = '…';
     var res = await fetch('https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=' + encodeURIComponent(ch) + '&key=' + encodeURIComponent(key));
-    if (!res.ok) { showToast('YouTube channel API error: ' + res.status, 'error'); return; }
     var data = await res.json();
+    if (!res.ok) {
+      var errMsg = (data.error && data.error.message) || ('HTTP ' + res.status);
+      showToast('YouTube API: ' + errMsg, 'error');
+      subsEl.textContent = 'Err';
+      dateEl.textContent = errMsg.slice(0, 40);
+      return;
+    }
     var item = (data.items && data.items[0]) || null;
-    if (!item) { showToast('Channel not found', 'error'); return; }
+    if (!item) {
+      showToast('Channel nahi mila — ID check karo (UCxxxx)', 'error');
+      latestEl.textContent = 'Not found';
+      return;
+    }
     var st = item.statistics || {};
     var sn = item.snippet || {};
-    function fmt(n) {
-      n = parseInt(n, 10) || 0;
-      if (n >= 1e6) return (n/1e6).toFixed(1) + 'M';
-      if (n >= 1e3) return (n/1e3).toFixed(1) + 'K';
-      return String(n);
-    }
-    document.getElementById('ytSubs').textContent = fmt(st.subscriberCount);
-    document.getElementById('ytViews').textContent = fmt(st.viewCount);
-    document.getElementById('ytVids').textContent = fmt(st.videoCount);
-    document.getElementById('ytLatest').textContent = (sn.title || 'Channel').slice(0, 22);
-    document.getElementById('ytLatestDate').textContent = 'live • ' + (sn.publishedAt || '').slice(0,10);
-    showToast('Live channel stats loaded', 'success');
+    subsEl.textContent = fmtNum(st.subscriberCount);
+    viewsEl.textContent = fmtNum(st.viewCount);
+    vidsEl.textContent = fmtNum(st.videoCount);
+    latestEl.textContent = (sn.title || 'Channel').slice(0, 24);
+    dateEl.textContent = '✅ Live • created ' + (sn.publishedAt || '').slice(0, 10);
+    showToast('Live channel stats loaded ✅', 'success');
   } catch (e) {
-    showToast('Channel stats fetch failed', 'error');
+    showToast('Network / API fail: ' + (e.message || e), 'error');
+    subsEl.textContent = '—';
   }
 }
 function loadYtFromHistory() {
