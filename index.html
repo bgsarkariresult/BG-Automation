@@ -3,329 +3,589 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>BG Automation — Dashboard</title>
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<title>BG Automation</title>
+<style>
+:root{
+  --bg:#070c1a;
+  --sb:#0a1128;
+  --cd:#0e1733;
+  --bd:#1b2a52;
+  --tx:#e8eeff;
+  --mu:#8a98bd;
+  --ac:#1d6bff;
+  --ok:#2ee59d;
+  --er:#ff5c6c;
+  --wa:#ffb13b;
+  --card-hover:#13204a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font:14px/1.45 system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;
+  background:var(--bg);
+  color:var(--tx);
+  padding-bottom:env(safe-area-inset-bottom);
+  min-height:100vh;
+}
+a{color:inherit;text-decoration:none}
+small,.mu{color:var(--mu);font-size:.78rem}
+
+/* ===== TOP BAR ===== */
+.top{
+  position:sticky;top:0;z-index:20;
+  display:flex;align-items:center;gap:14px;
+  padding:calc(12px + env(safe-area-inset-top)) 20px 12px;
+  background:var(--sb);
+  border-bottom:1px solid var(--bd);
+}
+.burger{display:none;background:none;border:0;color:var(--tx);font-size:1.5rem;cursor:pointer}
+.logo{font-size:1.25rem;font-weight:800;line-height:1.2}
+.logo small{font-weight:500;color:var(--mu);font-size:.72rem}
+.pill{
+  margin-left:auto;
+  padding:7px 16px;
+  border-radius:20px;
+  border:1px solid var(--ok);
+  color:var(--ok);
+  background:#0c2a2a;
+  font-weight:600;
+  font-size:.82rem;
+  display:flex;align-items:center;gap:6px;
+}
+.pill.bad{border-color:var(--wa);color:var(--wa);background:#2a2110}
+.user{
+  display:flex;align-items:center;gap:8px;
+  background:#13204a;padding:6px 12px 6px 6px;
+  border-radius:24px;border:1px solid var(--bd);
+  font-weight:600;font-size:.85rem;
+}
+.user .av{width:28px;height:28px;border-radius:50%;background:var(--ac);display:grid;place-items:center;font-size:.75rem}
+
+/* ===== LAYOUT ===== */
+.app{
+  display:grid;
+  grid-template-columns:240px minmax(0,1fr) 320px;
+  grid-template-areas:"nav main right";
+  gap:18px;
+  padding:18px;
+  max-width:1680px;
+  margin:0 auto;
+}
+nav{grid-area:nav}
+main{grid-area:main;display:grid;gap:18px;align-content:start}
+.right{grid-area:right;display:grid;gap:18px;align-content:start}
+
+/* ===== SIDEBAR ===== */
+nav a{
+  display:flex;align-items:center;gap:11px;
+  padding:12px 14px;
+  border-radius:11px;
+  color:var(--mu);
+  font-weight:600;
+  margin-bottom:3px;
+  transition:all .15s;
+}
+nav a.on,nav a:hover{background:var(--ac);color:#fff}
+nav .cnt{
+  margin-left:auto;
+  background:var(--er);color:#fff;
+  border-radius:10px;padding:1px 8px;
+  font-size:.72rem;font-weight:700;
+}
+nav h4{margin:22px 14px 10px;font-size:.78rem;color:var(--mu);text-transform:uppercase;letter-spacing:.4px}
+.sys{
+  margin-top:22px;
+  padding:14px;
+  border:1px solid var(--bd);
+  border-radius:12px;
+  background:var(--cd);
+}
+.sys .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:6px}
+
+/* ===== CARDS ===== */
+.card{
+  background:var(--cd);
+  border:1px solid var(--bd);
+  border-radius:16px;
+  padding:18px;
+  transition:border-color .2s;
+}
+.card:hover{border-color:#2a3f7a}
+.hd{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.hd h2{font-size:1.08rem;font-weight:700}
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:9px 16px;
+  border-radius:10px;
+  background:var(--ac);
+  color:#fff;
+  font-weight:600;
+  border:0;
+  font:inherit;
+  cursor:pointer;
+  transition:opacity .15s;
+}
+.btn:hover{opacity:.9}
+.btn.g{
+  background:#15214a;
+  border:1px solid var(--bd);
+  padding:7px 13px;
+  font-size:.82rem;
+}
+.btn.g:hover{background:#1a2a5a}
+
+/* ===== STATS ===== */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.stat{
+  display:flex;gap:14px;align-items:center;
+  background:var(--cd);
+  border:1px solid var(--bd);
+  border-radius:16px;
+  padding:16px;
+  transition:border-color .2s;
+}
+.stat:hover{border-color:#2a3f7a}
+.ico{
+  width:48px;height:48px;
+  border-radius:14px;
+  display:grid;place-items:center;
+  font-size:1.45rem;
+  flex-shrink:0;
+}
+.stat b{display:block;font-size:1.65rem;line-height:1.1;font-weight:800}
+.stat small{display:block;margin-top:2px}
+
+/* ===== CHANNEL CARDS ===== */
+.row5{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:14px}
+.ch{
+  border:1px solid var(--bd);
+  border-radius:14px;
+  padding:16px 12px;
+  text-align:center;
+  background:#0b1430;
+  transition:all .2s;
+}
+.ch:hover{border-color:#2a3f7a;background:#0f1a3a}
+.ch img,.av{
+  width:58px;height:58px;
+  border-radius:50%;
+  margin:0 auto 10px;
+  display:grid;place-items:center;
+  background:var(--ac);
+  font-weight:800;
+  object-fit:cover;
+  font-size:1.1rem;
+}
+.ch b{display:block;font-size:.95rem;margin-bottom:2px}
+.chip{
+  display:inline-block;
+  font-size:.72rem;
+  padding:2px 11px;
+  border-radius:12px;
+  background:#0c2a2a;
+  color:var(--ok);
+  border:1px solid #14534a;
+  margin:8px 0 6px;
+  font-weight:600;
+}
+.chip.e{background:#2a1015;color:var(--er);border-color:#5a1d27}
+.nums{
+  display:flex;justify-content:center;gap:14px;
+  font-size:.78rem;color:var(--mu);
+  margin-bottom:10px;
+}
+.add{
+  border-style:dashed;
+  display:flex;flex-direction:column;
+  justify-content:center;gap:10px;
+  min-height:180px;
+}
+
+/* ===== SITES ===== */
+.sites{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.site{
+  border:1px solid var(--bd);
+  border-radius:14px;
+  padding:16px;
+  background:#0b1430;
+  display:grid;gap:10px;
+  transition:border-color .2s;
+}
+.site:hover{border-color:#2a3f7a}
+.site .row{display:flex;gap:10px;align-items:flex-start}
+.site .row>*{flex:1}
+.tag{
+  font-size:.72rem;
+  background:#1a1f52;
+  color:#a9b4ff;
+  border-radius:6px;
+  padding:2px 9px;
+  justify-self:start;
+}
+.lk{
+  width:100%;
+  padding:9px 12px;
+  border-radius:9px;
+  border:1px solid var(--bd);
+  background:#070c1a;
+  color:var(--tx);
+  font:inherit;
+}
+.lk:focus{outline:none;border-color:var(--ac)}
+.site .r{display:flex;gap:8px}
+.site .r>*{flex:1;text-align:center}
+.hn{color:var(--wa);min-height:1.2em;font-size:.8rem}
+.rs{border-top:1px solid var(--bd);padding-top:8px;margin-top:4px}
+
+/* ===== THREE COL ===== */
+.three{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.k{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}
+.k div{
+  border:1px solid var(--bd);
+  border-radius:12px;
+  padding:12px;
+  background:#0b1430;
+}
+.k b{font-size:1.45rem;display:block;font-weight:800}
+.li{
+  display:flex;gap:12px;
+  padding:11px 0;
+  border-bottom:1px solid var(--bd);
+  align-items:flex-start;
+}
+.li:last-child{border:0}
+.li .t{margin-left:auto;white-space:nowrap;color:var(--mu);font-size:.75rem}
+.dot{
+  width:28px;height:28px;
+  border-radius:50%;
+  display:grid;place-items:center;
+  font-size:.85rem;
+  flex-shrink:0;
+  background:#15214a;
+}
+.qa a{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px 14px;
+  border:1px solid #14534a;
+  background:#0c2a24;
+  color:var(--ok);
+  border-radius:10px;
+  margin-bottom:9px;
+  font-weight:600;
+  transition:background .15s;
+}
+.qa a:hover{background:#0e342c}
+.s-success{color:var(--ok)}
+.s-failure,.s-cancelled{color:var(--er)}
+.s-in_progress,.s-queued{color:var(--wa)}
+
+/* ===== LOGS & TG ===== */
+.logs{max-height:520px;overflow:auto;scrollbar-width:thin}
+.logs::-webkit-scrollbar{width:5px}
+.logs::-webkit-scrollbar-thumb{background:#1b2a52;border-radius:4px}
+.ok-box{
+  border:1px solid var(--ok);
+  background:#0c2a24;
+  border-radius:14px;
+  padding:16px;
+  font-weight:700;
+  text-align:center;
+}
+
+/* ===== PAGE ROUTING ===== */
+body[data-p=channels] main>:not(#channels),
+body[data-p=sites] main>:not(#sites),
+body[data-p=jobs] main>:not(#jobs){display:none}
+body[data-p=channels] .right,
+body[data-p=sites] .right,
+body[data-p=jobs] .right{display:none}
+body[data-p=tg] main,
+body[data-p=logs] main{display:none}
+body[data-p=tg] .right>:not(#tg),
+body[data-p=logs] .right>:not(#logs){display:none}
+body[data-p=tg] .right,
+body[data-p=logs] .right{grid-area:main}
+body[data-p=logs] .logs{max-height:none}
+body:not([data-p=tg]) #tgList .li:nth-child(n+6){display:none}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:1200px){
+  .app{grid-template-columns:210px minmax(0,1fr);grid-template-areas:"nav main" "nav right"}
+}
+@media(max-width:860px){
+  .burger{display:block}
+  .app{
+    grid-template-columns:1fr;
+    grid-template-areas:"main" "right";
+    padding:12px;
+  }
+  nav{
+    position:fixed;inset:0 28% 0 0;z-index:30;
+    background:var(--sb);
+    padding:80px 14px 20px;
+    transform:translateX(-105%);
+    transition:transform .22s;
+    overflow:auto;
+    border-right:1px solid var(--bd);
+  }
+  nav.open{transform:none}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .pill{font-size:.72rem;padding:5px 10px}
+  .logo small{display:none}
+  .user span{display:none}
+}
+</style>
 </head>
 <body>
-<div class="app">
-  <!-- SIDEBAR -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-brand">
-      <div class="brand-icon"><i class="fas fa-rocket"></i></div>
-      <div>
-        <div class="brand-title">BG Automation</div>
-        <div class="brand-sub">YouTube • GitHub • Telegram • All Projects</div>
-      </div>
-    </div>
-    <nav class="sidebar-nav">
-      <a href="index.html" class="nav-item active"><i class="fas fa-home"></i> Dashboard</a>
-      <a href="pages/youtube.html" class="nav-item"><i class="fab fa-youtube"></i> YouTube Channels <span class="badge">6</span></a>
-      <a href="pages/websites.html" class="nav-item"><i class="fas fa-globe"></i> Websites / Projects</a>
-      <a href="pages/jobs.html" class="nav-item"><i class="fas fa-bolt"></i> Automation Jobs</a>
-      <a href="pages/article.html" class="nav-item"><i class="fas fa-file-alt"></i> Article Generator</a>
-      <a href="pages/videos.html" class="nav-item"><i class="fas fa-play-circle"></i> Video Library</a>
-      <a href="pages/telegram.html" class="nav-item"><i class="fab fa-telegram"></i> Telegram Messages <span class="badge red">3</span></a>
-      <a href="pages/logs.html" class="nav-item"><i class="fas fa-terminal"></i> Live Logs <span class="live-dot">Live</span></a>
-      <a href="pages/settings.html" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
-    </nav>
-    <div class="sidebar-section">
-      <div class="section-label">Your Websites</div>
-      <a href="https://sgnewsab.github.io/sgnewsab/" target="_blank" class="web-link"><span class="dot red"></span> SG News18 <small>News & Jobs</small></a>
-      <a href="https://bgtechlab.github.io/bgtech/" target="_blank" class="web-link"><span class="dot blue"></span> BG Tech <small>Tech Review & Gadgets</small></a>
-      <a href="https://bgsarkariresult.github.io/" target="_blank" class="web-link"><span class="dot purple"></span> BG Sarkari Job <small>Govt Jobs & Results</small></a>
-    </div>
-    <div class="sidebar-footer">
-      <div class="status-pill online"><span class="pulse"></span> System Online</div>
-      <div class="sync-time">Last sync: 28 Sep 2025, 07:45 AM</div>
-    </div>
-  </aside>
-
-  <!-- MAIN -->
-  <div class="main">
-    <header class="topbar">
-      <button class="burger" id="burger"><i class="fas fa-bars"></i></button>
-      <div class="topbar-left">
-        <span class="secrets-pill"><i class="fas fa-check-circle"></i> GitHub Secrets Connected</span>
-        <span class="token-info">All tokens loaded from GitHub Secrets <i class="fas fa-info-circle"></i></span>
-      </div>
-      <div class="topbar-right">
-        <button class="icon-btn"><i class="fas fa-bell"></i><span class="notif-count">3</span></button>
-        <button class="icon-btn"><i class="fas fa-mobile-alt"></i></button>
-        <div class="user-menu">
-          <div class="avatar">B</div>
-          <span>Bhavesh</span>
-          <i class="fas fa-chevron-down"></i>
-        </div>
-      </div>
-    </header>
-
-    <div class="content">
-      <div class="content-left">
-        <div class="welcome-card">
-          <div class="welcome-text">
-            <h1>👋 Welcome, Bhavesh!</h1>
-            <p>Your YouTube automation dashboard. All data is loaded securely from GitHub Secrets.</p>
-          </div>
-          <div class="welcome-meta">
-            <div class="date-box"><i class="fas fa-calendar"></i> 28 Sep 2025</div>
-            <div class="time-box">07:45 AM</div>
-            <button class="live-btn"><span class="pulse-green"></span> Live</button>
-          </div>
-        </div>
-
-        <div class="stats-row">
-          <div class="stat-card">
-            <div class="stat-icon yt"><i class="fab fa-youtube"></i></div>
-            <div>
-              <div class="stat-label">Total Channels</div>
-              <div class="stat-value">6</div>
-              <a href="pages/youtube.html" class="stat-link">+ Add more anytime →</a>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon runs"><i class="fas fa-play"></i></div>
-            <div>
-              <div class="stat-label">Total Runs</div>
-              <div class="stat-value">18</div>
-              <span class="stat-sub">Last 24 hours</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon tg"><i class="fab fa-telegram-plane"></i></div>
-            <div>
-              <div class="stat-label">Telegram Messages</div>
-              <div class="stat-value">5</div>
-              <a href="pages/telegram.html" class="stat-link">Unread messages →</a>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon job"><i class="fas fa-clock"></i></div>
-            <div>
-              <div class="stat-label">Last Job</div>
-              <div class="stat-value">2 hours ago</div>
-              <span class="stat-sub success">Completed successfully →</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="section-card">
-          <div class="section-header">
-            <div>
-              <h2><i class="fab fa-youtube"></i> YouTube Channels</h2>
-              <p>Manage your YouTube channels. Add more anytime (no need to re-enter tokens).</p>
-            </div>
-            <a href="pages/youtube.html" class="btn-primary"><i class="fas fa-plus"></i> Add Channel</a>
-          </div>
-          <div class="channels-grid">
-            <div class="channel-card">
-              <div class="ch-logo red">SG</div>
-              <div class="ch-name">SG News18</div>
-              <div class="ch-id">ID: UCxxxxxxx1</div>
-              <div class="ch-status active"><i class="fas fa-check-circle"></i> Active</div>
-              <div class="ch-stats"><span><i class="fas fa-eye"></i> 125K</span><span><i class="fas fa-users"></i> 2.5M</span></div>
-              <div class="ch-actions"><button class="btn-sm">Manage</button><button class="btn-icon"><i class="fas fa-ellipsis-v"></i></button></div>
-            </div>
-            <div class="channel-card">
-              <div class="ch-logo blue">BG</div>
-              <div class="ch-name">BG Tech</div>
-              <div class="ch-id">ID: UCxxxxxxx2</div>
-              <div class="ch-status active"><i class="fas fa-check-circle"></i> Active</div>
-              <div class="ch-stats"><span><i class="fas fa-eye"></i> 98K</span><span><i class="fas fa-users"></i> 1.8M</span></div>
-              <div class="ch-actions"><button class="btn-sm">Manage</button><button class="btn-icon"><i class="fas fa-ellipsis-v"></i></button></div>
-            </div>
-            <div class="channel-card">
-              <div class="ch-logo purple">🏛️</div>
-              <div class="ch-name">BG Sarkari Job</div>
-              <div class="ch-id">ID: UCxxxxxxx3</div>
-              <div class="ch-status active"><i class="fas fa-check-circle"></i> Active</div>
-              <div class="ch-stats"><span><i class="fas fa-eye"></i> 210K</span><span><i class="fas fa-users"></i> 3.4M</span></div>
-              <div class="ch-actions"><button class="btn-sm">Manage</button><button class="btn-icon"><i class="fas fa-ellipsis-v"></i></button></div>
-            </div>
-            <div class="channel-card">
-              <div class="ch-logo teal">SG</div>
-              <div class="ch-name">Study & Career</div>
-              <div class="ch-id">ID: UCxxxxxxx4</div>
-              <div class="ch-status active"><i class="fas fa-check-circle"></i> Active</div>
-              <div class="ch-stats"><span><i class="fas fa-eye"></i> 45K</span><span><i class="fas fa-users"></i> 900K</span></div>
-              <div class="ch-actions"><button class="btn-sm">Manage</button><button class="btn-icon"><i class="fas fa-ellipsis-v"></i></button></div>
-            </div>
-            <div class="channel-card">
-              <div class="ch-logo cyan">🌐</div>
-              <div class="ch-name">BG Automation</div>
-              <div class="ch-id">ID: UCxxxxxxx5</div>
-              <div class="ch-status active"><i class="fas fa-check-circle"></i> Active</div>
-              <div class="ch-stats"><span><i class="fas fa-eye"></i> 12K</span><span><i class="fas fa-users"></i> 320K</span></div>
-              <div class="ch-actions"><button class="btn-sm">Manage</button><button class="btn-icon"><i class="fas fa-ellipsis-v"></i></button></div>
-            </div>
-            <div class="channel-card add-card">
-              <div class="add-icon"><i class="fas fa-plus"></i></div>
-              <div class="ch-name">Add New Channel</div>
-              <p>You can add unlimited YouTube channels</p>
-              <button class="btn-primary">Add Channel</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="section-card">
-          <div class="section-header">
-            <div>
-              <h2><i class="fas fa-globe"></i> Websites / Projects</h2>
-              <p>Manage your websites and automation for each project.</p>
-            </div>
-            <a href="pages/websites.html" class="btn-primary"><i class="fas fa-plus"></i> Add Website</a>
-          </div>
-          <div class="websites-grid">
-            <div class="website-card">
-              <div class="web-header">
-                <div class="web-logo red">SG</div>
-                <div><div class="web-name">SG News18</div><div class="web-tag">News & Jobs</div></div>
-              </div>
-              <a href="https://sgnewsab.github.io/sgnewsab/" class="web-url" target="_blank"><i class="fas fa-link"></i> https://sgnewsab.github.io/sgnewsab/</a>
-              <div class="web-meta"><span>Articles: 124</span><span>Videos: 86</span><span>Last: 2h ago</span></div>
-              <div class="web-actions">
-                <button class="btn-sm">Manage</button>
-                <a href="https://sgnewsab.github.io/sgnewsab/" target="_blank" class="btn-primary">View Site <i class="fas fa-external-link-alt"></i></a>
-              </div>
-            </div>
-            <div class="website-card">
-              <div class="web-header">
-                <div class="web-logo blue">🌐</div>
-                <div><div class="web-name">BG Tech</div><div class="web-tag">Tech & Gadgets</div></div>
-              </div>
-              <a href="https://bgtechlab.github.io/bgtech/" class="web-url" target="_blank"><i class="fas fa-link"></i> https://bgtechlab.github.io/bgtech/</a>
-              <div class="web-meta"><span>Articles: 78</span><span>Videos: 64</span><span>Last: 4h ago</span></div>
-              <div class="web-actions">
-                <button class="btn-sm">Manage</button>
-                <a href="https://bgtechlab.github.io/bgtech/" target="_blank" class="btn-primary">View Site <i class="fas fa-external-link-alt"></i></a>
-              </div>
-            </div>
-            <div class="website-card">
-              <div class="web-header">
-                <div class="web-logo purple">🏛️</div>
-                <div><div class="web-name">BG Sarkari Job</div><div class="web-tag">Govt Jobs & Results</div></div>
-              </div>
-              <a href="https://bgsarkariresult.github.io/" class="web-url" target="_blank"><i class="fas fa-link"></i> https://bgsarkariresult.github.io/</a>
-              <div class="web-meta"><span>Articles: 136</span><span>Videos: 42</span><span>Last: 6h ago</span></div>
-              <div class="web-actions">
-                <button class="btn-sm">Manage</button>
-                <a href="https://bgsarkariresult.github.io/" target="_blank" class="btn-primary">View Site <i class="fas fa-external-link-alt"></i></a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="bottom-row">
-          <div class="section-card half">
-            <div class="section-header"><h2><i class="fas fa-chart-line"></i> Automation Overview</h2></div>
-            <div class="overview-stats">
-              <div class="ov-item"><span class="ov-num">12</span><span class="ov-label">Total Jobs</span></div>
-              <div class="ov-item success"><span class="ov-num">11</span><span class="ov-label">Success</span></div>
-              <div class="ov-item failed"><span class="ov-num">1</span><span class="ov-label">Failed</span></div>
-              <div class="ov-item pending"><span class="ov-num">0</span><span class="ov-label">Pending</span></div>
-            </div>
-            <a href="pages/jobs.html" class="btn-block">View All Jobs →</a>
-          </div>
-          <div class="section-card half">
-            <div class="section-header">
-              <h2><i class="fas fa-history"></i> Recent Activity</h2>
-              <a href="pages/logs.html" class="view-all">View All</a>
-            </div>
-            <div class="activity-list">
-              <div class="act-item"><span class="act-dot green"></span> SG News18 - New article uploaded <span class="act-time">2h ago</span></div>
-              <div class="act-item"><span class="act-dot blue"></span> BG Tech - Video completed <span class="act-time">3h ago</span></div>
-              <div class="act-item"><span class="act-dot purple"></span> BG Sarkari Job - Article published <span class="act-time">4h ago</span></div>
-              <div class="act-item"><span class="act-dot cyan"></span> Telegram - Message received <span class="act-time">5h ago</span></div>
-              <div class="act-item"><span class="act-dot green"></span> Automation job completed <span class="act-time">6h ago</span></div>
-            </div>
-          </div>
-          <div class="section-card half">
-            <div class="section-header"><h2><i class="fas fa-bolt"></i> Quick Actions</h2></div>
-            <div class="quick-actions">
-              <button class="qa-btn green"><i class="fas fa-play"></i> Run All Automation</button>
-              <button class="qa-btn"><i class="fas fa-file-alt"></i> Generate Article</button>
-              <button class="qa-btn"><i class="fas fa-upload"></i> Upload Video</button>
-              <button class="qa-btn"><i class="fab fa-telegram"></i> Check Telegram</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <aside class="right-panel">
-        <div class="panel-card">
-          <div class="panel-header">
-            <h3><i class="fas fa-terminal"></i> Live Logs <span class="live-badge">Live</span></h3>
-            <button class="btn-clear">Clear</button>
-          </div>
-          <div class="logs-list" id="liveLogs">
-            <div class="log-item ok"><span class="log-time">07:45:12</span> <span class="log-src github">GitHub</span> Secrets loaded successfully<br><small>(TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, YOUTUBE_API_KEY)</small></div>
-            <div class="log-item info"><span class="log-time">07:44:53</span> <span class="log-src yt">YouTube</span> Channel data fetched<br><small>(6 channels)</small></div>
-            <div class="log-item tg"><span class="log-time">07:43:21</span> <span class="log-src telegram">Telegram</span> New message received<br><small>[SG News18]: New article link</small></div>
-            <div class="log-item warn"><span class="log-time">07:42:10</span> <span class="log-src auto">Automation</span> Job started<br><small>SG News18 - Generate Video</small></div>
-            <div class="log-item ok"><span class="log-time">07:39:18</span> <span class="log-src yt">YouTube</span> Video uploaded successfully<br><small>Video ID: dF3k9H7xK2</small></div>
-            <div class="log-item ok"><span class="log-time">07:36:05</span> <span class="log-src github">GitHub</span> Workflow completed<br><small>Article automation</small></div>
-            <div class="log-item tg"><span class="log-time">07:32:17</span> <span class="log-src telegram">Telegram</span> Message sent<br><small>"Video for BG Tech is live"</small></div>
-            <div class="log-item warn"><span class="log-time">07:28:44</span> <span class="log-src auto">Automation</span> Job started<br><small>BG Tech - Generate Article</small></div>
-            <div class="log-item info"><span class="log-time">07:25:30</span> <span class="log-src yt">YouTube</span> Data fetched<br><small>Channel: BG Sarkari Job</small></div>
-            <div class="log-item ok"><span class="log-time">07:20:15</span> <span class="log-src sys">System</span> Daily sync completed<br><small>All services running</small></div>
-          </div>
-        </div>
-
-        <div class="panel-card">
-          <div class="panel-header">
-            <h3><i class="fab fa-telegram"></i> Recent Telegram Messages</h3>
-            <a href="pages/telegram.html" class="view-all">View All</a>
-          </div>
-          <div class="tg-list">
-            <div class="tg-item">
-              <div class="tg-logo red">SG</div>
-              <div><div class="tg-title">SG News18</div><div class="tg-msg">New article link: https://sgnewsab...</div></div>
-              <span class="tg-time">2h ago</span>
-            </div>
-            <div class="tg-item">
-              <div class="tg-logo blue">🌐</div>
-              <div><div class="tg-title">BG Tech</div><div class="tg-msg">Video uploaded successfully</div></div>
-              <span class="tg-time">4h ago</span>
-            </div>
-            <div class="tg-item">
-              <div class="tg-logo purple">🏛️</div>
-              <div><div class="tg-title">BG Sarkari Job</div><div class="tg-msg">New job notification</div></div>
-              <span class="tg-time">6h ago</span>
-            </div>
-            <div class="tg-item">
-              <div class="tg-logo teal">SG</div>
-              <div><div class="tg-title">Study & Career</div><div class="tg-msg">New article published</div></div>
-              <span class="tg-time">7h ago</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="systems-card">
-          <div class="sys-header"><i class="fas fa-check-circle"></i> All Systems Running</div>
-          <div class="sys-items">GitHub Actions • YouTube • Telegram • Websites</div>
-        </div>
-      </aside>
-    </div>
-
-    <footer class="footer">
-      <div class="footer-left">
-        <span>BG Automation v2.0</span>
-        <span class="sep">|</span>
-        <span class="secrets-req"><i class="fas fa-lock"></i> GitHub Secrets (Required)</span>
-        <span class="token-list">TELEGRAM_BOT_TOKEN • TELEGRAM_CHAT_ID • YOUTUBE_API_KEY</span>
-      </div>
-      <div class="footer-center">
-        <span class="no-token"><i class="fas fa-shield-alt"></i> No need to enter tokens again! All tokens loaded from GitHub Secrets.</span>
-      </div>
-      <div class="footer-right">
-        <span>Made with <i class="fas fa-heart"></i></span>
-        <a href="#">About</a>
-        <a href="#">Privacy</a>
-        <a href="#">Help</a>
-      </div>
-    </footer>
+<div class="top">
+  <button class="burger" onclick="document.querySelector('nav').classList.toggle('open')">☰</button>
+  <div class="logo">🚀 BG Automation<br><small>YouTube • GitHub • Telegram • All Projects</small></div>
+  <div class="pill" id="pill">…</div>
+  <div class="user">
+    <div class="av">B</div>
+    <span>Bhavesh</span>
   </div>
 </div>
-<script src="js/app.js"></script>
+
+<div class="app">
+<nav onclick="this.classList.remove('open')">
+  <a class="on" href="#top">🏠 Dashboard</a>
+  <a href="#channels">▶️ YouTube Channels <span class="cnt" id="nCh">0</span></a>
+  <a href="#sites">🌐 Websites / Projects</a>
+  <a href="#jobs">⚡ Automation Jobs</a>
+  <a href="#tg">✈️ Telegram Messages <span class="cnt" id="nTg">0</span></a>
+  <a href="#logs">💻 Live Logs</a>
+  <a href="https://github.com/bgsarkariresult/BG-Automation/settings/secrets/actions" target="_blank" rel="noopener">⚙️ Settings (Secrets)</a>
+  <h4>Your Websites</h4>
+  <div id="navSites"></div>
+  <div class="sys">
+    <b id="sysT">System</b><br>
+    <small id="sysS"></small>
+  </div>
+</nav>
+
+<main id="top">
+  <div class="card">
+    <h2>👋 Welcome, Bhavesh!</h2>
+    <small>Sara data GitHub Secrets se sync hota hai — kisi device pe token dalne ki zarurat nahi.</small>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="card" id="channels">
+    <div class="hd">
+      <div>
+        <h2>▶️ YouTube Channels</h2>
+        <small>Naya channel: config.json me ek line jodo — token dobara nahi dalna</small>
+      </div>
+      <a class="btn" href="https://github.com/bgsarkariresult/BG-Automation/edit/main/config.json" target="_blank" rel="noopener">＋ Add Channel</a>
+    </div>
+    <div class="row5" id="chGrid"></div>
+  </div>
+
+  <div class="card" id="sites">
+    <div class="hd">
+      <div>
+        <h2>🚀 Websites &amp; Projects Launcher</h2>
+        <small>Open • Run (link dalo) • Status — sab projects</small>
+      </div>
+      <a class="btn" href="https://github.com/bgsarkariresult/BG-Automation/edit/main/config.json" target="_blank" rel="noopener">＋ Add Project</a>
+    </div>
+    <div class="sites" id="siteGrid"></div>
+  </div>
+
+  <div class="three" id="jobs">
+    <div class="card">
+      <h2 class="hd">⚡ Automation Overview</h2>
+      <div class="k" id="ov"></div>
+    </div>
+    <div class="card">
+      <div class="hd"><h2>📨 Recent Activity</h2></div>
+      <div id="act"></div>
+    </div>
+    <div class="card qa">
+      <h2 class="hd">✅ Quick Actions</h2>
+      <a href="https://github.com/bgsarkariresult/BG-Automation/actions/workflows/sync.yml" target="_blank" rel="noopener">Sync Now <span>›</span></a>
+      <a href="https://github.com/bgsarkariresult/BG-Automation/actions" target="_blank" rel="noopener">All Actions <span>›</span></a>
+      <a href="https://t.me/bglarenup" target="_blank" rel="noopener">Check Telegram <span>›</span></a>
+      <a href="https://github.com/bgsarkariresult/BG-Automation/edit/main/config.json" target="_blank" rel="noopener">Edit config <span>›</span></a>
+    </div>
+  </div>
+</main>
+
+<div class="right">
+  <div class="card" id="logs">
+    <div class="hd">
+      <h2>💻 Live Logs</h2>
+      <span class="chip">● Live</span>
+    </div>
+    <div class="logs" id="logList"></div>
+  </div>
+  <div class="card" id="tg">
+    <div class="hd"><h2>✈️ Recent Telegram Messages</h2></div>
+    <div id="tgList"></div>
+  </div>
+  <div class="ok-box" id="okBox"></div>
+</div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>{n=+n||0;return n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(1)+'K':String(n)};
+const ago=t=>{if(!t)return'—';const m=Math.max(0,(Date.now()-new Date(t))/6e4);return m<1?'abhi':m<60?Math.round(m)+' min ago':m<1440?Math.round(m/60)+' hr ago':Math.round(m/1440)+' din ago'};
+const ini=s=>esc(String(s).split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase());
+const st=s=>({success:'✔',failure:'✖',cancelled:'✖',in_progress:'⏳',queued:'⏳'}[s]||'•');
+
+function render(d){
+  const chOk=d.channels.filter(c=>!c.error);
+  const good=chOk.length&&chOk.length===d.channels.length;
+  $('#pill').textContent=good?'✔ GitHub Secrets Connected':'⚠ Secrets/Channel ID check karo';
+  $('#pill').classList.toggle('bad',!good);
+  $('#nCh').textContent=d.channels.length;
+  $('#nTg').textContent=d.messages.length;
+
+  const day=d.bots.filter(b=>b.time&&Date.now()-new Date(b.time)<864e5);
+  const latest=[...d.bots].filter(b=>b.time).sort((a,b)=>new Date(b.time)-new Date(a.time))[0];
+
+  const S=(i,c,l,v,s)=>`<div class="stat"><div class="ico" style="background:${c}">${i}</div><div><small>${l}</small><b>${v}</b><small>${s}</small></div></div>`;
+  $('#stats').innerHTML=
+    S('▶️','#c4162a','Total Channels',d.channels.length,'＋ jitne chahe')+
+    S('▶','#0e8f5d','Total Runs',day.length,'Last 24 hours')+
+    S('✈️','#1d8fff','Telegram Messages',d.messages.length,'Saved messages')+
+    S('🕒','#6d3bd6','Last Job',latest?ago(latest.time):'—',latest?esc(latest.name)+': '+esc(latest.status):'');
+
+  $('#chGrid').innerHTML=d.channels.map(c=>`<div class="ch">
+    ${c.icon?`<img src="${esc(c.icon)}" alt="">`:`<div class="av">${ini(c.name)}</div>`}
+    <b>${esc(c.name)}</b>
+    <small>${esc(String(c.id).slice(0,14))}</small><br>
+    ${c.error
+      ?`<span class="chip e">${esc(c.error)}</span>`
+      :`<span class="chip">● Active</span>
+         <div class="nums"><span>👥 ${fmt(c.subs)}</span><span>👁 ${fmt(c.views)}</span></div>
+         <a class="btn g" href="https://www.youtube.com/channel/${esc(c.id)}" target="_blank" rel="noopener">Open</a>`}
+  </div>`).join('')+
+  `<div class="ch add">
+    <b>Add New Channel</b>
+    <small>Unlimited channels</small>
+    <a class="btn" href="https://github.com/bgsarkariresult/BG-Automation/edit/main/config.json" target="_blank" rel="noopener">Add Channel</a>
+  </div>`;
+
+  window.D=d;
+
+  $('#siteGrid').innerHTML=d.bots.map((b,i)=>`<div class="site">
+    <div class="row">
+      <div>
+        <b>${esc(b.name)}</b><br>
+        <small>${esc(b.tag||b.repo)}</small>
+      </div>
+      <span class="chip ${b.status==='success'?'':'e'}">${esc(b.status)}</span>
+    </div>
+    <input class="lk" id="lk${i}" placeholder="Link dalo (article / product URL)">
+    <div class="r">
+      <a class="btn g" href="${esc(b.site||'https://github.com/'+b.repo)}" target="_blank" rel="noopener">Open</a>
+      <button class="btn" onclick="runBot(${i})">Run</button>
+      <button class="btn g" onclick="tg(${i})">Status</button>
+    </div>
+    <small class="hn" id="hn${i}"></small>
+    <div class="rs" id="rs${i}" hidden>${runsHtml(b)}</div>
+  </div>`).join('');
+
+  $('#navSites').innerHTML=d.bots.filter(b=>b.site).map(b=>`
+    <a href="${esc(b.site)}" target="_blank" rel="noopener">
+      <span class="av" style="width:34px;height:34px;margin:0;font-size:.75rem">${ini(b.name)}</span>
+      <span>${esc(b.name)}<br><small>${esc(b.tag||'')}</small></span>
+    </a>`).join('');
+
+  const n=x=>d.bots.filter(b=>x.includes(b.status)).length;
+  $('#ov').innerHTML=`
+    <div><small>Total Jobs</small><b>${d.bots.length}</b></div>
+    <div><small>Success</small><b class="s-success">${n(['success'])}</b></div>
+    <div><small>Failed</small><b class="s-failure">${n(['failure','cancelled'])}</b></div>
+    <div><small>Pending</small><b class="s-in_progress">${n(['in_progress','queued'])}</b></div>`;
+
+  const runs=[...d.bots].filter(b=>b.time).sort((a,b)=>new Date(b.time)-new Date(a.time));
+  $('#act').innerHTML=runs.slice(0,5).map(b=>`
+    <div class="li">
+      <span class="dot s-${esc(b.status)}">${st(b.status)}</span>
+      <span>${esc(b.name)} <small>${esc(b.status)}</small></span>
+      <span class="t">${ago(b.time)}</span>
+    </div>`).join('')||'<small>Abhi koi run nahi.</small>';
+
+  const ev=[
+    ...d.bots.flatMap(b=>(b.runs||[]).map(r=>({t:r.time,ic:st(r.status),cl:'s-'+r.status,a:b.name,x:(r.title||'')+' — '+r.status}))),
+    ...d.messages.map(m=>({t:m.t,ic:'✈️',cl:'',a:'Telegram',x:m.text})),
+    {t:d.updated,ic:'✔',cl:'s-success',a:'GitHub',x:'Data sync ho gaya ('+d.channels.length+' channels)'}
+  ].sort((a,b)=>new Date(b.t)-new Date(a.t));
+
+  $('#logList').innerHTML=ev.slice(0,20).map(e=>`
+    <div class="li">
+      <span class="dot ${e.cl}">${e.ic}</span>
+      <span><b>${e.a}</b><br><small>${esc(e.x).slice(0,110)}</small></span>
+      <span class="t">${ago(e.t)}</span>
+    </div>`).join('');
+
+  $('#tgList').innerHTML=d.messages.slice(0,30).map(m=>`
+    <div class="li">
+      <span class="dot">✈️</span>
+      <span>${esc(m.text).slice(0,90)}</span>
+      <span class="t">${ago(m.t)}</span>
+    </div>`).join('')||'<small>Abhi koi message nahi.</small>';
+
+  $('#sysT').textContent='● System Online';
+  $('#sysS').textContent='Last sync: '+new Date(d.updated).toLocaleString('hi-IN');
+  $('#okBox').innerHTML='✔ All Systems Running<br><small>GitHub Actions • YouTube • Telegram • Websites</small>';
+}
+
+const runsHtml=b=>(b.runs||[]).map(r=>`
+  <div class="li">
+    <span class="dot s-${esc(r.status)}">${st(r.status)}</span>
+    <span>${esc(r.title)}<br><small>${esc(r.status)} • ${ago(r.time)}</small></span>
+    <a class="t" href="${esc(r.url)}" target="_blank" rel="noopener">लॉग</a>
+  </div>`).join('')||'<small>Koi run nahi mila.</small>';
+
+function tg(i){
+  const e=document.getElementById('rs'+i);
+  e.hidden=!e.hidden;
+}
+
+function runBot(i){
+  const b=window.D.bots[i];
+  const v=document.getElementById('lk'+i).value.trim();
+  window.open('https://github.com/'+b.repo+'/actions'+(b.workflow?'/workflows/'+b.workflow:''),'_blank');
+  const hn=document.getElementById('hn'+i);
+  if(v&&navigator.clipboard)
+    navigator.clipboard.writeText(v).then(()=>hn.textContent='Link copy ho gaya — "Run workflow" me paste karo',()=>hn.textContent='Link khud copy karke paste karo');
+  else
+    hn.textContent=v?'Link khud copy karke paste karo':'GitHub page khul gaya — Run workflow dabao';
+}
+
+const RAW='https://raw.githubusercontent.com/bgsarkariresult/BG-Automation/main/data/dashboard.json';
+async function load(){
+  try{
+    let r=await fetch(RAW+'?t='+Date.now()).catch(()=>null);
+    if(!r||!r.ok)r=await fetch('data/dashboard.json?t='+Date.now());
+    if(!r.ok)throw 0;
+    const d=await r.json();
+    if(d.updated===window.LU)return;
+    window.LU=d.updated;
+    render(d);
+  }catch(e){
+    $('#pill').textContent='⚠ Actions → Sync Dashboard chalao';
+    $('#pill').classList.add('bad');
+  }
+}
+
+function route(){
+  const p=(location.hash||'#top').slice(1)||'top';
+  document.body.dataset.p=p;
+  document.querySelectorAll('nav a[href^="#"]').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+p));
+  window.scrollTo(0,0);
+}
+
+addEventListener('hashchange',route);
+route();
+load();
+setInterval(load,60000);
+</script>
 </body>
 </html>
