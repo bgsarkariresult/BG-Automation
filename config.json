@@ -22,32 +22,15 @@
   }
  ],
  "bots": [
-  {
-   "name": "SG News18",
-   "repo": "bgsarkariresult/SG-News18",
-   "workflow": "news-bot.yml"
-  },
-  {
-   "name": "TechGlow India",
-   "repo": "bgsarkariresult/TechGlow-India",
-   "workflow": "tech-review-bot.yml"
-  },
-  {
-   "name": "BK GrowUp",
-   "repo": "bgsarkariresult/Bk-growup-",
-   "workflow": "run-job-bot.yml"
-  },
-  {
-   "name": "BG Reels Bot",
-   "repo": "bgtechlab/BG-Reels-Bot",
-   "workflow": "reels-bot.yml"
-  },
-  {
-   "name": "Trending Finder",
-   "repo": "bgtechlab/Trending-Topic-Finder",
-   "workflow": "daily-auto-run.yml"
-  }
- ],
+  {"name": "SG News18", "repo": "bgsarkariresult/SG-News18", "workflow": "news-bot.yml", "site": "https://bgsarkariresult.github.io/SG-News18/", "tag": "News & Jobs"},
+  {"name": "TechGlow India", "repo": "bgsarkariresult/TechGlow-India", "workflow": "tech-review-bot.yml", "site": "https://bgsarkariresult.github.io/TechGlow-India/", "tag": "Tech Review"},
+  {"name": "BK GrowUp", "repo": "bgsarkariresult/Bk-growup-", "workflow": "run-job-bot.yml", "tag": "Sarkari Job"},
+  {"name": "BG Sarkari Result", "repo": "bgsarkariresult/bgsarkariresult", "site": "https://bgsarkariresult.github.io/bgsarkariresult/", "tag": "Govt Jobs & Results"},
+  {"name": "YouTube Live Bot", "repo": "bgsarkariresult/youtube-live-bot", "tag": "Live Bot"},
+  {"name": "BG Tech", "repo": "bgtechlab/bgtech", "site": "https://bgtechlab.github.io/bgtech/", "tag": "Tech & Gadgets"},
+  {"name": "Trending Finder", "repo": "bgtechlab/Trending-Topic-Finder", "workflow": "daily-auto-run.yml", "tag": "Trending Topics"},
+  {"name": "BG Reels Bot", "repo": "bgtechlab/BG-Reels-Bot", "workflow": "reels-bot.yml", "tag": "Reels"}
+]
  "websites": [
   {
    "name": "BG Sarkari Result",
