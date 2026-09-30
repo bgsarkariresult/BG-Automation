@@ -1,6 +1,6 @@
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const fmt=n=>{n=+n||0;return n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(1)+'K':String(n)};
+const fmt=n=>{n=+n||0;return n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(1)+'K':String(Math.round(n))};
 const ago=t=>{if(!t)return'—';const m=Math.max(0,(Date.now()-new Date(t))/6e4);return m<1?'abhi':m<60?Math.round(m)+' min pehle':m<1440?Math.round(m/60)+' ghante pehle':Math.round(m/1440)+' din pehle'};
 const at=t=>t?new Date(t).toLocaleString('hi-IN',{dateStyle:'short',timeStyle:'short'}):'—';
 const st=s=>({success:'✔',failure:'✖',cancelled:'✖',in_progress:'⏳',queued:'⏳'}[s]||'•');
@@ -21,6 +21,6 @@ function boot(key,title,render){
   <div class="sys"><b>● System Online</b><br><small id="sysS"></small></div></nav><main id="main"></main></div>`;
   async function go(){try{let r=await fetch(RAW+'?t='+Date.now()).catch(()=>null);if(!r||!r.ok)r=await fetch('data/dashboard.json?t='+Date.now());if(!r.ok)throw 0;
     const d=await r.json();if(d.updated===window.LU)return;window.LU=d.updated;window.D=d;
-    const good=d.channels.every(c=>!c.error);$('#pill').textContent=good?'✔ GitHub Secrets Connected':'⚠ Channel ID check karo';$('#pill').classList.toggle('bad',!good);
+    const good=d.channels.every(c=>!c.error||/YAHAN/.test(c.id));$('#pill').textContent=good?'✔ GitHub Secrets Connected':'⚠ Channel ID check karo';$('#pill').classList.toggle('bad',!good);
     $('#sysS').textContent='Sync: '+at(d.updated);render(d)}catch(e){$('#pill').textContent='⚠ Sync Dashboard chalao';$('#pill').classList.add('bad')}}
   go();setInterval(go,60000)}
