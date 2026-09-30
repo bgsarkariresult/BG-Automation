@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Trending Topics</title>
+  <link rel="stylesheet" href="app.css">
+  <style>
+    .filters{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+    .filters button{padding:7px 14px;border-radius:20px;border:1px solid var(--bd);background:var(--cd);color:var(--mu);font:inherit;font-weight:600;cursor:pointer}
+    .filters button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+    .search{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--bd);background:#0b1430;color:var(--tx);font:inherit;margin-bottom:14px}
+    .tlist{display:grid;gap:8px}
+    .titem{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--bd);border-radius:12px;background:var(--cd);cursor:pointer}
+    .titem:hover{border-color:var(--ac);background:#12204a}
+    .titem .rank{width:28px;font-weight:800;color:var(--mu)}
+    .titem .score{margin-left:auto;background:#2a1510;color:#ff8a5c;padding:4px 10px;border-radius:20px;font-weight:700;font-size:.85rem}
+    .detail{display:none;margin-top:16px}
+    .detail.show{display:block}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+    .actions .btn{font-size:.85rem}
+    .meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:12px 0}
+    .meta div{background:#0b1430;border:1px solid var(--bd);border-radius:10px;padding:10px}
+    .meta b{display:block;font-size:1.05rem}
+  </style>
+</head>
+<body>
+<script src="app.js"></script>
+<script>
+const TREND_URL = 'https://raw.githubusercontent.com/bgtechlab/Trending-Topic-Finder/main/data/history.json';
+const DEMO = {
+  updated: new Date().toISOString(),
+  topics: [
+    {title:'SSC GD Result 2026', score:98, cat:'Jobs', trend:'rising', first:'2026-09-30T08:00:00Z', keywords:['ssc','gd','result']},
+    {title:'iPhone 17 India Price', score:91, cat:'Tech', trend:'rising', first:'2026-09-30T09:30:00Z', keywords:['iphone','apple','price']},
+    {title:'India vs Australia Live', score:87, cat:'Sports', trend:'falling', first:'2026-09-30T06:00:00Z', keywords:['cricket','live']},
+    {title:'UP Police Bharti', score:82, cat:'Jobs', trend:'rising', first:'2026-09-29T18:00:00Z', keywords:['up police','bharti']},
+    {title:'Bollywood New Release', score:76, cat:'Entertainment', trend:'rising', first:'2026-09-30T10:00:00Z', keywords:['movie','bollywood']},
+    {title:'Railway NTPC Update', score:74, cat:'Jobs', trend:'rising', first:'2026-09-30T07:00:00Z', keywords:['railway','ntpc']},
+    {title:'AI Tools Free 2026', score:71, cat:'Tech', trend:'rising', first:'2026-09-30T11:00:00Z', keywords:['ai','tools']},
+    {title:'Breaking News India', score:68, cat:'News', trend:'falling', first:'2026-09-30T05:00:00Z', keywords:['news','india']}
+  ]
+};
+
+let ALL = [];
+let CAT = 'All';
+let Q = '';
+let SEL = null;
+
+function norm(data){
+  // history.json formats support
+  if (Array.isArray(data)) return data.map(mapTopic);
+  if (data.topics) return data.topics.map(mapTopic);
+  if (data.items) return data.items.map(mapTopic);
+  if (data.trending) return data.trending.map(mapTopic);
+  // { date: [topics] }
+  const keys = Object.keys(data).filter(k => Array.isArray(data[k]));
+  if (keys.length){
+    keys.sort().reverse();
+    return data[keys[0]].map(mapTopic);
+  }
+  return DEMO.topics;
+}
+function mapTopic(t){
+  if (typeof t === 'string') return {title:t, score:50, cat:'All', trend:'rising', first:'', keywords:[]};
+  return {
+    title: t.title || t.topic || t.name || t.query || 'Topic',
+    score: +(t.score || t.heat || t.volume || t.rank_score || 50),
+    cat: t.cat || t.category || t.type || 'All',
+    trend: t.trend || t.direction || 'rising',
+    first: t.first || t.first_seen || t.detected || t.time || '',
+    keywords: t.keywords || t.tags || []
+  };
+}
+
+boot('trending.html', 'Trending Topics', async () => {
+  let data = DEMO;
+  try {
+    const r = await fetch(TREND_URL + '?t=' + Date.now());
+    if (r.ok) data = await r.json();
+  } catch(e) {}
+  ALL = norm(data).sort((a,b)=>b.score-a.score);
+  renderList();
+});
+
+function renderList(){
+  const cats = ['All','News','Jobs','Tech','Sports','Entertainment'];
+  const list = ALL.filter(t => {
+    const okCat = CAT==='All' || (t.cat||'').toLowerCase()===CAT.toLowerCase() || CAT==='All';
+    const okQ = !Q || (t.title+t.keywords.join(' ')).toLowerCase().includes(Q.toLowerCase());
+    return okCat && okQ;
+  });
+
+  $('#main').innerHTML = `
+    <div class="card">
+      <div class="hd"><h2>🔥 Trending Now</h2>
+        <button class="btn g" onclick="location.reload()">↻ Refresh</button>
+      </div>
+      <input class="search" id="sq" placeholder="🔎 Search trending topic..." value="${esc(Q)}" oninput="Q=this.value;renderList()">
+      <div class="filters" id="fc">
+        ${cats.map(c=>`<button class="${c===CAT?'on':''}" onclick="CAT='${c}';renderList()">${c}</button>`).join('')}
+      </div>
+      <div class="tlist">
+        ${list.slice(0,30).map((t,i)=>`
+          <div class="titem" onclick="showDetail(${ALL.indexOf(t)})">
+            <span class="rank">${i+1}</span>
+            <div><b>${esc(t.title)}</b><br><small>${esc(t.cat)} • ${t.trend==='falling'?'📉 Falling':'📈 Rising'}</small></div>
+            <span class="score">🔥 ${Math.round(t.score)}</span>
+          </div>`).join('') || '<small>Koi topic nahi mila.</small>'}
+      </div>
+    </div>
+    <div class="card detail ${SEL!==null?'show':''}" id="det"></div>
+  `;
+  if (SEL!==null) paintDetail();
+}
+
+function showDetail(idx){
+  SEL = idx;
+  renderList();
+  paintDetail();
+  $('#det')?.scrollIntoView({behavior:'smooth'});
+}
+
+function paintDetail(){
+  const t = ALL[SEL];
+  if (!t) return;
+  const q = encodeURIComponent(t.title);
+  $('#det').innerHTML = `
+    <div class="hd"><h2>${esc(t.title)}</h2>
+      <button class="btn g" onclick="SEL=null;renderList()">✕ Close</button>
+    </div>
+    <div class="meta">
+      <div><small>🔥 Trend Score</small><b>${Math.round(t.score)}</b></div>
+      <div><small>📈 Status</small><b>${t.trend==='falling'?'Falling':'Rising'}</b></div>
+      <div><small>🕐 First detected</small><b>${t.first ? at(t.first) : '—'}</b></div>
+      <div><small>🏷 Category</small><b>${esc(t.cat||'—')}</b></div>
+    </div>
+    <small>Related keywords: ${(t.keywords||[]).map(k=>esc(k)).join(', ') || '—'}</small>
+    <div class="actions">
+      <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/search?q=${q}">Search Web</a>
+      <a class="btn g" target="_blank" rel="noopener" href="https://www.google.com/search?q=${q}+article">Create Article idea</a>
+      <a class="btn g" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=${q}">YouTube Script idea</a>
+      <button class="btn g" onclick="navigator.clipboard.writeText('${esc(t.title).replace(/'/g,"\\'")}');this.textContent='✅ Copied'">Copy topic</button>
+    </div>
+  `;
+  $('#det').classList.add('show');
+}
+</script>
+</body>
+</html>
