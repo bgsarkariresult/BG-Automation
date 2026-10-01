@@ -1,98 +1,112 @@
 <!DOCTYPE html>
 <html lang="hi">
-<link rel="stylesheet" href="theme.css">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BG Automation</title>
 <link rel="stylesheet" href="app.css">
 <style>
-/* ===== Dashboard v2 – Image-matched layout (live data preserved) ===== */
-.dg{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px;align-items:start}
-.dg>div{display:grid;gap:18px;min-width:0;align-content:start}
-@media(min-width:1151px){.dg>div:last-child{position:sticky;top:76px}}
-@media(max-width:1150px){.dg{grid-template-columns:1fr}}
-
-/* Welcome */
-.wel{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:center;padding:18px 20px}
-.wel h2{font-size:1.35rem;margin-bottom:4px}
-.wel small{color:var(--mu);line-height:1.4}
-.dt{border:1px solid var(--bd);border-radius:12px;padding:8px 16px;display:flex;gap:12px;align-items:center;background:#0b1430}
-.lv{background:#0e8f5d;color:#fff;border-radius:8px;padding:3px 12px;font-weight:700;font-size:.78rem}
-
-/* Big stats row – 4 cards like image */
-.stats4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-@media(max-width:900px){.stats4{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:520px){.stats4{grid-template-columns:1fr}}
-.stat4{background:var(--cd);border:1px solid var(--bd);border-radius:16px;padding:18px 16px;display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden}
-.stat4 .ico{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:1.3rem;margin-bottom:4px}
-.stat4 b{font-size:1.85rem;line-height:1.1;font-weight:800}
-.stat4 small{color:var(--mu);font-size:.8rem}
-.stat4 .sub{font-size:.75rem;color:var(--mu);margin-top:2px}
-
-/* YouTube Channels grid */
-.yt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
-.yt-card{background:#0b1430;border:1px solid var(--bd);border-radius:14px;padding:16px 12px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;transition:.15s}
-.yt-card:hover{border-color:var(--ac);transform:translateY(-2px)}
-.yt-card .av,.yt-card img{width:58px;height:58px;border-radius:50%;object-fit:cover;background:var(--ac);display:grid;place-items:center;font-weight:800;font-size:1.1rem;margin-bottom:4px}
-.yt-card b{font-size:.95rem;line-height:1.2}
-.yt-card .id{font-size:.72rem;color:var(--mu);word-break:break-all}
-.yt-card .nums{display:flex;gap:10px;font-size:.78rem;color:var(--mu);margin:4px 0}
-.yt-card .manage{margin-top:6px;width:100%;padding:7px 0;border-radius:8px;background:#13204a;border:1px solid var(--bd);color:var(--tx);font-size:.8rem;font-weight:600;cursor:pointer;text-align:center}
-.yt-card .manage:hover{background:var(--ac);border-color:var(--ac)}
-.yt-add{border:2px dashed var(--bd);background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--mu);min-height:180px}
-.yt-add:hover{border-color:var(--ac);color:var(--ac)}
-.yt-add .plus{font-size:2rem;line-height:1}
-
-/* Websites grid */
-.ws-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
-.ws-card{background:#0b1430;border:1px solid var(--bd);border-radius:14px;padding:16px;display:grid;gap:10px}
-.ws-card .top{display:flex;align-items:center;gap:10px}
-.ws-card .icon{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-size:1.2rem;flex-shrink:0}
-.ws-card .tag{font-size:.72rem;padding:2px 8px;border-radius:6px;background:#13204a;color:var(--mu)}
-.ws-card .url{font-size:.78rem;color:var(--ac);word-break:break-all}
-.ws-card .meta{display:flex;gap:12px;font-size:.78rem;color:var(--mu)}
-.ws-card .actions{display:flex;gap:8px;margin-top:4px}
-.ws-card .actions a,.ws-card .actions button{flex:1;text-align:center;padding:8px 0;border-radius:8px;font-size:.82rem;font-weight:600;border:1px solid var(--bd);background:#13204a;color:var(--tx);cursor:pointer}
-.ws-card .actions a.primary{background:var(--ac);border-color:var(--ac);color:#fff}
-
-/* Bottom three cards */
-.three{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-@media(max-width:900px){.three{grid-template-columns:1fr}}
-.k{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.k div{background:#0b1430;border:1px solid var(--bd);border-radius:10px;padding:12px;text-align:center}
-.k b{display:block;font-size:1.4rem;margin-top:2px}
-.k .ok b{color:var(--ok)}.k .er b{color:var(--er)}.k .wa b{color:var(--wa)}
-
-/* Recent activity & logs */
-.li{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd);align-items:flex-start}
-.li:last-child{border:0}
-.li .dot{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:.75rem;flex-shrink:0}
-.dot.s-success{background:#0c2a2a;color:var(--ok)}
-.dot.s-failure{background:#2a1015;color:var(--er)}
-.dot.s-in_progress,.dot.s-queued{background:#2a2110;color:var(--wa)}
-.li .t{margin-left:auto;white-space:nowrap;color:var(--mu);font-size:.75rem}
-
-/* Quick actions */
-.qa a{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border:1px solid #14534a;background:#0c2a24;color:var(--ok);border-radius:10px;margin-bottom:8px;font-weight:600;font-size:.9rem}
-.qa a:hover{background:#0e3a30}
-
-/* Right panel */
-.logs{max-height:420px;overflow:auto;padding-right:4px}
-.ok-box{border:1px solid var(--ok);background:#0c2a24;border-radius:12px;padding:14px 16px;font-weight:700;display:flex;align-items:center;gap:10px}
-.ok-box.bad{border-color:var(--er);background:#2a1015;color:var(--er)}
-
-/* Section headers */
-.hd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap}
-.hd h2{font-size:1.05rem;display:flex;align-items:center;gap:8px}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:9px;background:var(--ac);color:#fff;font-weight:600;font-size:.85rem;border:0;cursor:pointer}
-.btn.g{background:#13204a;border:1px solid var(--bd);color:var(--tx)}
-.btn.g:hover{background:var(--ac);border-color:var(--ac);color:#fff}
-
-/* Chip */
-.chip{display:inline-block;font-size:.72rem;padding:2px 10px;border-radius:12px;background:#0c2a2a;color:var(--ok);border:1px solid #14534a;margin:4px 0}
-.chip.e{background:#2a1015;color:var(--er);border-color:#5a1d27}
-.chip.w{background:#2a2110;color:var(--wa);border-color:#5a4210}
+:root{
+ --bg:#050b18;--sb:#071329;--cd:#0a1730;--bd:#17315c;
+ --tx:#eef5ff;--mu:#91a6ca;--ac:#1683ff;--ok:#20d69b;--er:#ff5d72;--wa:#ffbd45;
+}
+*{box-sizing:border-box;margin:0}
+html,body{min-height:100%}
+body{
+ font:14px/1.45 system-ui,-apple-system,"Segoe UI","Noto Sans Devanagari",sans-serif;
+ background:
+ radial-gradient(circle at 75% 0%,rgba(32,91,255,.13),transparent 28%),
+ radial-gradient(circle at 15% 40%,rgba(0,174,255,.06),transparent 25%),var(--bg);
+ color:var(--tx);padding-bottom:20px;
+}
+a{color:inherit;text-decoration:none}
+small,.mu{color:var(--mu);font-size:.78rem}
+.top{
+ position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:24px;
+ padding:10px 22px;background:rgba(5,14,32,.94);backdrop-filter:blur(16px);
+ border-bottom:1px solid rgba(55,107,180,.35);box-shadow:0 8px 30px #0004;
+}
+.burger{display:none;background:none;border:0;color:var(--tx);font-size:1.5rem}
+.logo{font-size:1.28rem;font-weight:800;white-space:nowrap;letter-spacing:-.3px}
+.logo small{font-weight:500}
+.topnav{display:flex;align-items:center;gap:5px;flex:1}
+.topnav a{padding:10px 14px;border-radius:10px;color:#c6d6f5;font-weight:600}
+.topnav a:hover,.topnav a.on{background:#103b86;color:#fff;box-shadow:0 8px 22px #1257c833}
+.pill{margin-left:auto;padding:6px 13px;border-radius:20px;border:1px solid var(--ok);color:var(--ok);background:#0c2a2a;font-weight:600;font-size:.78rem;white-space:nowrap}
+.pill.bad{border-color:var(--wa);color:var(--wa);background:#2a2110}
+.userbox{display:flex;align-items:center;gap:9px;white-space:nowrap}
+.userav{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#287eff,#1648c9);display:grid;place-items:center;font-weight:800}
+.app{display:grid;grid-template-columns:225px minmax(0,1fr);gap:18px;padding:18px;max-width:1800px;margin:auto}
+nav{position:sticky;top:86px;align-self:start;padding:9px 7px 14px;border:1px solid #17345d;border-radius:17px;background:linear-gradient(180deg,#091a36,#061328);box-shadow:0 18px 45px #0004}
+nav a{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:10px;color:var(--mu);font-weight:600;margin-bottom:4px}
+nav a.on,nav a:hover{background:linear-gradient(90deg,#1257c8,#176ef0);color:#fff;box-shadow:0 8px 20px #1257c833}
+nav .cnt{margin-left:auto;background:var(--er);color:#fff;border-radius:10px;padding:0 7px;font-size:.72rem}
+nav h4{margin:18px 12px 8px;font-size:.75rem;color:var(--mu);text-transform:uppercase;letter-spacing:.7px}
+.sys{margin-top:15px;padding:12px;border:1px solid #244775;border-radius:12px;background:#0a1b37}
+.sys b{color:#bfe4ff}.sys b:first-letter{color:var(--ok)}
+main{min-width:0}
+.dashboard{display:grid;grid-template-columns:minmax(0,1fr) 315px;gap:16px;align-items:start}
+.leftcol,.rightcol{display:grid;gap:16px;align-content:start}
+.rightcol{position:sticky;top:86px}
+.card,.stat4{
+ background:linear-gradient(145deg,rgba(11,27,55,.98),rgba(7,20,42,.98));
+ border:1px solid rgba(42,82,139,.48);border-radius:17px;
+ box-shadow:0 12px 35px #0003;
+}
+.card{padding:17px;transition:.2s}
+.card:hover{border-color:#247eff66}
+.wel{
+ min-height:134px;padding:22px;display:flex;justify-content:space-between;gap:14px;
+ flex-wrap:wrap;align-items:center;overflow:hidden;position:relative;
+ background:radial-gradient(circle at 82% 25%,#2d59ff45,transparent 28%),linear-gradient(135deg,#0b2148,#091733);
+}
+.wel:after{content:"";position:absolute;width:360px;height:180px;right:-100px;top:-60px;background:#2478ff12;transform:rotate(-13deg);pointer-events:none}
+.wel h2{font-size:1.45rem;margin-bottom:5px;position:relative;z-index:1}
+.wel small{position:relative;z-index:1;max-width:650px;display:block}
+.dt{border:1px solid #3265ac66;border-radius:12px;padding:9px 14px;display:flex;gap:12px;align-items:center;background:#040d1d99;position:relative;z-index:2}
+.lv{background:#0e9f6a;color:#fff;border-radius:9px;padding:4px 11px;font-weight:700;font-size:.76rem}
+.stats4{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+.stat4{padding:17px;display:flex;flex-direction:column;gap:7px;position:relative;overflow:hidden;min-height:153px}
+.stat4:after{content:"";position:absolute;width:100px;height:100px;right:-35px;bottom:-35px;border-radius:50%;background:#1683ff22;filter:blur(8px)}
+.stat4 .ico{width:43px;height:43px;border-radius:12px;display:grid;place-items:center;font-size:1.3rem}
+.stat4 b{font-size:1.9rem;line-height:1.1;font-weight:800}
+.stat4 small,.stat4 .sub{color:var(--mu)}
+.hd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px;flex-wrap:wrap}
+.hd h2{font-size:1.08rem;display:flex;align-items:center;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border-radius:9px;background:linear-gradient(135deg,#1476f5,#1454d8);color:#fff;font-weight:700;font-size:.84rem;border:0;cursor:pointer;box-shadow:0 7px 18px #1460dc33}
+.btn.g{background:#10264b;border:1px solid #244575;color:var(--tx);box-shadow:none}
+.btn.g:hover{background:#176df0;border-color:#176df0}
+.yt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px}
+.yt-card{background:linear-gradient(145deg,#0b1d3b,#08162e);border:1px solid #1a3763;border-radius:14px;padding:15px 11px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:5px;transition:.18s}
+.yt-card:hover{border-color:#2586ff;transform:translateY(-3px);box-shadow:0 14px 30px #0046b433}
+.yt-card .av,.yt-card img{width:55px;height:55px;border-radius:50%;object-fit:cover;background:#126ee5;display:grid;place-items:center;font-weight:800;margin-bottom:4px}
+.yt-card b{font-size:.92rem;line-height:1.2}
+.yt-card .id{font-size:.7rem;color:var(--mu);word-break:break-all}
+.nums{display:flex;gap:10px;font-size:.76rem;color:var(--mu);margin:3px 0}
+.manage{margin-top:4px;width:100%;padding:7px 0;border-radius:8px;background:#10264b;border:1px solid #214575;color:var(--tx);font-size:.79rem;font-weight:600;text-align:center}
+.manage:hover{background:#176df0;border-color:#176df0}
+.yt-add{border:2px dashed #24416c;background:#08152d;justify-content:center;min-height:175px;color:var(--mu)}
+.yt-add:hover{color:#4ba1ff}
+.plus{font-size:2rem}
+.ws-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.ws-card{background:linear-gradient(145deg,#0b1d3b,#08162e);border:1px solid #1a3763;border-radius:14px;padding:15px;display:grid;gap:9px}
+.ws-card:hover{border-color:#287ef0}
+.ws-top{display:flex;align-items:center;gap:10px}
+.ws-card .icon{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-size:1.15rem;flex-shrink:0}
+.ws-card .tag{font-size:.7rem;padding:2px 7px;border-radius:6px;background:#132b52;color:#a9c7ef}
+.ws-card .url{font-size:.74rem;color:#58a9ff;word-break:break-all}
+.ws-card .meta{display:flex;gap:10px;font-size:.75rem;color:var(--mu);flex-wrap:wrap}
+.actions{display:flex;gap:7px}.actions a{flex:1;text-align:center;padding:7px 0;border-radius:8px;font-size:.79rem;font-weight:600;border:1px solid #214575;background:#10264b}.actions a.primary{background:#1476f5;border-color:#1476f5;color:#fff}
+.bottomgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.k{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.k div{background:#0b1d3b;border:1px solid #1a3763;border-radius:10px;padding:10px;text-align:center}.k b{display:block;font-size:1.25rem;margin-top:2px}.k .ok b{color:var(--ok)}.k .er b{color:var(--er)}.k .wa b{color:var(--wa)}
+.qa a{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid #1d4d7e;background:linear-gradient(90deg,#0e3054,#0a2342);color:#cce4ff;border-radius:9px;margin-bottom:8px;font-weight:600;font-size:.85rem}.qa a:hover{background:#1254b8;color:#fff}
+.li{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #1b3760;align-items:flex-start}.li:last-child{border:0}.li .dot{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:.72rem;flex-shrink:0}.dot.s-success{background:#0c2a2a;color:var(--ok)}.dot.s-failure{background:#2a1015;color:var(--er)}.dot.s-in_progress,.dot.s-queued{background:#2a2110;color:var(--wa)}.li .t{margin-left:auto;white-space:nowrap;color:var(--mu);font-size:.72rem}
+.logs{max-height:410px;overflow:auto;padding-right:3px}.ok-box{border:1px solid var(--ok);background:#0c2a24;border-radius:12px;padding:14px;font-weight:700}.ok-box.bad{border-color:var(--er);background:#2a1015;color:var(--er)}
+.chip{display:inline-block;font-size:.7rem;padding:2px 9px;border-radius:12px;background:#0c2a2a;color:var(--ok);border:1px solid #14534a}.chip.e{background:#2a1015;color:var(--er);border-color:#5a1d27}
+@media(max-width:1200px){.dashboard{grid-template-columns:1fr}.rightcol{position:static}.stats4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:850px){.topnav{display:none}.top{gap:10px}.burger{display:block}.app{grid-template-columns:1fr;padding:12px}nav{position:fixed;inset:0 25% 0 0;z-index:30;padding:75px 10px 15px;transform:translateX(-105%);transition:.2s;overflow:auto}nav.open{transform:none}.bottomgrid{grid-template-columns:1fr}}
+@media(max-width:520px){.stats4{grid-template-columns:1fr}.k{grid-template-columns:repeat(2,1fr)}.userbox span:last-child{display:none}.pill{font-size:.68rem}.wel{padding:17px}.yt-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -176,136 +190,86 @@ boot('index.html', 'YouTube • GitHub • Telegram • All Projects', d => {
       
       <h4 style="margin:20px 12px 8px;font-size:.78rem;color:var(--mu);text-transform:uppercase;letter-spacing:.5px">Your Websites</h4>
       ${sites.slice(0,5).map(x => {
-        const u = x.url || x.link || '#';
-        return `<a href="${esc(u)}" target="_blank" rel="noopener" style="font-size:.85rem;padding:8px 12px">
-          <span style="width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block;margin-right:6px"></span>
-          ${esc(x.name || x.title || 'Site')}
-        </a>`;
-      }).join('') || ''}
-      
-      <div class="sys">
-        <b>● System Online</b><br>
-        <small id="sysS">Sync: ${at(d.updated)}</small>
-      </div>
-    `;
-  }
-
-  // Channel card
-  const chC = c => {
-    const nm = c.name || c.title || c.id || 'Channel';
-    const ic = c.icon || c.thumb || c.thumbnail || c.img || '';
-    const av = /^https?:/.test(ic)
-      ? `<img src="${esc(ic)}" alt="">`
-      : `<div class="av">${esc(String(nm).slice(0, 2).toUpperCase())}</div>`;
-    const active = !c.error;
-    return `<div class="yt-card">
-      ${av}
-      <b>${esc(nm)}</b>
-      <div class="id">ID: ${esc((c.id || '—').slice(0, 12))}…</div>
-      <span class="chip ${active ? '' : 'e'}">${active ? '● Active' : 'Error'}</span>
-      <div class="nums"><span>👁 ${num(c.views ?? c.viewCount)}</span><span>👥 ${num(c.subs ?? c.subscribers)}</span></div>
-      <a class="manage" href="youtube.html">Manage</a>
-    </div>`;
-  };
-
-  // Website card
-  const stC = x => {
-    const u = x.url || x.link || '';
-    const tag = x.tag || '';
-    const articles = (x.days || {})[T] || 0;
-    const colors = ['#e11d48', '#2563eb', '#7c3aed', '#0891b2', '#d97706'];
-    const col = colors[(x.name || '').length % colors.length];
-    return `<div class="ws-card">
-      <div class="top">
-        <div class="icon" style="background:${col}22;color:${col}">🌐</div>
-        <div>
-          <b>${esc(x.name || x.title || 'Site')}</b>
-          ${tag ? `<div class="tag">${esc(tag)}</div>` : ''}
-        </div>
-      </div>
-      ${u ? `<div class="url">${esc(u)}</div>` : ''}
-      <div class="meta">
-        <span>📰 Articles: ${articles}</span>
-        <span>Last: ${ago(x.updated || d.updated)}</span>
-      </div>
-      <div class="actions">
-        <a href="sites.html">Manage</a>
-        ${u ? `<a class="primary" href="${esc(u)}" target="_blank" rel="noopener">View Site ↗</a>` : ''}
-      </div>
-    </div>`;
-  };
-
-  // Events for logs & recent
-  const ev = d.bots.flatMap(b => (b.runs || [])
-    .filter(r => r.d >= 60 || r.s === 'failure')
-    .map(r => ({ n: b.name, r, tag: b.tag || '' })))
-    .sort((a, b) => new Date(b.r.t) - new Date(a.r.t));
-
-  const li = (e, showTime) => {
-    const icon = e.r.s === 'success' ? '✔' : (e.r.s === 'failure' ? '✖' : '⏳');
-    return `<div class="li">
-      <span class="dot s-${e.r.s}">${icon}</span>
-      <div><b>${esc(e.n)}</b><small style="display:block;color:var(--mu)">${esc(e.r.s)} • ${Math.ceil(e.r.d / 60)} min</small></div>
-      <span class="t">${showTime ? tm(e.r.t) : ago(e.r.t)}</span>
-    </div>`;
-  };
-
-  const lg = ev.slice(0, 12).map(e => li(e, 1)).join('') || '<small style="color:var(--mu)">Abhi koi activity nahi.</small>';
-  const ra = ev.slice(0, 6).map(e => li(e, 0)).join('') || '<small style="color:var(--mu)">Abhi koi activity nahi.</small>';
-
   $('#main').innerHTML = `
-  <div class="dg">
-    <!-- LEFT / MAIN COLUMN -->
-    <div>
-      <!-- Welcome -->
+  <div class="dashboard">
+    <div class="leftcol">
       <div class="card wel">
         <div>
-          <h2>👋 Welcome, Bhavesh!</h2>
-          <small>Your YouTube automation dashboard. All data is loaded securely from GitHub Secrets.</small>
+          <h2>👋 Welcome Back, Bhavesh!</h2>
+          <small>Your YouTube, Websites and Automation are running smoothly.<br>Keep creating, keep growing 🚀</small>
         </div>
-        <div class="dt">
-          <span id="clk">${nowS()}</span>
-          <span class="lv">Live</span>
-        </div>
+        <div class="dt"><span id="clk">${nowS()}</span><span class="lv">Live</span></div>
       </div>
 
-      <!-- 4 Big Stats -->
       <div class="stats4">
-        <div class="stat4">
-          <div class="ico" style="background:#dc262622;color:#f87171">▶</div>
-          <small>Total Channels</small>
-          <b>${chs.length}</b>
-          <div class="sub">+ Add more anytime</div>
-        </div>
-        <div class="stat4">
-          <div class="ico" style="background:#16a34a22;color:#4ade80">⟳</div>
-          <small>Total Runs</small>
-          <b>${runs24}</b>
-          <div class="sub">Last 24 hours</div>
-        </div>
-        <div class="stat4">
-          <div class="ico" style="background:#2563eb22;color:#60a5fa">✈</div>
-          <small>Telegram Messages</small>
-          <b>${tgCount || '—'}</b>
-          <div class="sub">Unread messages</div>
-        </div>
-        <div class="stat4">
-          <div class="ico" style="background:#7c3aed22;color:#a78bfa">⏱</div>
-          <small>Last Job</small>
-          <b style="font-size:1.25rem">${ago(last && last.time)}</b>
-          <div class="sub">${last ? 'Completed successfully' : 'No recent job'}</div>
-        </div>
+        <div class="stat4"><div class="ico" style="background:#dc262622;color:#f87171">▶</div><small>Total Channels</small><b>${chs.length}</b><div class="sub">YouTube Automation</div></div>
+        <div class="stat4"><div class="ico" style="background:#16a34a22;color:#4ade80">⚙</div><small>Total Runs</small><b>${runs24}</b><div class="sub">Last 24 hours</div></div>
+        <div class="stat4"><div class="ico" style="background:#2563eb22;color:#60a5fa">✈</div><small>Telegram Messages</small><b>${tgCount || '—'}</b><div class="sub">Recent messages</div></div>
+        <div class="stat4"><div class="ico" style="background:#7c3aed22;color:#a78bfa">⏱</div><small>Last Job</small><b style="font-size:1.22rem">${ago(last && last.time)}</b><div class="sub">${last ? 'Completed successfully' : 'No recent job'}</div></div>
       </div>
 
-      <!-- YouTube Channels -->
       <div class="card">
-        <div class="hd">
-          <h2>▶ YouTube Channels</h2>
-          <a class="btn" href="youtube.html">+ Add Channel</a>
-        </div>
-        <small style="display:block;margin:-8px 0 14px;color:var(--mu)">Manage your YouTube channels. Add more anytime (no need to re-enter tokens).</small>
+        <div class="hd"><h2>▶️ YouTube Channels</h2><a class="btn" href="youtube.html">View All →</a></div>
         <div class="yt-grid">
           ${chs.map(chC).join('') || '<small>Koi channel nahi mila.</small>'}
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="hd"><h2>🌐 Websites / Projects</h2><a class="btn g" href="sites.html">View All →</a></div>
+        <div class="ws-grid">${sites.map(stC).join('') || '<small>Koi website nahi mili.</small>'}</div>
+      </div>
+
+      <div class="bottomgrid">
+        <div class="card">
+          <div class="hd"><h2>⚙ Automation Overview</h2><a class="btn g" href="control.html">View Details →</a></div>
+          <div class="k">
+            <div><small>YouTube</small><b>${chs.length}</b></div>
+            <div class="ok"><small>Success</small><b>${s.ok}</b></div>
+            <div class="er"><small>Failed</small><b>${s.bad}</b></div>
+            <div class="wa"><small>Pending</small><b>${run}</b></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="hd"><h2>🕘 Recent Activity</h2><a class="btn g" href="logs.html">View All →</a></div>
+          ${ra}
+        </div>
+      </div>
+    </div>
+
+    <div class="rightcol">
+      <div class="card qa">
+        <div class="hd"><h2>⚡ Quick Actions</h2></div>
+        <a href="control.html">▶️ Run All Automation <span>→</span></a>
+        <a href="sites.html">📝 Generate Article <span>→</span></a>
+        <a href="youtube.html">⬆️ Upload YouTube Video <span>→</span></a>
+        <a href="logs.html">✈️ Send Telegram Message <span>→</span></a>
+      </div>
+
+      <div class="card">
+        <div class="hd"><h2>💻 Live Logs</h2><span class="lv">Live</span></div>
+        <div class="logs">${lg}</div>
+      </div>
+
+      <div class="card">
+        <div class="hd"><h2>✈️ Recent Telegram</h2><a class="btn g" href="logs.html">View All →</a></div>
+        <div id="tgList">
+          ${ev.slice(0, 5).map(e => `
+            <div class="li">
+              <span class="dot s-${e.r.s}">${e.r.s === 'success' ? '✔' : '•'}</span>
+              <div><b>${esc(e.n)}</b><small style="display:block">${e.r.s === 'success' ? 'Job completed' : esc(e.r.s)}</small></div>
+              <span class="t">${ago(e.r.t)}</span>
+            </div>`).join('') || '<small>No recent messages</small>'}
+        </div>
+      </div>
+
+      <div class="ok-box ${fail ? 'bad' : ''}">
+        ${fail ? `⚠ ${fail} project fail hua` : `✔ All Systems Running<br><small style="font-weight:500;opacity:.8">GitHub Actions • YouTube • Telegram • Websites</small>`}
+      </div>
+    </div>
+  </div>`;
+});
+'}
           <a class="yt-card yt-add" href="youtube.html">
             <div class="plus">+</div>
             <b>Add New Channel</b>
