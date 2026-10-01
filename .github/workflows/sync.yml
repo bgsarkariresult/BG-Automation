@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write
+  actions: read
 
 concurrency: sync-dashboard
 
@@ -23,6 +24,7 @@ jobs:
         env:
           YT_API_KEY: ${{ secrets.YT_API_KEY }}
           GH_PAT: ${{ secrets.GH_PAT }}
+          GH_TOKEN: ${{ github.token }}
           MSG_TEXT: ${{ github.event.client_payload.text }}
       - run: |
           git config user.name "dashboard-bot"
