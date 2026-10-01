@@ -152,11 +152,21 @@ for s in cfg.get("sites", []):
             arts.append({"t": (t.group(1).strip() if t else url.rstrip("/").split("/")[-1].replace("-", " ")),
                          "u": url, "d": dday(d.group(1) if d else "")})
         arts.sort(key=lambda a: a["d"], reverse=True)
+        # Sitemap me title nahi hota; latest 10 pages se asli title lene ki koshish.
+        for a in arts[:10]:
+            if a["t"] == a["u"] or a["t"].endswith(".html") or "article.html?id=" in a["u"]:
+                try:
+                    page = get(a["u"], raw=True)
+                    title = re.search(r"<title[^>]*>(.*?)</title>", page, re.I | re.S)
+                    if title:
+                        a["t"] = re.sub(r"\\s+", " ", re.sub(r"<[^>]+>", "", title.group(1))).strip()
+                except Exception:
+                    pass
         row["total"] = len(arts)
         for a in arts:
             if a["d"]:
                 row["days"][a["d"]] = row["days"].get(a["d"], 0) + 1
-        row["articles"] = arts[:12]
+        row["articles"] = arts[:10]
     except Exception:
         row["error"] = "feed nahi mila — config.json me sahi sitemap.xml / rss URL daalo"
     sites.append(row)
