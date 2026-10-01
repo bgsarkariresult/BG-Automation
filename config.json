@@ -60,6 +60,12 @@
    "tag": "Tech & Gadgets",
    "url": "https://bgtechlab.github.io/bgtech/",
    "repo": "bgtechlab/bgtech"
+  },
+  {
+   "name": "Trending-Topic-Finder",
+   "tag": "Trending Topics",
+   "url": "https://bgtechlab.github.io/Trending-Topic-Finder/",
+   "repo": "bgtechlab/Trending-Topic-Finder"
   }
  ]
 }
