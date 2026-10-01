@@ -28,48 +28,48 @@
 <script src="app.js"></script>
 <script>
 const TREND_URL = 'https://raw.githubusercontent.com/bgtechlab/Trending-Topic-Finder/main/history.json';
-const DEMO = {
-  updated: new Date().toISOString(),
-  topics: [
-    {title:'SSC GD Result 2026', score:98, cat:'Jobs', trend:'rising', first:'2026-09-30T08:00:00Z', keywords:['ssc','gd','result']},
-    {title:'iPhone 17 India Price', score:91, cat:'Tech', trend:'rising', first:'2026-09-30T09:30:00Z', keywords:['iphone','apple','price']},
-    {title:'India vs Australia Live', score:87, cat:'Sports', trend:'falling', first:'2026-09-30T06:00:00Z', keywords:['cricket','live']},
-    {title:'UP Police Bharti', score:82, cat:'Jobs', trend:'rising', first:'2026-09-29T18:00:00Z', keywords:['up police','bharti']},
-    {title:'Bollywood New Release', score:76, cat:'Entertainment', trend:'rising', first:'2026-09-30T10:00:00Z', keywords:['movie','bollywood']},
-    {title:'Railway NTPC Update', score:74, cat:'Jobs', trend:'rising', first:'2026-09-30T07:00:00Z', keywords:['railway','ntpc']},
-    {title:'AI Tools Free 2026', score:71, cat:'Tech', trend:'rising', first:'2026-09-30T11:00:00Z', keywords:['ai','tools']},
-    {title:'Breaking News India', score:68, cat:'News', trend:'falling', first:'2026-09-30T05:00:00Z', keywords:['news','india']}
-  ]
-};
-
 let ALL = [];
 let CAT = 'All';
 let Q = '';
 let SEL = null;
 
 function norm(data){
-  // history.json formats support
-  if (Array.isArray(data)) return data.map(mapTopic);
-  if (data.topics) return data.topics.map(mapTopic);
-  if (data.items) return data.items.map(mapTopic);
-  if (data.trending) return data.trending.map(mapTopic);
-  // { date: [topics] }
-  const keys = Object.keys(data).filter(k => Array.isArray(data[k]));
-  if (keys.length){
-    keys.sort().reverse();
-    return data[keys[0]].map(mapTopic);
+  // Trending Finder history.json: channel -> { suggested: [...] }
+  if (Array.isArray(data)) return data.map(t => mapTopic(t, 'All'));
+  if (Array.isArray(data.topics)) return data.topics.map(t => mapTopic(t, 'All'));
+  if (Array.isArray(data.items)) return data.items.map(t => mapTopic(t, 'All'));
+  if (Array.isArray(data.trending)) return data.trending.map(t => mapTopic(t, 'All'));
+
+  const channelCats = {
+    'sg-news-automation': 'Sports',
+    'tech-review-bot': 'Tech',
+    'bg-auto-job-bot': 'Jobs',
+    'history-facts-bot': 'Entertainment',
+    'reels-bot': 'Tech'
+  };
+  const rows = [];
+  for (const [key, value] of Object.entries(data || {})) {
+    if (!value || !Array.isArray(value.suggested)) continue;
+    value.suggested.forEach(t => rows.push(mapTopic(t, channelCats[key] || 'News', key)));
   }
-  return DEMO.topics;
+  // Keep latest saved suggestions first, and remove duplicate titles.
+  const seen = new Set();
+  return rows.reverse().filter(t => {
+    const key = t.title.trim().toLowerCase();
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
-function mapTopic(t){
+function mapTopic(t, fallbackCat='All', channel=''){
   if (typeof t === 'string') return {title:t, score:50, cat:'All', trend:'rising', first:'', keywords:[]};
   return {
     title: t.title || t.topic || t.name || t.query || 'Topic',
     score: +(t.score || t.heat || t.volume || t.rank_score || 50),
-    cat: t.cat || t.category || t.type || 'All',
+    cat: t.cat || t.category || t.type || fallbackCat,
     trend: t.trend || t.direction || 'rising',
     first: t.first || t.first_seen || t.detected || t.time || '',
-    keywords: t.keywords || t.tags || []
+    keywords: t.keywords || t.tags || [],\n    url: t.url || t.link || '',\n    source: t.source || 'live',\n    channel
   };
 }
 
