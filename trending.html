@@ -79,6 +79,7 @@ function renderList(){
     return okCat && okQ;
   });
 
+  const groups = [...new Set(list.map(t=>t.channel))].map(channel=>({channel,topics:list.filter(t=>t.channel===channel).slice(0,5)}));
   $('#main').innerHTML = `
     <div class="card">
       <div class="hd"><h2>🔥 Trending Now</h2>
@@ -89,12 +90,7 @@ function renderList(){
         ${cats.map(c=>`<button class="${c===CAT?'on':''}" onclick="CAT='${c}';renderList()">${c}</button>`).join('')}
       </div>
       <div class="tlist">
-        ${list.slice(0,5).map((t,i)=>`
-          <div class="titem" onclick="showDetail(${ALL.indexOf(t)})">
-            <span class="rank">${i+1}</span>
-            <div><b>${esc(t.title)}</b><br><small>${esc(t.channel||'Channel')} • ${esc(t.cat)} • ${t.trend==='falling'?'📉 Falling':t.trend==='rising'?'📈 Rising':'Trend status unavailable'} • ${esc(t.source||'unknown')}</small></div>
-            <span class="score">🔥 ${Math.round(t.score)}</span>
-          </div>`).join('') || '<small>Koi topic nahi mila.</small>'}
+        ${groups.map(g=>`<h3 style="margin:14px 0 8px">${esc(g.channel)}</h3>${g.topics.map((t,i)=>`<div class="titem" onclick="showDetail(${ALL.indexOf(t)})"><span class="rank">${i+1}</span><div><b>${esc(t.title)}</b><br><small>${esc(t.cat)} • ${t.trend==='falling'?'📉 Falling':t.trend==='rising'?'📈 Rising':'Trend status unavailable'} • ${esc(t.source||'unknown')}</small></div><span class="score">🔥 ${Math.round(t.score)}</span></div>`).join('')}`).join('') || '<small>Koi topic nahi mila.</small>'}
       </div>
     </div>
     <div class="card detail ${SEL!==null?'show':''}" id="det"></div>
