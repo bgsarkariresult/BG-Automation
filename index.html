@@ -25,7 +25,7 @@ main{min-width:0}.dg{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:
 @media(max-width:900px){.dg{grid-template-columns:1fr}.app{grid-template-columns:185px minmax(0,1fr)}}
 @media(max-width:680px){.top{padding:9px 12px;gap:9px}.burger{display:block}.logo{font-size:18px}.logo small,.topnav{display:none}.topright{margin-left:auto}.status{font-size:10px}.avatar{width:32px;height:32px}.app{display:block;padding:11px}.app nav{position:fixed;inset:0 22% 0 0;z-index:30;background:var(--sb);padding:65px 12px 12px;transform:translateX(-110%);transition:transform .2s;overflow:auto;border-right:1px solid var(--bd)}nav.open{transform:translateX(0)}.dg{grid-template-columns:1fr;gap:12px}.col{gap:12px}.wel{padding:15px;min-height:0}.wel h2{font-size:18px}.wel p{font-size:12px}.stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.stat{padding:11px;grid-template-columns:38px 1fr;gap:7px}.ico{width:36px;height:36px;font-size:17px}.stat strong{font-size:21px}.stat small{font-size:10px}.card{padding:12px}.hd h2{font-size:14px}.two{grid-template-columns:1fr}.yt-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ws-grid{grid-template-columns:1fr}}
 @media(max-width:420px){.refresh-btn{padding:6px 8px;font-size:10px}.topright{gap:7px}}@media(max-width:360px){.stats{grid-template-columns:1fr}.status{display:none}}
-</style>
+.trend-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--bd);min-width:0}.trend-row:last-child{border-bottom:0}.trend-rank{width:24px;height:24px;border-radius:7px;background:#142750;display:grid;place-items:center;font-size:11px;font-weight:800;flex-shrink:0}.trend-title{min-width:0;flex:1}.trend-title b{display:block;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.trend-title small{display:block;color:var(--mu);font-size:9px;margin-top:2px}.trend-score{font-size:10px;color:#ff8a5c;background:#2a1510;border-radius:12px;padding:3px 7px;white-space:nowrap}</style>
 </head>
 <body>
 <script src="app.js"></script>
@@ -51,6 +51,7 @@ boot('index.html','YouTube • GitHub • Telegram • All Projects',d=>{
  <section class="card wel"><div><h2>👋 <span>Welcome Back,</span> Bhavesh!</h2><p>Your YouTube, Websites and Automation are running smoothly.</p><small>Keep creating, keep growing. 🚀</small></div><span class="live">● Live</span></section>
  <section class="stats"><div class="stat"><div class="ico" style="background:#e11d4825;color:#fb7185">▶</div><div><small>Total Channels</small><strong>${channels.length}</strong></div><div class="sub">YouTube Automation</div></div><div class="stat"><div class="ico" style="background:#7c3aed25;color:#b69aff">⚙</div><div><small>Total Runs</small><strong>${todayRuns}</strong></div><div class="sub">Automation Jobs · Today</div></div><div class="stat"><div class="ico" style="background:#0891b225;color:#38bdf8">➤</div><div><small>Telegram Messages</small><strong>${messages||'—'}</strong></div><div class="sub">Available messages</div></div></section>
  <section class="card"><div class="hd"><h2>▶ YouTube Channels</h2><a class="btn" href="youtube.html">View All →</a></div><div class="yt-grid">${channels.slice(0,8).map(channelCard).join('')||'<small>No channel found.</small>'}<a class="yt-card" href="youtube.html"><b style="font-size:25px">＋</b><b>Add New Channel</b><small>Manage channels</small></a></div></section>
+ <section class="card"><div class="hd"><h2>🔥 Trending Topics</h2><a class="btn alt" href="trending.html">View All →</a></div><div id="dashTrending"><small>Trending topics लोड हो रहे हैं…</small></div></section>
  <section class="card"><div class="hd"><h2>🌐 Websites / Projects</h2><a class="btn alt" href="sites.html">View All →</a></div><div class="ws-grid">${sites.slice(0,6).map(siteCard).join('')||'<small>No website found.</small>'}</div></section>
  <div class="two"><section class="card"><div class="hd"><h2>⚙ Automation Overview</h2><a class="btn alt" href="control.html">Details →</a></div><div class="k"><div><small>Total Jobs</small><b>${recent.length}</b></div><div class="ok"><small>Success</small><b>${success}</b></div><div class="err"><small>Failed</small><b>${failed}</b></div><div class="warn"><small>Running</small><b>${bots.filter(b=>['in_progress','queued'].includes(b.status)).length}</b></div></div></section><section class="card"><div class="hd"><h2>🕒 Recent Activity</h2><a class="btn alt" href="logs.html">View All →</a></div>${recent.slice(0,4).map(row).join('')||'<small>No recent activity.</small>'}</section></div>
  </div><div class="col"><section class="card qa"><div class="hd"><h2>⚡ Quick Actions</h2></div><a href="youtube.html"><span>▶　Upload YouTube Video</span><span>›</span></a><a href="https://github.com/bgsarkariresult/BG-Automation" target="_blank" rel="noopener"><span>◉　View GitHub Repository</span><span>›</span></a><a href="logs.html"><span>➤　Telegram Messages</span><span>›</span></a><a href="sites.html"><span>▦　Check All Projects</span><span>›</span></a><a href="control.html"><span>⚙　Automation Control</span><span>›</span></a></section>
@@ -86,6 +87,36 @@ async function runDashboardSync(){
  }finally{btn.disabled=false;btn.textContent='▶ Run Sync'}
 }
 setInterval(()=>{const el=document.querySelector('#clock');if(el)el.textContent=clockText()},30000);
+
+<script>
+(async function loadDashboardTrending(){
+ const box=document.querySelector('#dashTrending');
+ if(!box)return;
+ const url='https://raw.githubusercontent.com/bgtechlab/Trending-Topic-Finder/main/history.json';
+ try{
+  const r=await fetch(url+'?t='+Date.now(),{cache:'no-store'});
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  const data=await r.json();
+  const rows=[];
+  Object.values(data||{}).forEach(group=>{
+   if(!group||!Array.isArray(group.suggested))return;
+   group.suggested.forEach(t=>rows.push(t));
+  });
+  const seen=new Set();
+  const top=rows
+   .filter(t=>t&&t.title)
+   .sort((a,b)=>(+b.score||0)-(+a.score||0))
+   .filter(t=>{const k=String(t.title).trim().toLowerCase();if(seen.has(k))return false;seen.add(k);return true})
+   .slice(0,8);
+  box.innerHTML=top.length?top.map((t,i)=>{
+   const title=esc(t.title),score=Math.round(+t.score||0),source=esc(t.source||'unknown'),link=esc(t.url||'');
+   return '<a href="'+link+'" target="_blank" rel="noopener" class="trend-row"><span class="trend-rank">'+(i+1)+'</span><span class="trend-title"><b>'+title+'</b><small>'+source+'</small></span><span class="trend-score">🔥 '+score+'</span></a>';
+  }).join(''):'<small>Aaj koi trending topic nahi mila.</small>';
+ }catch(e){
+  box.innerHTML='<small>Trending data load nahi ho paya. <a href="trending.html" style="color:#64a9ff">Trending page खोलें →</a></small>';
+ }
+})();
+</script>
 </script>
 </body>
 </html>
