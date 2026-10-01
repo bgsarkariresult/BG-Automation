@@ -96,24 +96,23 @@ setInterval(()=>{const el=document.querySelector('#clock');if(el)el.textContent=
  try{
   const r=await fetch(url+'?t='+Date.now(),{cache:'no-store'});
   if(!r.ok)throw new Error('HTTP '+r.status);
-  const data=await r.json();
-  const rows=[];
-  Object.values(data||{}).forEach(group=>{
-   if(!group||!Array.isArray(group.suggested))return;
-   group.suggested.forEach(t=>rows.push(t));
+  const data=await r.json(),rows=[];
+  Object.entries(data||{}).forEach(([channel,group])=>{
+   if(!group)return;
+   const list=Array.isArray(group.latest)?group.latest:(Array.isArray(group.suggested)?group.suggested:[]);
+   list.forEach(t=>rows.push({...t,channel,updated_at:t.fetched_at||group.updated_at||''}));
   });
   const seen=new Set();
-  const top=rows
-   .filter(t=>t&&t.title)
-   .sort((a,b)=>(+b.score||0)-(+a.score||0))
-   .filter(t=>{const k=String(t.title).trim().toLowerCase();if(seen.has(k))return false;seen.add(k);return true})
-   .slice(0,8);
-  box.innerHTML=top.length?top.map((t,i)=>{
-   const title=esc(t.title),score=Math.round(+t.score||0),source=esc(t.source||'unknown'),link=esc(t.url||'');
-   return '<a href="'+link+'" target="_blank" rel="noopener" class="trend-row"><span class="trend-rank">'+(i+1)+'</span><span class="trend-title"><b>'+title+'</b><small>'+source+'</small></span><span class="trend-score">🔥 '+score+'</span></a>';
-  }).join(''):'<small>Aaj koi trending topic nahi mila.</small>';
+  const top=rows.filter(t=>t&&t.title).filter(t=>{
+    const k=String(t.title).trim().toLowerCase();
+    if(seen.has(k))return false;seen.add(k);return true;
+  }).sort((a,b)=>new Date(b.updated_at||0)-new Date(a.updated_at||0)).slice(0,8);
+  box.innerHTML=top.length?'<small class="meta">Latest saved results · '+esc(top[0].updated_at?new Date(top[0].updated_at).toLocaleString('hi-IN'):'update time unavailable')+'</small>'+top.map((t,i)=>{
+   const title=esc(t.title),score=Number.isFinite(+t.score)?Math.round(+t.score):'—',source=esc(t.source||'unknown'),link=esc(t.url||'#');
+   return '<a href="'+link+'" target="_blank" rel="noopener" class="trend-row"><span class="trend-rank">'+(i+1)+'</span><span class="trend-title"><b>'+title+'</b><small>'+source+' · '+esc(t.channel||'')+'</small></span><span class="trend-score">Score '+score+'</span></a>';
+  }).join(''):'<small>अभी कोई नवीनतम ट्रेंड उपलब्ध नहीं है।</small>';
  }catch(e){
-  box.innerHTML='<small>Trending data load nahi ho paya. <a href="trending.html" style="color:#64a9ff">Trending page खोलें →</a></small>';
+  box.innerHTML='<small>Live trending data उपलब्ध नहीं है। <a href="trending.html" style="color:#64a9ff">Trending page खोलें →</a></small>';
  }
 })();
 </script>
