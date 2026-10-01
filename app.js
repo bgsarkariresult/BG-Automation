@@ -35,4 +35,4 @@ function boot(key,title,render){
     $('#pill').textContent=!channelOk?'⚠ Channel ID/API check':fresh?'● Data fresh · '+age+' min':'⚠ Data delayed · '+(Number.isFinite(age)?age+' min':'unknown');
     $('#pill').classList.toggle('bad',!fresh||!channelOk);
     $('#sysS').textContent='Sync: '+at(d.updated);render(d)}catch(e){$('#pill').textContent='⚠ Sync Dashboard chalao';$('#pill').classList.add('bad')}finally{if(btn){btn.disabled=false;btn.textContent='↻ Refresh'}}}
-  window.refreshDashboard=()=>go(true);go();setInterval(()=>go(false),30000)}
+  window.refreshDashboard=()=>go(true);go();setInterval(()=>{if(!document.hidden)go(false)},15000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)go(true)})}
