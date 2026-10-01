@@ -152,5 +152,6 @@ for s in cfg.get("sites", []):
         row["error"] = "feed nahi mila — config.json me sahi sitemap.xml / rss URL daalo"
     sites.append(row)
 
-json.dump({"updated": now, "channels": channels, "bots": bots, "sites": sites, "messages": msgs},
+json.dump({"updated": now, "channels": channels, "bots": bots, "sites": sites,
+          "websites": cfg.get("websites", []), "messages": msgs},
           open("data/dashboard.json", "w", encoding="utf-8"), ensure_ascii=False)
