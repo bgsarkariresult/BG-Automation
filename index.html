@@ -87,7 +87,7 @@ async function runDashboardSync(){
  }finally{btn.disabled=false;btn.textContent='▶ Run Sync'}
 }
 setInterval(()=>{const el=document.querySelector('#clock');if(el)el.textContent=clockText()},30000);
-
+</script>
 <script>
 (async function loadDashboardTrending(){
  const box=document.querySelector('#dashTrending');
@@ -116,7 +116,6 @@ setInterval(()=>{const el=document.querySelector('#clock');if(el)el.textContent=
   box.innerHTML='<small>Trending data load nahi ho paya. <a href="trending.html" style="color:#64a9ff">Trending page खोलें →</a></small>';
  }
 })();
-</script>
 </script>
 </body>
 </html>
