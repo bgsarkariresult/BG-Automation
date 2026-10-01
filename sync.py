@@ -140,35 +140,63 @@ sites = []
 for s in cfg.get("sites", []):
     row = {"name": s["name"], "url": s["url"], "articles": [], "days": {}, "total": 0}
     try:
-        x = get(s["feed"], raw=True)
-        arts = []
-        for _, it in re.findall(r"<(url|entry|item)\b[^>]*>(.*?)</\1>", x, re.S):
-            m = re.search(r"<loc>\s*(.*?)\s*</loc>|<link[^>]*href=\"([^\"]+)\"|<link>\s*(.*?)\s*</link>", it, re.S)
-            if not m:
+        name = s["name"].lower()
+        # Read the site's real content database where available; sitemap lastmod
+        # may describe a rebuild rather than the article publication date.
+        if "sg news" in name:
+            base = s["feed"].split("/sitemap.xml")[0]
+            data = get(base + "/data/news.json")
+            arts = []
+            for a in data if isinstance(data, list) else []:
+                date = str(a.get("publishedDate") or a.get("date") or "")
+                parsed = re.search(r"\d{4}-\d{2}-\d{2}", date)
+                if not parsed:
+                    months = {"जनवरी":"01","फ़रवरी":"02","फरवरी":"02","मार्च":"03","अप्रैल":"04","मई":"05","जून":"06","जुलाई":"07","अगस्त":"08","सितंबर":"09","अक्टूबर":"10","नवंबर":"11","दिसंबर":"12"}
+                    m = re.search(r"(\d{1,2})\s+([^\s]+)\s+(\d{4})", date)
+                    if m and m.group(2) in months:
+                        date = f'{m.group(3)}-{months[m.group(2)]}-{int(m.group(1)):02d}'
+                    else:
+                        date = ""
+                else:
+                    date = parsed.group(0)
+                arts.append({"t": a.get("title") or "शीर्षक उपलब्ध नहीं", "u": base + "/article.html?id=" + str(a.get("id")), "d": date})
+        elif "techglow" in name:
+            base = s["feed"].split("/sitemap.xml")[0]
+            data = get(base + "/data/products.json")
+            arts = []
+            for a in data if isinstance(data, list) else []:
+                arts.append({"t": a.get("title") or a.get("short_name") or "शीर्षक उपलब्ध नहीं",
+                             "u": base + "/products/" + str(a.get("id", "")) + "/",
+                             "d": dday(str(a.get("date") or ""))})
+        else:
+            x = get(s["feed"], raw=True)
+            arts = []
+            for _, it in re.findall(r"<(url|entry|item)\b[^>]*>(.*?)</\1>", x, re.S):
+                m = re.search(r"<loc>\s*(.*?)\s*</loc>|<link[^>]*href=\"([^\"]+)\"|<link>\s*(.*?)\s*</link>", it, re.S)
+                if not m:
+                    continue
+                url = next(g for g in m.groups() if g)
+                if url.rstrip("/") == s["url"].rstrip("/"):
+                    continue
+                t = re.search(r"<title[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</title>", it, re.S)
+                d = re.search(r"<(?:lastmod|updated|published|pubDate)>(.*?)</", it, re.S)
+                arts.append({"t": (t.group(1).strip() if t else url.rstrip("/").split("/")[-1].replace("-", " ")),
+                             "u": url, "d": dday(d.group(1) if d else "")})
+        # Remove home pages and duplicate URLs; never count a sitemap rebuild date as an article.
+        unique = {}
+        for a in arts:
+            if a["u"].rstrip("/") == s["url"].rstrip("/"):
                 continue
-            url = next(g for g in m.groups() if g)
-            t = re.search(r"<title[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</title>", it, re.S)
-            d = re.search(r"<(?:lastmod|updated|published|pubDate)>(.*?)</", it, re.S)
-            arts.append({"t": (t.group(1).strip() if t else url.rstrip("/").split("/")[-1].replace("-", " ")),
-                         "u": url, "d": dday(d.group(1) if d else "")})
-        arts.sort(key=lambda a: a["d"], reverse=True)
-        # Sitemap me title nahi hota; latest 10 pages se asli title lene ki koshish.
-        for a in arts[:10]:
-            if a["t"] == a["u"] or a["t"].endswith(".html") or "article.html?id=" in a["u"]:
-                try:
-                    page = get(a["u"], raw=True)
-                    title = re.search(r"<title[^>]*>(.*?)</title>", page, re.I | re.S)
-                    if title:
-                        a["t"] = re.sub(r"\\s+", " ", re.sub(r"<[^>]+>", "", title.group(1))).strip()
-                except Exception:
-                    pass
+            unique[a["u"]] = a
+        arts = list(unique.values())
+        arts.sort(key=lambda a: (a["d"] or "", a["u"]), reverse=True)
         row["total"] = len(arts)
         for a in arts:
             if a["d"]:
                 row["days"][a["d"]] = row["days"].get(a["d"], 0) + 1
         row["articles"] = arts[:10]
-    except Exception:
-        row["error"] = "feed nahi mila — config.json me sahi sitemap.xml / rss URL daalo"
+    except Exception as e:
+        row["error"] = ("feed/data nahi mila: " + str(e))[:300]
     sites.append(row)
 
 json.dump({"updated": now, "checked_at": now, "refresh_interval_seconds": 300,
