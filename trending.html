@@ -62,27 +62,33 @@ function norm(data){
   });
 }
 function mapTopic(t, fallbackCat='All', channel=''){
-  if (typeof t === 'string') return {title:t, score:50, cat:'All', trend:'rising', first:'', keywords:[]};
+  if (typeof t === 'string') return {title:t, score:50, cat:fallbackCat, trend:'rising', first:'', keywords:[], url:'', source:'live', channel};
   return {
     title: t.title || t.topic || t.name || t.query || 'Topic',
     score: +(t.score || t.heat || t.volume || t.rank_score || 50),
     cat: t.cat || t.category || t.type || fallbackCat,
     trend: t.trend || t.direction || 'rising',
     first: t.first || t.first_seen || t.detected || t.time || '',
-    keywords: t.keywords || t.tags || [],\n    url: t.url || t.link || '',\n    source: t.source || 'live',\n    channel
+    keywords: Array.isArray(t.keywords) ? t.keywords : (Array.isArray(t.tags) ? t.tags : []),
+    url: t.url || t.link || '',
+    source: t.source || 'live',
+    channel
   };
 }
 
 boot('trending.html', 'Trending Topics', async () => {
-  let data = DEMO;
   try {
-    const r = await fetch(TREND_URL + '?t=' + Date.now());
-    if (r.ok) data = await r.json();
-  } catch(e) {}
-  ALL = norm(data).sort((a,b)=>b.score-a.score);
-  renderList();
+    const r = await fetch(TREND_URL + '?t=' + Date.now(), {cache:'no-store'});
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const data = await r.json();
+    ALL = norm(data).sort((a,b)=>b.score-a.score);
+    renderList();
+    if (!ALL.length) $('#main').insertAdjacentHTML('afterbegin','<div class="card"><b>⚠ अभी कोई लाइव ट्रेंड उपलब्ध नहीं है।</b><br><small>Trending Finder की GitHub Actions workflow चलाएँ और कुछ देर बाद Refresh करें।</small></div>');
+  } catch(e) {
+    ALL = [];
+    $('#main').innerHTML = '<div class="card"><h2>⚠ Live data उपलब्ध नहीं है</h2><p>डेमो डेटा नहीं दिखाया जा रहा है। GitHub पर Trending Finder की workflow जाँचें और फिर Refresh करें।</p><small>कारण: '+esc(e.message)+'</small><p><a class="btn" href="https://github.com/bgtechlab/Trending-Topic-Finder/actions" target="_blank" rel="noopener">GitHub Actions खोलें ↗</a></p></div>';
+  }
 });
-
 function renderList(){
   const cats = ['All','News','Jobs','Tech','Sports','Entertainment'];
   const list = ALL.filter(t => {
