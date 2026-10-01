@@ -1,6 +1,6 @@
 {
-  "updated": "2026-10-01T14:47:16Z",
-  "checked_at": "2026-10-01T14:47:16Z",
+  "updated": "2026-10-01T15:53:04Z",
+  "checked_at": "2026-10-01T15:53:04Z",
   "refresh_interval_seconds": 300,
   "source": "GitHub Actions API",
   "channels": [
@@ -996,7 +996,7 @@
       "actor": "bgsarkariresult",
       "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/36853454517",
       "cron": "*/5 * * * *",
-      "next": "2026-10-01T14:50:00Z"
+      "next": "2026-10-01T15:55:00Z"
     },
     {
       "name": "TechGlow India",
@@ -1006,8 +1006,22 @@
       "tag": "Tech Review",
       "cost": "",
       "kind": "video",
-      "status": "cancelled",
+      "status": "in_progress",
       "runs": [
+        {
+          "id": 36886807978,
+          "number": 44,
+          "s": "in_progress",
+          "t": "2026-10-01T15:46:15Z",
+          "started": "2026-10-01T15:45:54Z",
+          "created": "2026-10-01T15:45:54Z",
+          "d": 21,
+          "e": "workflow_dispatch",
+          "n": "TechGlow India - Tech Review Auto Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/36886807978"
+        },
         {
           "id": 36869946450,
           "number": 43,
@@ -1611,14 +1625,14 @@
           "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/36110177851"
         }
       ],
-      "time": "2026-10-01T13:36:43Z",
-      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/36869946450",
-      "last_run_id": 36869946450,
-      "run_number": 43,
+      "time": "2026-10-01T15:46:15Z",
+      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/36886807978",
+      "last_run_id": 36886807978,
+      "run_number": 44,
       "branch": "main",
       "event": "workflow_dispatch",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/36869946450",
+      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/36886807978",
       "failed": {
         "job": "resolve-url",
         "step": "URL nikalo (manual input ya Telegram se)",
@@ -1628,7 +1642,7 @@
         "run_id": 36841713410
       },
       "cron": "*/5 * * * *",
-      "next": "2026-10-01T14:50:00Z"
+      "next": "2026-10-01T15:55:00Z"
     },
     {
       "name": "BK GrowUp",
@@ -3289,6 +3303,20 @@
       "status": "success",
       "runs": [
         {
+          "id": 36886045634,
+          "number": 99,
+          "s": "success",
+          "t": "2026-10-01T15:42:21Z",
+          "started": "2026-10-01T15:40:00Z",
+          "created": "2026-10-01T15:40:00Z",
+          "d": 141,
+          "e": "dynamic",
+          "n": "pages build and deployment",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/bgtech/actions/runs/36886045634"
+        },
+        {
           "id": 35810878903,
           "number": 98,
           "s": "success",
@@ -4673,30 +4701,16 @@
           "branch": "main",
           "actor": "bgtechlab",
           "u": "https://github.com/bgtechlab/bgtech/actions/runs/31240903877"
-        },
-        {
-          "id": 31240887237,
-          "number": 5,
-          "s": "success",
-          "t": "2026-08-08T05:05:14Z",
-          "started": "2026-08-08T05:04:55Z",
-          "created": "2026-08-08T05:04:55Z",
-          "d": 19,
-          "e": "push",
-          "n": "Create index.htmls",
-          "branch": "main",
-          "actor": "bgtechlab",
-          "u": "https://github.com/bgtechlab/bgtech/actions/runs/31240887237"
         }
       ],
-      "time": "2026-09-23T02:35:21Z",
-      "url": "https://github.com/bgtechlab/bgtech/actions/runs/35810878903",
-      "last_run_id": 35810878903,
-      "run_number": 98,
+      "time": "2026-10-01T15:42:21Z",
+      "url": "https://github.com/bgtechlab/bgtech/actions/runs/36886045634",
+      "last_run_id": 36886045634,
+      "run_number": 99,
       "branch": "main",
       "event": "dynamic",
       "actor": "bgtechlab",
-      "html_url": "https://github.com/bgtechlab/bgtech/actions/runs/35810878903"
+      "html_url": "https://github.com/bgtechlab/bgtech/actions/runs/36886045634"
     },
     {
       "name": "Trending Finder",
@@ -5594,7 +5608,7 @@
       "actor": "bgtechlab",
       "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/36840495457",
       "cron": "*/5 * * * *",
-      "next": "2026-10-01T14:50:00Z"
+      "next": "2026-10-01T15:55:00Z"
     }
   ],
   "sites": [
@@ -5753,6 +5767,11 @@
       "url": "https://bgtechlab.github.io/bgtech/index.html",
       "articles": [
         {
+          "t": "ultiads TJ-54/K Tower Multimedia Speaker System Remote Control 130 W Review (2026)",
+          "u": "https://bgtechlab.github.io/bgtech/products/ultiads-tj-54-k-tower-multimedia-speaker-system-remote-control-130-w/",
+          "d": "2026-10-01"
+        },
+        {
           "t": "Samsung Crystal 4K Vision AI 108 cm (43 inch) Ultra HD (4K) LED Smart Review (2026)",
           "u": "https://bgtechlab.github.io/bgtech/products/samsung-crystal-4k-vision-ai-108-cm-43-inch-ultra-hd-4k-led-smart/",
           "d": "2026-09-23"
@@ -5796,14 +5815,10 @@
           "t": "Apple iPhone 17 (512 GB Storage) Review (2026)",
           "u": "https://bgtechlab.github.io/bgtech/products/apple-iphone-17-512-gb-storage/",
           "d": "2026-09-10"
-        },
-        {
-          "t": "POCO X8 Pro Max (256 GB Storage Review (2026)",
-          "u": "https://bgtechlab.github.io/bgtech/products/poco-x8-pro-max-256-gb-storage/",
-          "d": "2026-09-09"
         }
       ],
       "days": {
+        "2026-10-01": 1,
         "2026-09-23": 4,
         "2026-09-19": 1,
         "2026-09-17": 1,
@@ -5827,7 +5842,7 @@
         "2026-08-11": 1,
         "2026-08-08": 1
       },
-      "total": 33
+      "total": 34
     }
   ],
   "websites": [
