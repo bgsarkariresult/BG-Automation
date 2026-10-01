@@ -34,41 +34,24 @@ let Q = '';
 let SEL = null;
 
 function norm(data){
-  // Trending Finder history.json: channel -> { suggested: [...] }
-  if (Array.isArray(data)) return data.map(t => mapTopic(t, 'All'));
-  if (Array.isArray(data.topics)) return data.topics.map(t => mapTopic(t, 'All'));
-  if (Array.isArray(data.items)) return data.items.map(t => mapTopic(t, 'All'));
-  if (Array.isArray(data.trending)) return data.trending.map(t => mapTopic(t, 'All'));
-
-  const channelCats = {
-    'sg-news-automation': 'Sports',
-    'tech-review-bot': 'Tech',
-    'bg-auto-job-bot': 'Jobs',
-    'history-facts-bot': 'Entertainment',
-    'reels-bot': 'Tech'
-  };
-  const rows = [];
-  for (const [key, value] of Object.entries(data || {})) {
-    if (!value || !Array.isArray(value.suggested)) continue;
-    value.suggested.forEach(t => rows.push(mapTopic(t, channelCats[key] || 'News', key)));
+  const rows=[];
+  const category={'sg-news-automation':'News','tech-review-bot':'Tech','bg-auto-job-bot':'Jobs','history-facts-bot':'Entertainment','reels-bot':'Tech'};
+  for(const [key,value] of Object.entries(data||{})){
+    if(!value)continue;
+    const list=Array.isArray(value.latest)?value.latest:(Array.isArray(value.suggested)?value.suggested:[]);
+    list.forEach(t=>rows.push(mapTopic(t,category[key]||'News',key,value.updated_at||'')));
   }
-  // Keep latest saved suggestions first, and remove duplicate titles.
-  const seen = new Set();
-  return rows.reverse().filter(t => {
-    const key = t.title.trim().toLowerCase();
-    if (!key || seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
+  const seen=new Set();
+  return rows.filter(t=>{const k=t.title.trim().toLowerCase();if(!k||seen.has(k))return false;seen.add(k);return true;});
 }
-function mapTopic(t, fallbackCat='All', channel=''){
-  if (typeof t === 'string') return {title:t, score:50, cat:fallbackCat, trend:'rising', first:'', keywords:[], url:'', source:'live', channel};
+function mapTopic(t, fallbackCat='All', channel='', updatedAt=''){
+  if (typeof t === 'string') return {title:t, score:0, cat:fallbackCat, trend:'unknown', first:updatedAt, keywords:[], url:'', source:'unknown', channel, updatedAt};
   return {
     title: t.title || t.topic || t.name || t.query || 'Topic',
     score: +(t.score || t.heat || t.volume || t.rank_score || 50),
     cat: t.cat || t.category || t.type || fallbackCat,
-    trend: t.trend || t.direction || 'rising',
-    first: t.first || t.first_seen || t.detected || t.time || '',
+    trend: t.trend || t.direction || 'unknown',
+    first: t.first || t.first_seen || t.detected || t.time || t.fetched_at || updatedAt || '',
     keywords: Array.isArray(t.keywords) ? t.keywords : (Array.isArray(t.tags) ? t.tags : []),
     url: t.url || t.link || '',
     source: t.source || 'live',
@@ -81,9 +64,9 @@ boot('trending.html', 'Trending Topics', async () => {
     const r = await fetch(TREND_URL + '?t=' + Date.now(), {cache:'no-store'});
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const data = await r.json();
-    ALL = norm(data).sort((a,b)=>b.score-a.score);
+    ALL = norm(data).sort((a,b)=>new Date(b.updatedAt||0)-new Date(a.updatedAt||0));
     renderList();
-    if (!ALL.length) $('#main').insertAdjacentHTML('afterbegin','<div class="card"><b>⚠ अभी कोई लाइव ट्रेंड उपलब्ध नहीं है।</b><br><small>Trending Finder की GitHub Actions workflow चलाएँ और कुछ देर बाद Refresh करें।</small></div>');
+    if (!ALL.length) $('#main').insertAdjacentHTML('afterbegin','<div class="card"><b>⚠ अभी कोई नया ट्रेंड उपलब्ध नहीं है।</b><br><small>पुराने सुझाव दिखाने के बजाय केवल नवीनतम सफल रन के विषय दिखाए जाते हैं। GitHub Actions की स्थिति जाँचें।</small></div>');
   } catch(e) {
     ALL = [];
     $('#main').innerHTML = '<div class="card"><h2>⚠ Live data उपलब्ध नहीं है</h2><p>डेमो डेटा नहीं दिखाया जा रहा है। GitHub पर Trending Finder की workflow जाँचें और फिर Refresh करें।</p><small>कारण: '+esc(e.message)+'</small><p><a class="btn" href="https://github.com/bgtechlab/Trending-Topic-Finder/actions" target="_blank" rel="noopener">GitHub Actions खोलें ↗</a></p></div>';
@@ -110,7 +93,7 @@ function renderList(){
         ${list.slice(0,30).map((t,i)=>`
           <div class="titem" onclick="showDetail(${ALL.indexOf(t)})">
             <span class="rank">${i+1}</span>
-            <div><b>${esc(t.title)}</b><br><small>${esc(t.cat)} • ${t.trend==='falling'?'📉 Falling':'📈 Rising'}</small></div>
+            <div><b>${esc(t.title)}</b><br><small>${esc(t.cat)} • ${t.trend==='falling'?'📉 Falling':t.trend==='rising'?'📈 Rising':'Trend status unavailable'} • ${esc(t.source||'unknown')}</small></div>
             <span class="score">🔥 ${Math.round(t.score)}</span>
           </div>`).join('') || '<small>Koi topic nahi mila.</small>'}
       </div>
@@ -137,11 +120,11 @@ function paintDetail(){
     </div>
     <div class="meta">
       <div><small>🔥 Trend Score</small><b>${Math.round(t.score)}</b></div>
-      <div><small>📈 Status</small><b>${t.trend==='falling'?'Falling':'Rising'}</b></div>
-      <div><small>🕐 First detected</small><b>${t.first ? at(t.first) : '—'}</b></div>
+      <div><small>📈 Status</small><b>${t.trend==='falling'?'Falling':t.trend==='rising'?'Rising':'Not measured'}</b></div>
+      <div><small>🕐 Data updated</small><b>${t.updatedAt ? at(t.updatedAt) : '—'}</b></div>
       <div><small>🏷 Category</small><b>${esc(t.cat||'—')}</b></div>
     </div>
-    <small>Related keywords: ${(t.keywords||[]).map(k=>esc(k)).join(', ') || '—'}</small>
+    <small>Source: ${esc(t.source||'unknown')} · Score type: ${esc(t.scoreType||'unknown')}<br>Related keywords: ${(t.keywords||[]).map(k=>esc(k)).join(', ') || '—'}</small>
     <div class="actions">
       <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/search?q=${q}">Search Web</a>
       <a class="btn g" target="_blank" rel="noopener" href="https://www.google.com/search?q=${q}+article">Create Article idea</a>
