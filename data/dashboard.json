@@ -1,6 +1,6 @@
 {
-  "updated": "2026-10-01T07:59:39Z",
-  "checked_at": "2026-10-01T07:59:39Z",
+  "updated": "2026-10-01T08:03:23Z",
+  "checked_at": "2026-10-01T08:03:23Z",
   "refresh_interval_seconds": 300,
   "source": "GitHub Actions API",
   "channels": [
@@ -14,7 +14,7 @@
       "id": "UCosaFY8El412UGzlyT6LA5Q",
       "icon": "https://yt3.ggpht.com/ytc/AIdro_l6LfiGUOovI1gGphSJuRe0J78AzT4UMRYC_hyCjtiSi8XqkNILzrxpVmBSvC9ns51YqA=s88-c-k-c0x00ffffff-no-rj",
       "subs": "1",
-      "views": "1500",
+      "views": "1635",
       "videos": "53",
       "latest": [
         {
@@ -954,7 +954,7 @@
       "actor": "bgsarkariresult",
       "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/36805669805",
       "cron": "*/5 * * * *",
-      "next": "2026-10-01T08:00:00Z"
+      "next": "2026-10-01T08:05:00Z"
     },
     {
       "name": "TechGlow India",
@@ -1544,7 +1544,7 @@
         "run_id": 36805749798
       },
       "cron": "*/5 * * * *",
-      "next": "2026-10-01T08:00:00Z"
+      "next": "2026-10-01T08:05:00Z"
     },
     {
       "name": "BK GrowUp",
@@ -5454,7 +5454,7 @@
       "actor": "bgtechlab",
       "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/36805279798",
       "cron": "*/5 * * * *",
-      "next": "2026-10-01T08:00:00Z"
+      "next": "2026-10-01T08:05:00Z"
     }
   ],
   "sites": [
@@ -5463,52 +5463,52 @@
       "url": "https://bgsarkariresult.github.io/bgsarkariresult/",
       "articles": [
         {
-          "t": "Bank of Baroda SO Recruitment 2026 Last Date Extended - Apply Online for 1100 Wealth Executive, Credit Analyst Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "bank of baroda so recruitment 2026 last date extended apply online for 1100 wealth executive credit analyst posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/bank-of-baroda-so-recruitment-2026-last-date-extended-apply-online-for-1100-wealth-executive-credit-analyst-posts.html",
           "d": "2026-10-01"
         },
         {
-          "t": "UPSC CAPF AC PET Admit Card 2026 Out - Download Hall Ticket at upsconline.gov.in | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "upsc capf ac pet admit card 2026 out download hall ticket at upsconlinegovin.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/upsc-capf-ac-pet-admit-card-2026-out-download-hall-ticket-at-upsconlinegovin.html",
           "d": "2026-09-30"
         },
         {
-          "t": "Canara Bank Apprentice Recruitment 2026 Notification Out - Apply Online for 3500 Graduate Apprentice Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "canara bank apprentice recruitment 2026 notification out apply online for 3500 graduate apprentice posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/canara-bank-apprentice-recruitment-2026-notification-out-apply-online-for-3500-graduate-apprentice-posts.html",
           "d": "2026-09-29"
         },
         {
-          "t": "UPSSSC Assistant Store Keeper Final Result 2026 - Check Cut-Off Marks and Selected Candidates List | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "upsssc assistant store keeper final result 2026 check cut off marks and selected candidates list.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/upsssc-assistant-store-keeper-final-result-2026-check-cut-off-marks-and-selected-candidates-list.html",
           "d": "2026-09-28"
         },
         {
-          "t": "MP Police Constable Recruitment 2026 Notification Out - Apply Online for 7500 Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "mp police constable recruitment 2026 notification out apply online for 7500 posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/mp-police-constable-recruitment-2026-notification-out-apply-online-for-7500-posts.html",
           "d": "2026-09-27"
         },
         {
-          "t": "UPSC Recruitment 2026 Notification Out - Apply Online for 13 Law Officer, JTO and More Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "upsc recruitment 2026 notification out apply online for 13 law officer jto and more posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/upsc-recruitment-2026-notification-out-apply-online-for-13-law-officer-jto-and-more-posts.html",
           "d": "2026-09-26"
         },
         {
-          "t": "RRC NR PET Result 2026 (CEN 08/2024) - Ambala Division Qualified & Non-Qualified List | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "rrc nr pet result 2026 cen 082024 ambala division qualified non qualified list.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rrc-nr-pet-result-2026-cen-082024-ambala-division-qualified-non-qualified-list.html",
           "d": "2026-09-25"
         },
         {
-          "t": "RRB NTPC UG Recruitment Notification 2026 (CEN 07/2026) – Apply Online for 1,688 Undergraduate Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "rrb ntpc ug recruitment notification 2026 cen 072026 apply online for 1688 undergraduate posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rrb-ntpc-ug-recruitment-notification-2026-cen-072026-apply-online-for-1688-undergraduate-posts.html",
           "d": "2026-09-24"
         },
         {
-          "t": "Indian Army TGC 145 Recruitment 2026 – Notification Out, Apply Online | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "indian army tgc 145 recruitment 2026 notification out apply online.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/indian-army-tgc-145-recruitment-2026-notification-out-apply-online.html",
           "d": "2026-09-23"
         },
         {
-          "t": "RRB NTPC Graduate Recruitment 06/2026 Notification Out - Apply Online for 3,477 Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "rrb ntpc graduate recruitment 062026 notification out apply online for 3477 posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rrb-ntpc-graduate-recruitment-062026-notification-out-apply-online-for-3477-posts.html",
           "d": "2026-09-22"
         }
@@ -5536,7 +5536,7 @@
         "2026-09-10": 2,
         "2026-09-09": 1,
         "2026-09-08": 2,
-        "2026-09-07": 7,
+        "2026-09-07": 6,
         "2026-09-06": 2,
         "2026-09-05": 1,
         "2026-09-04": 1,
@@ -5548,127 +5548,146 @@
         "2026-08-27": 2,
         "2026-08-26": 7
       },
-      "total": 52
+      "total": 51
     },
     {
       "name": "SG News18",
       "url": "https://bgnewswab.github.io/sgnewswab/index.html",
       "articles": [
         {
-          "t": "sgnewswab",
-          "u": "https://bgnewswab.github.io/sgnewswab/",
-          "d": "2026-10-01"
+          "t": "IND W vs JPN W: 5 ओवरों का कमाल, टीम इंडिया रिकॉर्ड से मालामाल; ह",
+          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=99",
+          "d": ""
         },
         {
-          "t": "SG News - ताज़ा ख़बरें",
-          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=132",
-          "d": "2026-10-01"
+          "t": "IND vs AFG: Abhishek Sharma के रिकॉर्ड T20I शतक के सामने शर्मसार ",
+          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=98",
+          "d": ""
         },
         {
-          "t": "SG News - ताज़ा ख़बरें",
-          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=131",
-          "d": "2026-10-01"
+          "t": "अभिषेक शर्मा का शतक और संजू सैमसन का धमाका, अफगानिस्तान पर 3-0 की",
+          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=97",
+          "d": ""
         },
         {
-          "t": "SG News - ताज़ा ख़बरें",
-          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=130",
-          "d": "2026-10-01"
+          "t": "IND vs AFG: वैभव सूर्यवंशी पर तीसरे T20I मैच में रहेंगी नजरें, अफ",
+          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=96",
+          "d": ""
         },
         {
-          "t": "SG News - ताज़ा ख़बरें",
-          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=129",
-          "d": "2026-10-01"
+          "t": "'हम कोई मशीन या रोबोट नहीं', 15 साल के वैभव सूर्यवंशी से कॉम्पिटि",
+          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=95",
+          "d": ""
         },
         {
-          "t": "SG News - ताज़ा ख़बरें",
-          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=128",
-          "d": "2026-10-01"
+          "t": "IND vs AFG: सीरीज जीतते ही श्रेयस अय्यर ने किया बड़ा एलान, आखिरी ",
+          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=94",
+          "d": ""
         },
         {
-          "t": "SG News - ताज़ा ख़बरें",
-          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=127",
-          "d": "2026-10-01"
+          "t": "भगवान शिव की नगरी में जल्द होगा 'क्रिकेट का शंखनाद', वाराणसी के न",
+          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=93",
+          "d": ""
         },
         {
-          "t": "SG News - ताज़ा ख़बरें",
-          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=126",
-          "d": "2026-10-01"
+          "t": "IND vs AFG: संजू सैमसन से लेकर रेड्डी तक, भारत को इन 5 'धुरंधरों'",
+          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=92",
+          "d": ""
         },
         {
-          "t": "SG News - ताज़ा ख़बरें",
-          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=125",
-          "d": "2026-10-01"
+          "t": "IND vs AFG: वरुण चक्रवर्ती हुए बाहर, अब कौन लेगा उनकी जगह? इन दो ",
+          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=91",
+          "d": ""
         },
         {
-          "t": "SG News - ताज़ा ख़बरें",
-          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=124",
-          "d": "2026-10-01"
+          "t": "IND vs AFG Live Streaming: भारत-अफगानिस्तान दूसरे T20I मैच को फ्र",
+          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=90",
+          "d": ""
         }
       ],
-      "days": {
-        "2026-10-01": 101
-      },
-      "total": 101
+      "days": {},
+      "total": 100
     },
     {
       "name": "TechGlow India",
       "url": "https://bgtechlab.github.io/bgtech/index.html",
       "articles": [
         {
-          "t": "BG ProductCheck - Expert Product Reviews, Price Comparison & Buying Guides (2026)",
-          "u": "https://bgtechlab.github.io/bgtech/index.html",
-          "d": "2026-09-23"
-        },
-        {
-          "t": "berrylicious women kurta palazzo dupatta set buy berrylicious women",
-          "u": "https://bgtechlab.github.io/bgtech/products/berrylicious-women-kurta-palazzo-dupatta-set-buy-berrylicious-women/",
-          "d": "2026-09-23"
-        },
-        {
-          "t": "samsung crystal 4k vision ai 108 cm 43 inch ultra hd 4k led smart",
+          "t": "Samsung Crystal 4K Vision AI 108 cm (43 inch) Ultra HD (4K) LED Smart Review (2026)",
           "u": "https://bgtechlab.github.io/bgtech/products/samsung-crystal-4k-vision-ai-108-cm-43-inch-ultra-hd-4k-led-smart/",
           "d": "2026-09-23"
         },
         {
-          "t": "govo gosurround 965pro",
+          "t": "GOVO GOSURROUND 965Pro Review (2026)",
           "u": "https://bgtechlab.github.io/bgtech/products/govo-gosurround-965pro/",
           "d": "2026-09-23"
         },
         {
-          "t": "xiaomi a series 108 cm 43 inch full hd led smart google tv with",
-          "u": "https://bgtechlab.github.io/bgtech/products/xiaomi-a-series-108-cm-43-inch-full-hd-led-smart-google-tv-with/",
+          "t": "Best Tech Gadget Deal Review (2026)",
+          "u": "https://bgtechlab.github.io/bgtech/products/best-tech-gadget-deal/",
           "d": "2026-09-23"
         },
         {
-          "t": "motorola edge 60 pro 256 gb storage",
+          "t": "berrylicious Women Kurta Palazzo Dupatta Set - Buy berrylicious Women Review (2026)",
+          "u": "https://bgtechlab.github.io/bgtech/products/berrylicious-women-kurta-palazzo-dupatta-set-buy-berrylicious-women/",
+          "d": "2026-09-23"
+        },
+        {
+          "t": "MOTOROLA Edge 60 Pro (256 GB Storage Review (2026)",
           "u": "https://bgtechlab.github.io/bgtech/products/motorola-edge-60-pro-256-gb-storage/",
-          "d": "2026-09-23"
+          "d": "2026-09-19"
         },
         {
-          "t": "motorola edge 70 pro 256 gb storage",
+          "t": "XIAOMI A Series 108 cm (43 inch) Full HD LED Smart Google TV with Review (2026)",
+          "u": "https://bgtechlab.github.io/bgtech/products/xiaomi-a-series-108-cm-43-inch-full-hd-led-smart-google-tv-with/",
+          "d": "2026-09-17"
+        },
+        {
+          "t": "MOTOROLA Edge 70 Pro+ (256 GB Storage Review (2026)",
           "u": "https://bgtechlab.github.io/bgtech/products/motorola-edge-70-pro-256-gb-storage/",
-          "d": "2026-09-23"
+          "d": "2026-09-13"
         },
         {
-          "t": "poco x8 power 5g 128 gb storage",
+          "t": "POCO X8 Power 5G (128 GB Storage Review (2026)",
           "u": "https://bgtechlab.github.io/bgtech/products/poco-x8-power-5g-128-gb-storage/",
-          "d": "2026-09-23"
+          "d": "2026-09-11"
         },
         {
-          "t": "apple iphone 17 512 gb storage",
+          "t": "Apple iPhone 17 (512 GB Storage) Review (2026)",
           "u": "https://bgtechlab.github.io/bgtech/products/apple-iphone-17-512-gb-storage/",
-          "d": "2026-09-23"
+          "d": "2026-09-10"
         },
         {
-          "t": "poco x8 pro max 256 gb storage",
+          "t": "POCO X8 Pro Max (256 GB Storage Review (2026)",
           "u": "https://bgtechlab.github.io/bgtech/products/poco-x8-pro-max-256-gb-storage/",
-          "d": "2026-09-23"
+          "d": "2026-09-09"
         }
       ],
       "days": {
-        "2026-09-23": 34
+        "2026-09-23": 4,
+        "2026-09-19": 1,
+        "2026-09-17": 1,
+        "2026-09-13": 1,
+        "2026-09-11": 1,
+        "2026-09-10": 1,
+        "2026-09-09": 1,
+        "2026-09-08": 2,
+        "2026-09-07": 2,
+        "2026-09-06": 1,
+        "2026-09-05": 1,
+        "2026-09-02": 1,
+        "2026-09-01": 1,
+        "2026-08-30": 1,
+        "2026-08-29": 2,
+        "2026-08-28": 2,
+        "2026-08-25": 5,
+        "2026-08-23": 1,
+        "2026-08-18": 1,
+        "2026-08-13": 1,
+        "2026-08-11": 1,
+        "2026-08-08": 1
       },
-      "total": 34
+      "total": 33
     }
   ],
   "websites": [
