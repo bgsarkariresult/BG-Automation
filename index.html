@@ -1,5 +1,16 @@
 <!DOCTYPE html>
-<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>BG Automation</title><link rel="stylesheet" href="app.css"></head><body><script src="app.js"></script>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>BG Automation</title><link rel="stylesheet" href="app.css">
+<style>
+.dg{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px;align-items:start}
+.dg>div{display:grid;gap:16px;min-width:0;align-content:start}
+.wel{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+.dt{border:1px solid var(--bd);border-radius:10px;padding:8px 14px;display:flex;gap:10px;align-items:center;background:#0b1430}
+.lv{background:#0e8f5d;color:#fff;border-radius:8px;padding:2px 10px;font-weight:700;font-size:.78rem}
+.card h2{margin-bottom:10px}
+.card .li b{display:block}
+@media(min-width:1151px){.dg>div:last-child{position:sticky;top:76px}}
+@media(max-width:1150px){.dg{grid-template-columns:1fr}}
+</style></head><body><script src="app.js"></script>
 <script>
 const WORKER_URL = 'https://bg-runf.garhwalbhavesh2002.workers.dev/';
 
@@ -15,14 +26,38 @@ async function runNow(btn) {
   }
   setTimeout(() => { btn.disabled = false; btn.textContent = '▶ Abhi Run Karo'; }, 6000);
 }
+const nowS=()=>new Date().toLocaleString('hi-IN',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+if(!window.CK){window.CK=1;setInterval(()=>{const e=document.querySelector('#clk');if(e)e.textContent=nowS()},30000)}
 boot('index.html','Dashboard — sirf status',d=>{
  const T=TD(),s=stats(d,T,T),art=(d.sites||[]).reduce((n,x)=>n+((x.days||{})[T]||0),0);
  const run=d.bots.filter(b=>['in_progress','queued'].includes(b.status)).length,fail=d.bots.filter(b=>b.status==='failure').length;
  const last=[...d.bots].filter(b=>b.time).sort((a,b)=>new Date(b.time)-new Date(a.time))[0];
  const nx=d.bots.filter(b=>b.next).sort((a,b)=>new Date(a.next)-new Date(b.next))[0];
  const S=(i,c,l,v,x)=>`<div class="stat"><div class="ico" style="background:${c}">${i}</div><div><small>${l}</small><b>${v}</b><small>${x}</small></div></div>`;
- $('#main').innerHTML=`<div class="card"><h2>👋 Welcome, Bhavesh!</h2><small>Yahan sirf status hai. Detail left menu ke alag pages me.</small><br><br><button onclick="runNow(this)">▶ Abhi Run Karo</button></div>
+ const num=v=>v==null||v===''?'—':fmt(v);
+ const chC=c=>{const nm=c.name||c.title||c.id||'Channel',ic=c.icon||c.thumb||c.thumbnail||c.img||'';
+  const av=/^https?:/.test(ic)?`<img src="${esc(ic)}" alt="">`:`<div class="av">${esc(String(nm).slice(0,2).toUpperCase())}</div>`;
+  return `<div class="ch">${av}<b>${esc(nm)}</b><small>ID: ${esc(c.id||'—')}</small><br><span class="chip ${c.error?'e':''}">${c.error?'Error':'Active'}</span><div class="nums"><span>👥 ${num(c.subs??c.subscribers)}</span><span>👁 ${num(c.views??c.viewCount)}</span></div></div>`};
+ const stC=x=>{const u=x.url||x.link||'';return `<div class="site"><b>${esc(x.name||x.title||'Site')}</b>${x.tag?`<span class="tag">${esc(x.tag)}</span>`:''}${u?`<small>${esc(u)}</small>`:''}<small>📰 Aaj: ${(x.days||{})[T]||0} lekh</small>${u?`<div class="r"><a class="btn g" href="${esc(u)}" target="_blank" rel="noopener">View Site</a></div>`:''}</div>`};
+ const ev=d.bots.flatMap(b=>(b.runs||[]).filter(r=>r.d>=60||r.s==='failure').map(r=>({n:b.name,r}))).sort((a,b)=>new Date(b.r.t)-new Date(a.r.t));
+ const tm=t=>new Date(t).toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'});
+ const li=(e,sub)=>`<div class="li"><span class="dot s-${e.r.s}">${st(e.r.s)}</span><div><b>${esc(e.n)}</b>${sub?`<small>${esc(e.r.s)} • ${Math.ceil(e.r.d/60)} min</small>`:''}</div><span class="t">${sub?tm(e.r.t):ago(e.r.t)}</span></div>`;
+ const lg=ev.slice(0,10).map(e=>li(e,1)).join('')||'<small>Abhi koi run nahi.</small>';
+ const ra=ev.slice(0,5).map(e=>li(e,0)).join('')||'<small>Abhi koi run nahi.</small>';
+ const chs=d.channels||[],sites=d.sites||[];
+ $('#main').innerHTML=`<div class="dg"><div>
+ <div class="card wel"><div><h2>👋 Welcome, Bhavesh!</h2><small>Yahan sirf status hai. Detail left menu ke alag pages me.</small><br><br><button class="btn" onclick="runNow(this)">▶ Abhi Run Karo</button></div><div class="dt"><span id="clk">${nowS()}</span><span class="lv">Live</span></div></div>
  <div class="stats">${S('🗂','#1d6bff','Projects',d.bots.length,(d.bots.length-fail-run)+' theek • '+fail+' fail • '+run+' chal rahe')}${S('✔','#0e8f5d','Aaj Safal',s.ok,'automation')}${S('✖','#c4162a','Aaj Asafal',s.bad,'automation')}${S('🎬','#6d3bd6','Aaj Video',s.vid,'ban gaye')}${S('📰','#1d8fff','Aaj Lekh',art,'publish hue')}${S('🕒','#b7791f','Pichhla run',ago(last&&last.time),nx?'Agla: '+esc(nx.name)+' '+at(nx.next):'schedule nahi mila')}</div>
+ <div class="card"><div class="hd"><h2>▶️ YouTube Channels (${chs.length})</h2><a class="btn g" href="youtube.html">Manage</a></div><div class="row5">${chs.map(chC).join('')||'<small>Koi channel nahi mila.</small>'}</div></div>
+ <div class="card"><div class="hd"><h2>🌐 Websites / Projects (${sites.length})</h2><a class="btn g" href="sites.html">Manage</a></div><div class="sites">${sites.map(stC).join('')||'<small>Koi website nahi mili.</small>'}</div></div>
+ <div class="three">
+  <div class="card"><div class="hd"><h2>Automation Overview</h2></div><div class="k"><div><small>Total Jobs</small><b>${s.ok+s.bad}</b></div><div><small>Success</small><b>${s.ok}</b></div><div><small>Failed</small><b>${s.bad}</b></div><div><small>Pending</small><b>${run}</b></div></div></div>
+  <div class="card"><div class="hd"><h2>Recent Activity</h2></div>${ra}</div>
+  <div class="card qa"><div class="hd"><h2>Quick Actions</h2></div><a href="control.html">⚡ Actions Control</a><a href="youtube.html">▶️ YouTube Studio</a><a href="sites.html">📰 Website &amp; Articles</a><a href="logs.html">💻 Logs &amp; Telegram</a></div>
+ </div>
  <div class="card"><div class="hd"><h2>Sabhi Projects ki Sthiti</h2></div><div class="tbw"><table class="tb"><tr><th>Project</th><th>Status</th><th>Pichhla run</th><th>Agla run</th></tr>${d.bots.map(b=>`<tr><td>${esc(b.name)}</td><td>${chip(b.status)}</td><td>${ago(b.time)}</td><td>${b.next?at(b.next):'—'}</td></tr>`).join('')}</table></div>
- <small>Note: 60 sec se chhote (polling) run ginti me nahi. Video = 2 min+ ka safal run (anumaan).</small></div>`});
+ <small>Note: 60 sec se chhote (polling) run ginti me nahi. Video = 2 min+ ka safal run (anumaan).</small></div>
+ </div>
+ <div><div class="card"><div class="hd"><h2>💻 Live Logs</h2><span class="lv">Live</span></div><div class="logs">${lg}</div></div>
+ <div class="ok-box" style="${fail?'border-color:var(--er);background:#2a1015;color:var(--er)':''}">${fail?'⚠ '+fail+' project fail hua':'✔ All Systems Running'}</div></div></div>`});
 </script></body></html>
