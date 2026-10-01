@@ -42,7 +42,7 @@ boot('index.html','YouTube • GitHub • Telegram • All Projects',d=>{
  const agoText=t=>{if(!t)return'—';let m=Math.max(0,(Date.now()-new Date(t))/60000);return m<1?'अभी':m<60?Math.round(m)+' मिनट पहले':m<1440?Math.round(m/60)+' घंटे पहले':Math.round(m/1440)+' दिन पहले'};
  const row=x=>`<div class="li"><span class="dot ${x.r.s}">${x.r.s==='success'?'✓':x.r.s==='failure'?'✕':'…'}</span><div><b>${esc(x.name)}</b><small>${esc(x.r.s||'unknown')} · ${Math.ceil((+x.r.d||0)/60)} मिनट</small></div><span class="time">${agoText(x.r.t)}</span></div>`;
  const top=document.querySelector('.top');
- top.innerHTML=`<button class="burger" aria-label="Menu" onclick="document.querySelector('nav').classList.toggle('open')">☰</button><div class="logo"><span style="color:#20baff">⚙ BG</span> Automation<small>Automate　•　Create　•　Grow</small></div><div class="topnav"><a class="on" href="index.html">⌂　Home</a><a href="youtube.html">▶　YouTube</a><a href="https://github.com/bgsarkariresult/BG-Automation" target="_blank" rel="noopener">◉　GitHub</a><a href="logs.html">➤　Telegram</a><a href="sites.html">▦　All Projects</a></div><div class="topright"><button id="refreshBtn" class="refresh-btn" onclick="window.refreshDashboard&&window.refreshDashboard()" title="नया उपलब्ध डेटा लोड करें">↻ Refresh</button><a class="refresh-btn" href="https://github.com/bgsarkariresult/BG-Automation/actions/workflows/sync.yml" target="_blank" rel="noopener" title="GitHub Actions में Sync चलाएँ">▶ Run Sync</a><div class="status"><b>System Online</b><span id="clock">${clockText()}</span></div><div class="avatar">BG</div></div>`;
+ top.innerHTML=`<button class="burger" aria-label="Menu" onclick="document.querySelector('nav').classList.toggle('open')">☰</button><div class="logo"><span style="color:#20baff">⚙ BG</span> Automation<small>Automate　•　Create　•　Grow</small></div><div class="topnav"><a class="on" href="index.html">⌂　Home</a><a href="youtube.html">▶　YouTube</a><a href="https://github.com/bgsarkariresult/BG-Automation" target="_blank" rel="noopener">◉　GitHub</a><a href="logs.html">➤　Telegram</a><a href="sites.html">▦　All Projects</a></div><div class="topright"><button id="refreshBtn" class="refresh-btn" onclick="window.refreshDashboard&&window.refreshDashboard()" title="नया उपलब्ध डेटा लोड करें">↻ Refresh</button><button id="runSyncBtn" class="refresh-btn" onclick="window.runDashboardSync&&window.runDashboardSync()" title="Cloudflare Worker से GitHub Sync शुरू करें">▶ Run Sync</button><div class="status"><b>System Online</b><span id="clock">${clockText()}</span></div><div class="avatar">BG</div></div>`;
  const nav=document.querySelector('nav');
  nav.innerHTML=`<a class="on" href="index.html">⌂　Dashboard</a><a href="youtube.html">▶　YouTube Channels <span class="cnt">${channels.length}</span></a><a href="sites.html">▣　Websites / Projects</a><a href="control.html">⚙　Automation</a><a href="logs.html">▤　Activity Logs</a><a href="logs.html">➤　Telegram Messages <span class="cnt">${messages}</span></a><a href="https://github.com/bgsarkariresult/BG-Automation/settings/secrets/actions" target="_blank" rel="noopener">⚙　Settings</a><div class="sys"><b>● System Online</b><br><small>Last checked: ${clockText()}</small><br><small>Data updated: ${at(d.updated)}</small></div>`;
  const channelCard=c=>{const name=c.name||c.title||c.id||'Channel',img=c.icon||c.thumb||c.thumbnail||c.img||'',avatar=/^https?:/.test(img)?`<img src="${esc(img)}" alt="">`:`<div class="av">${esc(String(name).slice(0,2).toUpperCase())}</div>`;return `<div class="yt-card">${avatar}<b>${esc(name)}</b><div class="id">${esc((c.id||'—').slice(0,16))}</div><span class="chip ${c.error?'e':''}">${c.error?'Error':'● Active'}</span><div class="nums"><span>👁 ${fmt(c.views??c.viewCount)}</span><span>👥 ${fmt(c.subs??c.subscribers)}</span></div><a class="manage" href="youtube.html">Manage</a></div>`};
@@ -56,6 +56,35 @@ boot('index.html','YouTube • GitHub • Telegram • All Projects',d=>{
  </div><div class="col"><section class="card qa"><div class="hd"><h2>⚡ Quick Actions</h2></div><a href="youtube.html"><span>▶　Upload YouTube Video</span><span>›</span></a><a href="https://github.com/bgsarkariresult/BG-Automation" target="_blank" rel="noopener"><span>◉　View GitHub Repository</span><span>›</span></a><a href="logs.html"><span>➤　Telegram Messages</span><span>›</span></a><a href="sites.html"><span>▦　Check All Projects</span><span>›</span></a><a href="control.html"><span>⚙　Automation Control</span><span>›</span></a></section>
  <section class="card"><div class="hd"><h2>⌁ Live Logs</h2><span class="live">● Live</span></div><div class="logs">${recent.slice(0,7).map(row).join('')||'<small>No logs available.</small>'}</div><div style="text-align:right;margin-top:8px"><a class="btn alt" href="logs.html">View All Logs →</a></div></section><section class="card"><div class="hd"><h2>➤ Recent Telegram Messages</h2><a class="btn alt" href="logs.html">View All →</a></div>${(d.telegram||d.messages||[]).slice(0,4).map(m=>`<div class="li"><span class="dot">➤</span><div><b>${esc(m.title||m.name||m.text||'Telegram update')}</b><small>${esc(m.message||m.status||'')}</small></div></div>`).join('')||'<small>No Telegram messages in dashboard data.</small>'}</section><div class="okbox">${failed?'⚠ Check failed jobs':'✓ Dashboard loaded'}<small style="display:block;font-weight:400;margin-top:3px">Data synced: ${at(d.updated)}</small></div></div></div>`;
 });
+async function runDashboardSync(){
+ const btn=document.querySelector('#runSyncBtn');
+ if(!btn||btn.disabled)return;
+ btn.disabled=true;btn.textContent='⏳ Starting…';
+ const oldUpdated=window.D?.updated||'';
+ const status=document.querySelector('.okbox');
+ if(status)status.innerHTML='⏳ GitHub Actions sync शुरू हो रहा है…';
+ try{
+  const response=await fetch('https://bg-runf.garhwalbhavesh2002.workers.dev/',{
+   method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({repo:'bgsarkariresult/BG-Automation',workflow:'sync.yml',ref:'main'})
+  });
+  const result=await response.json().catch(()=>({}));
+  if(!response.ok||!result.ok)throw new Error(result.error||('Worker error: '+response.status));
+  btn.textContent='⏳ Sync चल रहा है…';
+  if(status)status.innerHTML='⏳ GitHub Actions शुरू हो गया। डेटा अपडेट होने की प्रतीक्षा…';
+  const deadline=Date.now()+240000;
+  let updated=false;
+  while(Date.now()<deadline){
+   await new Promise(resolve=>setTimeout(resolve,8000));
+   try{
+    const r=await fetch('https://raw.githubusercontent.com/bgsarkariresult/BG-Automation/main/data/dashboard.json?t='+Date.now(),{cache:'no-store'});
+    if(r.ok){const d=await r.json();if(d.updated&&d.updated!==oldUpdated){updated=true;await window.refreshDashboard?.();break}}
+   }catch(_){}
+  }
+  if(status)status.innerHTML=updated?'✓ Sync पूरा हुआ। Data updated: '+new Date(window.D?.updated||Date.now()).toLocaleString('hi-IN'):'⏳ Sync शुरू हो गया है। डेटा अपडेट होने में अधिक समय लग रहा है; कुछ देर बाद Refresh करें।';
+ }catch(e){
+  if(status)status.textContent='⚠ Sync शुरू नहीं हुआ: '+(e.message||'Worker से संपर्क नहीं हो पाया');
+ }finally{btn.disabled=false;btn.textContent='▶ Run Sync'}
+}
 setInterval(()=>{const el=document.querySelector('#clock');if(el)el.textContent=clockText()},30000);
 </script>
 </body>
