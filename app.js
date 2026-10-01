@@ -29,6 +29,10 @@ function boot(key,title,render){
   <div class="sys"><b>● System Online</b><br><small id="sysS"></small></div></nav><main id="main"></main></div>`;
   async function go(force=false){const btn=document.querySelector('#refreshBtn');try{if(btn){btn.disabled=true;btn.textContent='↻ Loading…'}let r=await fetch(RAW+'?t='+Date.now(),{cache:'no-store'}).catch(()=>null);if(!r||!r.ok)r=await fetch('data/dashboard.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;
     const d=await r.json();if(d.updated===window.LU&&!force)return;window.LU=d.updated;window.D=d;
-    const good=d.channels.every(c=>!c.error||/YAHAN/.test(c.id));$('#pill').textContent=good?'✔ GitHub Secrets Connected':'⚠ Channel ID check karo';$('#pill').classList.toggle('bad',!good);
+    const age=d.updated?Math.max(0,Math.floor((Date.now()-new Date(d.updated).getTime())/60000)):Infinity;
+    const channelOk=(d.channels||[]).every(c=>!c.error||/YAHAN/.test(c.id));
+    const fresh=age<=7;
+    $('#pill').textContent=!channelOk?'⚠ Channel ID/API check':fresh?'● Data fresh · '+age+' min':'⚠ Data delayed · '+(Number.isFinite(age)?age+' min':'unknown');
+    $('#pill').classList.toggle('bad',!fresh||!channelOk);
     $('#sysS').textContent='Sync: '+at(d.updated);render(d)}catch(e){$('#pill').textContent='⚠ Sync Dashboard chalao';$('#pill').classList.add('bad')}finally{if(btn){btn.disabled=false;btn.textContent='↻ Refresh'}}}
-  window.refreshDashboard=()=>go(true);go();setInterval(()=>go(false),60000)}
+  window.refreshDashboard=()=>go(true);go();setInterval(()=>go(false),30000)}
