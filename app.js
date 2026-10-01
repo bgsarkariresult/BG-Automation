@@ -27,8 +27,8 @@ function boot(key,title,render){
   <div class="app"><nav onclick="this.classList.remove('open')">${NAV.map(n=>`<a class="${n[0]==key?'on':''}" href="${n[0]}">${n[1]} ${n[2]}</a>`).join('')}
   <a href="https://github.com/bgsarkariresult/BG-Automation/settings/secrets/actions" target="_blank" rel="noopener">⚙️ Settings (Secrets)</a>
   <div class="sys"><b>● System Online</b><br><small id="sysS"></small></div></nav><main id="main"></main></div>`;
-  async function go(){try{let r=await fetch(RAW+'?t='+Date.now()).catch(()=>null);if(!r||!r.ok)r=await fetch('data/dashboard.json?t='+Date.now());if(!r.ok)throw 0;
-    const d=await r.json();if(d.updated===window.LU)return;window.LU=d.updated;window.D=d;
+  async function go(force=false){const btn=document.querySelector('#refreshBtn');try{if(btn){btn.disabled=true;btn.textContent='↻ Loading…'}let r=await fetch(RAW+'?t='+Date.now(),{cache:'no-store'}).catch(()=>null);if(!r||!r.ok)r=await fetch('data/dashboard.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;
+    const d=await r.json();if(d.updated===window.LU&&!force)return;window.LU=d.updated;window.D=d;
     const good=d.channels.every(c=>!c.error||/YAHAN/.test(c.id));$('#pill').textContent=good?'✔ GitHub Secrets Connected':'⚠ Channel ID check karo';$('#pill').classList.toggle('bad',!good);
-    $('#sysS').textContent='Sync: '+at(d.updated);render(d)}catch(e){$('#pill').textContent='⚠ Sync Dashboard chalao';$('#pill').classList.add('bad')}}
-  go();setInterval(go,60000)}
+    $('#sysS').textContent='Sync: '+at(d.updated);render(d)}catch(e){$('#pill').textContent='⚠ Sync Dashboard chalao';$('#pill').classList.add('bad')}finally{if(btn){btn.disabled=false;btn.textContent='↻ Refresh'}}}
+  window.refreshDashboard=()=>go(true);go();setInterval(()=>go(false),60000)}
