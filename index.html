@@ -32,7 +32,7 @@ main{min-width:0}.dg{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:
 <script>
 function clockText(){return new Date().toLocaleString('hi-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}
 boot('index.html','YouTube • GitHub • Telegram • All Projects',d=>{
- const channels=d.channels||[],sites=d.sites||d.websites||[],bots=d.bots||[];
+ const channels=d.channels||[],sites=d.websites||d.sites||[],bots=d.bots||[];
  const runs=bots.flatMap(b=>(b.runs||[]).map(r=>({name:b.name||b.id||'Automation',r}))).sort((a,b)=>new Date(b.r.t)-new Date(a.r.t));
  const recent=runs.filter(x=>x.r.d>=60||x.r.s==='failure');
  const today=new Date().toLocaleDateString('en-CA');
