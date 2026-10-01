@@ -134,6 +134,61 @@ boot('index.html', 'YouTube • GitHub • Telegram • All Projects', d => {
   const num = v => (v == null || v === '') ? '—' : fmt(v);
   const tm = t => new Date(t).toLocaleTimeString('hi-IN', { hour: '2-digit', minute: '2-digit' });
 
+  const chs = d.channels || [];
+  const sites = d.sites || d.websites || [];
+  const tgCount = (d.telegram && d.telegram.length) || (d.messages && d.messages.length) || 0;
+
+  // ===== Rebuild Top bar + Sidebar to match image style (only on Dashboard) =====
+  const top = document.querySelector('.top');
+  if (top) {
+    top.innerHTML = `
+      <button class="burger" onclick="document.querySelector('nav').classList.toggle('open')">☰</button>
+      <div class="logo">🚀 BG Automation<br><small>YouTube • GitHub • Telegram • All Projects</small></div>
+      <div class="pill" id="pill">✔ GitHub Secrets Connected</div>
+      <div style="margin-left:12px;display:flex;align-items:center;gap:10px">
+        <span style="font-size:1.2rem;cursor:pointer" title="Notifications">🔔</span>
+        <div style="width:34px;height:34px;border-radius:50%;background:var(--ac);display:grid;place-items:center;font-weight:700;font-size:.9rem">B</div>
+        <span style="font-weight:600">Bhavesh</span>
+      </div>
+    `;
+    // re-apply good/bad class after pill is recreated
+    const good = d.channels.every(c => !c.error || /YAHAN/.test(c.id));
+    const pill = document.getElementById('pill');
+    if (pill) {
+      pill.textContent = good ? '✔ GitHub Secrets Connected' : '⚠ Channel ID check karo';
+      pill.classList.toggle('bad', !good);
+    }
+  }
+
+  const nav = document.querySelector('nav');
+  if (nav) {
+    nav.innerHTML = `
+      <a class="on" href="index.html">🏠 Dashboard</a>
+      <a href="youtube.html">▶ YouTube Channels <span class="cnt">${chs.length}</span></a>
+      <a href="sites.html">🌐 Websites / Projects</a>
+      <a href="control.html">⚡ Automation Jobs</a>
+      <a href="sites.html">📝 Article Generator</a>
+      <a href="youtube.html">🎬 Video Library</a>
+      <a href="logs.html">✈ Telegram Messages ${tgCount ? `<span class="cnt">${tgCount}</span>` : ''}</a>
+      <a href="logs.html">💻 Live Logs <span class="lv" style="margin-left:auto;font-size:.7rem;padding:2px 8px">Live</span></a>
+      <a href="https://github.com/bgsarkariresult/BG-Automation/settings/secrets/actions" target="_blank" rel="noopener">⚙️ Settings</a>
+      
+      <h4 style="margin:20px 12px 8px;font-size:.78rem;color:var(--mu);text-transform:uppercase;letter-spacing:.5px">Your Websites</h4>
+      ${sites.slice(0,5).map(x => {
+        const u = x.url || x.link || '#';
+        return `<a href="${esc(u)}" target="_blank" rel="noopener" style="font-size:.85rem;padding:8px 12px">
+          <span style="width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block;margin-right:6px"></span>
+          ${esc(x.name || x.title || 'Site')}
+        </a>`;
+      }).join('') || ''}
+      
+      <div class="sys">
+        <b>● System Online</b><br>
+        <small id="sysS">Sync: ${at(d.updated)}</small>
+      </div>
+    `;
+  }
+
   // Channel card
   const chC = c => {
     const nm = c.name || c.title || c.id || 'Channel';
@@ -196,12 +251,6 @@ boot('index.html', 'YouTube • GitHub • Telegram • All Projects', d => {
 
   const lg = ev.slice(0, 12).map(e => li(e, 1)).join('') || '<small style="color:var(--mu)">Abhi koi activity nahi.</small>';
   const ra = ev.slice(0, 6).map(e => li(e, 0)).join('') || '<small style="color:var(--mu)">Abhi koi activity nahi.</small>';
-
-  const chs = d.channels || [];
-  const sites = d.sites || d.websites || [];
-
-  // Telegram count approximation (from recent bot activity that mentions telegram or just show 0 if none)
-  const tgCount = (d.telegram && d.telegram.length) || (d.messages && d.messages.length) || 0;
 
   $('#main').innerHTML = `
   <div class="dg">
