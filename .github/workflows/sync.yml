@@ -4,7 +4,7 @@ on:
     - cron: "*/5 * * * *"
   workflow_dispatch:
   repository_dispatch:
-    types: [tg-message]
+    types: [tg-message, article-published]
 
 permissions:
   contents: write
