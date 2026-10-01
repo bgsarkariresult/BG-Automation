@@ -1,6 +1,6 @@
 {
-  "updated": "2026-10-01T08:03:23Z",
-  "checked_at": "2026-10-01T08:03:23Z",
+  "updated": "2026-10-01T08:11:02Z",
+  "checked_at": "2026-10-01T08:11:02Z",
   "refresh_interval_seconds": 300,
   "source": "GitHub Actions API",
   "channels": [
@@ -954,7 +954,7 @@
       "actor": "bgsarkariresult",
       "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/36805669805",
       "cron": "*/5 * * * *",
-      "next": "2026-10-01T08:05:00Z"
+      "next": "2026-10-01T08:15:00Z"
     },
     {
       "name": "TechGlow India",
@@ -964,8 +964,22 @@
       "tag": "Tech Review",
       "cost": "",
       "kind": "video",
-      "status": "failure",
+      "status": "in_progress",
       "runs": [
+        {
+          "id": 36834504469,
+          "number": 41,
+          "s": "in_progress",
+          "t": "2026-10-01T08:08:55Z",
+          "started": "2026-10-01T08:08:40Z",
+          "created": "2026-10-01T08:08:40Z",
+          "d": 15,
+          "e": "workflow_dispatch",
+          "n": "TechGlow India - Tech Review Auto Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/36834504469"
+        },
         {
           "id": 36805749798,
           "number": 40,
@@ -1527,14 +1541,14 @@
           "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/36110177851"
         }
       ],
-      "time": "2026-10-01T02:25:30Z",
-      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/36805749798",
-      "last_run_id": 36805749798,
-      "run_number": 40,
+      "time": "2026-10-01T08:08:55Z",
+      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/36834504469",
+      "last_run_id": 36834504469,
+      "run_number": 41,
       "branch": "main",
-      "event": "schedule",
+      "event": "workflow_dispatch",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/36805749798",
+      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/36834504469",
       "failed": {
         "job": "resolve-url",
         "step": "URL nikalo (manual input ya Telegram se)",
@@ -1544,7 +1558,7 @@
         "run_id": 36805749798
       },
       "cron": "*/5 * * * *",
-      "next": "2026-10-01T08:05:00Z"
+      "next": "2026-10-01T08:15:00Z"
     },
     {
       "name": "BK GrowUp",
@@ -5454,7 +5468,7 @@
       "actor": "bgtechlab",
       "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/36805279798",
       "cron": "*/5 * * * *",
-      "next": "2026-10-01T08:05:00Z"
+      "next": "2026-10-01T08:15:00Z"
     }
   ],
   "sites": [
