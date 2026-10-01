@@ -35,14 +35,13 @@ let SEL = null;
 
 function norm(data){
   const rows=[];
-  const category={'sg-news-automation':'News','tech-review-bot':'Tech','bg-auto-job-bot':'Jobs','history-facts-bot':'Entertainment','reels-bot':'Tech'};
+  const category={'sg-news-automation':'Sports','tech-review-bot':'Tech','bg-auto-job-bot':'Jobs','history-facts-bot':'Entertainment','reels-bot':'Entertainment'};
   for(const [key,value] of Object.entries(data||{})){
     if(!value)continue;
-    const list=Array.isArray(value.latest)?value.latest:(Array.isArray(value.suggested)?value.suggested:[]);
+    const list=Array.isArray(value.latest)?value.latest:[];
     list.forEach(t=>rows.push(mapTopic(t,category[key]||'News',key,value.updated_at||'')));
   }
-  const seen=new Set();
-  return rows.filter(t=>{const k=t.title.trim().toLowerCase();if(!k||seen.has(k))return false;seen.add(k);return true;});
+  return rows.filter(t=>t.title.trim());
 }
 function mapTopic(t, fallbackCat='All', channel='', updatedAt=''){
   if (typeof t === 'string') return {title:t, score:0, cat:fallbackCat, trend:'unknown', first:updatedAt, keywords:[], url:'', source:'unknown', channel, updatedAt};
@@ -90,10 +89,10 @@ function renderList(){
         ${cats.map(c=>`<button class="${c===CAT?'on':''}" onclick="CAT='${c}';renderList()">${c}</button>`).join('')}
       </div>
       <div class="tlist">
-        ${list.slice(0,30).map((t,i)=>`
+        ${list.slice(0,5).map((t,i)=>`
           <div class="titem" onclick="showDetail(${ALL.indexOf(t)})">
             <span class="rank">${i+1}</span>
-            <div><b>${esc(t.title)}</b><br><small>${esc(t.cat)} • ${t.trend==='falling'?'📉 Falling':t.trend==='rising'?'📈 Rising':'Trend status unavailable'} • ${esc(t.source||'unknown')}</small></div>
+            <div><b>${esc(t.title)}</b><br><small>${esc(t.channel||'Channel')} • ${esc(t.cat)} • ${t.trend==='falling'?'📉 Falling':t.trend==='rising'?'📈 Rising':'Trend status unavailable'} • ${esc(t.source||'unknown')}</small></div>
             <span class="score">🔥 ${Math.round(t.score)}</span>
           </div>`).join('') || '<small>Koi topic nahi mila.</small>'}
       </div>
