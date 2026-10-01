@@ -33,8 +33,8 @@
 ],
  "sites": [
   {"name": "BG Sarkari Result", "url": "https://bgsarkariresult.github.io/bgsarkariresult/", "feed": "https://bgsarkariresult.github.io/bgsarkariresult/sitemap.xml"},
-  {"name": "SG News18", "url": "SAHI_SITE_URL", "feed": "SAHI_SITE_URL/sitemap.xml"},
-  {"name": "TechGlow India", "url": "SAHI_SITE_URL", "feed": "SAHI_SITE_URL/sitemap.xml"}
+  {"name": "SG News18", "url": "https://bgsarkariresult.github.io/SG-News18/", "feed": "https://bgsarkariresult.github.io/SG-News18/sitemap.xml"},
+  {"name": "TechGlow India", "url": "https://bgsarkariresult.github.io/TechGlow-India/", "feed": "https://bgsarkariresult.github.io/TechGlow-India/sitemap.xml"}
 ],
  "websites": [
   {
