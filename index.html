@@ -1,16 +1,101 @@
 <!DOCTYPE html>
-<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>BG Automation</title><link rel="stylesheet" href="app.css">
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BG Automation</title>
+<link rel="stylesheet" href="app.css">
 <style>
-.dg{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px;align-items:start}
-.dg>div{display:grid;gap:16px;min-width:0;align-content:start}
-.wel{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
-.dt{border:1px solid var(--bd);border-radius:10px;padding:8px 14px;display:flex;gap:10px;align-items:center;background:#0b1430}
-.lv{background:#0e8f5d;color:#fff;border-radius:8px;padding:2px 10px;font-weight:700;font-size:.78rem}
-.card h2{margin-bottom:10px}
-.card .li b{display:block}
+/* ===== Dashboard v2 – Image-matched layout (live data preserved) ===== */
+.dg{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px;align-items:start}
+.dg>div{display:grid;gap:18px;min-width:0;align-content:start}
 @media(min-width:1151px){.dg>div:last-child{position:sticky;top:76px}}
 @media(max-width:1150px){.dg{grid-template-columns:1fr}}
-</style></head><body><script src="app.js"></script>
+
+/* Welcome */
+.wel{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:center;padding:18px 20px}
+.wel h2{font-size:1.35rem;margin-bottom:4px}
+.wel small{color:var(--mu);line-height:1.4}
+.dt{border:1px solid var(--bd);border-radius:12px;padding:8px 16px;display:flex;gap:12px;align-items:center;background:#0b1430}
+.lv{background:#0e8f5d;color:#fff;border-radius:8px;padding:3px 12px;font-weight:700;font-size:.78rem}
+
+/* Big stats row – 4 cards like image */
+.stats4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:900px){.stats4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.stats4{grid-template-columns:1fr}}
+.stat4{background:var(--cd);border:1px solid var(--bd);border-radius:16px;padding:18px 16px;display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden}
+.stat4 .ico{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:1.3rem;margin-bottom:4px}
+.stat4 b{font-size:1.85rem;line-height:1.1;font-weight:800}
+.stat4 small{color:var(--mu);font-size:.8rem}
+.stat4 .sub{font-size:.75rem;color:var(--mu);margin-top:2px}
+
+/* YouTube Channels grid */
+.yt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
+.yt-card{background:#0b1430;border:1px solid var(--bd);border-radius:14px;padding:16px 12px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;transition:.15s}
+.yt-card:hover{border-color:var(--ac);transform:translateY(-2px)}
+.yt-card .av,.yt-card img{width:58px;height:58px;border-radius:50%;object-fit:cover;background:var(--ac);display:grid;place-items:center;font-weight:800;font-size:1.1rem;margin-bottom:4px}
+.yt-card b{font-size:.95rem;line-height:1.2}
+.yt-card .id{font-size:.72rem;color:var(--mu);word-break:break-all}
+.yt-card .nums{display:flex;gap:10px;font-size:.78rem;color:var(--mu);margin:4px 0}
+.yt-card .manage{margin-top:6px;width:100%;padding:7px 0;border-radius:8px;background:#13204a;border:1px solid var(--bd);color:var(--tx);font-size:.8rem;font-weight:600;cursor:pointer;text-align:center}
+.yt-card .manage:hover{background:var(--ac);border-color:var(--ac)}
+.yt-add{border:2px dashed var(--bd);background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--mu);min-height:180px}
+.yt-add:hover{border-color:var(--ac);color:var(--ac)}
+.yt-add .plus{font-size:2rem;line-height:1}
+
+/* Websites grid */
+.ws-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.ws-card{background:#0b1430;border:1px solid var(--bd);border-radius:14px;padding:16px;display:grid;gap:10px}
+.ws-card .top{display:flex;align-items:center;gap:10px}
+.ws-card .icon{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-size:1.2rem;flex-shrink:0}
+.ws-card .tag{font-size:.72rem;padding:2px 8px;border-radius:6px;background:#13204a;color:var(--mu)}
+.ws-card .url{font-size:.78rem;color:var(--ac);word-break:break-all}
+.ws-card .meta{display:flex;gap:12px;font-size:.78rem;color:var(--mu)}
+.ws-card .actions{display:flex;gap:8px;margin-top:4px}
+.ws-card .actions a,.ws-card .actions button{flex:1;text-align:center;padding:8px 0;border-radius:8px;font-size:.82rem;font-weight:600;border:1px solid var(--bd);background:#13204a;color:var(--tx);cursor:pointer}
+.ws-card .actions a.primary{background:var(--ac);border-color:var(--ac);color:#fff}
+
+/* Bottom three cards */
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:900px){.three{grid-template-columns:1fr}}
+.k{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.k div{background:#0b1430;border:1px solid var(--bd);border-radius:10px;padding:12px;text-align:center}
+.k b{display:block;font-size:1.4rem;margin-top:2px}
+.k .ok b{color:var(--ok)}.k .er b{color:var(--er)}.k .wa b{color:var(--wa)}
+
+/* Recent activity & logs */
+.li{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd);align-items:flex-start}
+.li:last-child{border:0}
+.li .dot{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:.75rem;flex-shrink:0}
+.dot.s-success{background:#0c2a2a;color:var(--ok)}
+.dot.s-failure{background:#2a1015;color:var(--er)}
+.dot.s-in_progress,.dot.s-queued{background:#2a2110;color:var(--wa)}
+.li .t{margin-left:auto;white-space:nowrap;color:var(--mu);font-size:.75rem}
+
+/* Quick actions */
+.qa a{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border:1px solid #14534a;background:#0c2a24;color:var(--ok);border-radius:10px;margin-bottom:8px;font-weight:600;font-size:.9rem}
+.qa a:hover{background:#0e3a30}
+
+/* Right panel */
+.logs{max-height:420px;overflow:auto;padding-right:4px}
+.ok-box{border:1px solid var(--ok);background:#0c2a24;border-radius:12px;padding:14px 16px;font-weight:700;display:flex;align-items:center;gap:10px}
+.ok-box.bad{border-color:var(--er);background:#2a1015;color:var(--er)}
+
+/* Section headers */
+.hd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.hd h2{font-size:1.05rem;display:flex;align-items:center;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:9px;background:var(--ac);color:#fff;font-weight:600;font-size:.85rem;border:0;cursor:pointer}
+.btn.g{background:#13204a;border:1px solid var(--bd);color:var(--tx)}
+.btn.g:hover{background:var(--ac);border-color:var(--ac);color:#fff}
+
+/* Chip */
+.chip{display:inline-block;font-size:.72rem;padding:2px 10px;border-radius:12px;background:#0c2a2a;color:var(--ok);border:1px solid #14534a;margin:4px 0}
+.chip.e{background:#2a1015;color:var(--er);border-color:#5a1d27}
+.chip.w{background:#2a2110;color:var(--wa);border-color:#5a4210}
+</style>
+</head>
+<body>
+<script src="app.js"></script>
 <script>
 const WORKER_URL = 'https://bg-runf.garhwalbhavesh2002.workers.dev/';
 
@@ -26,38 +111,238 @@ async function runNow(btn) {
   }
   setTimeout(() => { btn.disabled = false; btn.textContent = '▶ Abhi Run Karo'; }, 6000);
 }
-const nowS=()=>new Date().toLocaleString('hi-IN',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
-if(!window.CK){window.CK=1;setInterval(()=>{const e=document.querySelector('#clk');if(e)e.textContent=nowS()},30000)}
-boot('index.html','Dashboard — sirf status',d=>{
- const T=TD(),s=stats(d,T,T),art=(d.sites||[]).reduce((n,x)=>n+((x.days||{})[T]||0),0);
- const run=d.bots.filter(b=>['in_progress','queued'].includes(b.status)).length,fail=d.bots.filter(b=>b.status==='failure').length;
- const last=[...d.bots].filter(b=>b.time).sort((a,b)=>new Date(b.time)-new Date(a.time))[0];
- const nx=d.bots.filter(b=>b.next).sort((a,b)=>new Date(a.next)-new Date(b.next))[0];
- const S=(i,c,l,v,x)=>`<div class="stat"><div class="ico" style="background:${c}">${i}</div><div><small>${l}</small><b>${v}</b><small>${x}</small></div></div>`;
- const num=v=>v==null||v===''?'—':fmt(v);
- const chC=c=>{const nm=c.name||c.title||c.id||'Channel',ic=c.icon||c.thumb||c.thumbnail||c.img||'';
-  const av=/^https?:/.test(ic)?`<img src="${esc(ic)}" alt="">`:`<div class="av">${esc(String(nm).slice(0,2).toUpperCase())}</div>`;
-  return `<div class="ch">${av}<b>${esc(nm)}</b><small>ID: ${esc(c.id||'—')}</small><br><span class="chip ${c.error?'e':''}">${c.error?'Error':'Active'}</span><div class="nums"><span>👥 ${num(c.subs??c.subscribers)}</span><span>👁 ${num(c.views??c.viewCount)}</span></div></div>`};
- const stC=x=>{const u=x.url||x.link||'';return `<div class="site"><b>${esc(x.name||x.title||'Site')}</b>${x.tag?`<span class="tag">${esc(x.tag)}</span>`:''}${u?`<small>${esc(u)}</small>`:''}<small>📰 Aaj: ${(x.days||{})[T]||0} lekh</small>${u?`<div class="r"><a class="btn g" href="${esc(u)}" target="_blank" rel="noopener">View Site</a></div>`:''}</div>`};
- const ev=d.bots.flatMap(b=>(b.runs||[]).filter(r=>r.d>=60||r.s==='failure').map(r=>({n:b.name,r}))).sort((a,b)=>new Date(b.r.t)-new Date(a.r.t));
- const tm=t=>new Date(t).toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'});
- const li=(e,sub)=>`<div class="li"><span class="dot s-${e.r.s}">${st(e.r.s)}</span><div><b>${esc(e.n)}</b>${sub?`<small>${esc(e.r.s)} • ${Math.ceil(e.r.d/60)} min</small>`:''}</div><span class="t">${sub?tm(e.r.t):ago(e.r.t)}</span></div>`;
- const lg=ev.slice(0,10).map(e=>li(e,1)).join('')||'<small>Abhi koi run nahi.</small>';
- const ra=ev.slice(0,5).map(e=>li(e,0)).join('')||'<small>Abhi koi run nahi.</small>';
- const chs=d.channels||[],sites=d.sites||[];
- $('#main').innerHTML=`<div class="dg"><div>
- <div class="card wel"><div><h2>👋 Welcome, Bhavesh!</h2><small>Yahan sirf status hai. Detail left menu ke alag pages me.</small><br><br><button class="btn" onclick="runNow(this)">▶ Abhi Run Karo</button></div><div class="dt"><span id="clk">${nowS()}</span><span class="lv">Live</span></div></div>
- <div class="stats">${S('🗂','#1d6bff','Projects',d.bots.length,(d.bots.length-fail-run)+' theek • '+fail+' fail • '+run+' chal rahe')}${S('✔','#0e8f5d','Aaj Safal',s.ok,'automation')}${S('✖','#c4162a','Aaj Asafal',s.bad,'automation')}${S('🎬','#6d3bd6','Aaj Video',s.vid,'ban gaye')}${S('📰','#1d8fff','Aaj Lekh',art,'publish hue')}${S('🕒','#b7791f','Pichhla run',ago(last&&last.time),nx?'Agla: '+esc(nx.name)+' '+at(nx.next):'schedule nahi mila')}</div>
- <div class="card"><div class="hd"><h2>▶️ YouTube Channels (${chs.length})</h2><a class="btn g" href="youtube.html">Manage</a></div><div class="row5">${chs.map(chC).join('')||'<small>Koi channel nahi mila.</small>'}</div></div>
- <div class="card"><div class="hd"><h2>🌐 Websites / Projects (${sites.length})</h2><a class="btn g" href="sites.html">Manage</a></div><div class="sites">${sites.map(stC).join('')||'<small>Koi website nahi mili.</small>'}</div></div>
- <div class="three">
-  <div class="card"><div class="hd"><h2>Automation Overview</h2></div><div class="k"><div><small>Total Jobs</small><b>${s.ok+s.bad}</b></div><div><small>Success</small><b>${s.ok}</b></div><div><small>Failed</small><b>${s.bad}</b></div><div><small>Pending</small><b>${run}</b></div></div></div>
-  <div class="card"><div class="hd"><h2>Recent Activity</h2></div>${ra}</div>
-  <div class="card qa"><div class="hd"><h2>Quick Actions</h2></div><a href="control.html">⚡ Actions Control</a><a href="youtube.html">▶️ YouTube Studio</a><a href="sites.html">📰 Website &amp; Articles</a><a href="logs.html">💻 Logs &amp; Telegram</a></div>
- </div>
- <div class="card"><div class="hd"><h2>Sabhi Projects ki Sthiti</h2></div><div class="tbw"><table class="tb"><tr><th>Project</th><th>Status</th><th>Pichhla run</th><th>Agla run</th></tr>${d.bots.map(b=>`<tr><td>${esc(b.name)}</td><td>${chip(b.status)}</td><td>${ago(b.time)}</td><td>${b.next?at(b.next):'—'}</td></tr>`).join('')}</table></div>
- <small>Note: 60 sec se chhote (polling) run ginti me nahi. Video = 2 min+ ka safal run (anumaan).</small></div>
- </div>
- <div><div class="card"><div class="hd"><h2>💻 Live Logs</h2><span class="lv">Live</span></div><div class="logs">${lg}</div></div>
- <div class="ok-box" style="${fail?'border-color:var(--er);background:#2a1015;color:var(--er)':''}">${fail?'⚠ '+fail+' project fail hua':'✔ All Systems Running'}</div></div></div>`});
-</script></body></html>
+
+const nowS = () => new Date().toLocaleString('hi-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+if (!window.CK) {
+  window.CK = 1;
+  setInterval(() => { const e = document.querySelector('#clk'); if (e) e.textContent = nowS(); }, 30000);
+}
+
+boot('index.html', 'YouTube • GitHub • Telegram • All Projects', d => {
+  const T = TD();
+  const s = stats(d, T, T);
+  const art = (d.sites || []).reduce((n, x) => n + ((x.days || {})[T] || 0), 0);
+  const run = d.bots.filter(b => ['in_progress', 'queued'].includes(b.status)).length;
+  const fail = d.bots.filter(b => b.status === 'failure').length;
+  const last = [...d.bots].filter(b => b.time).sort((a, b) => new Date(b.time) - new Date(a.time))[0];
+  const nx = d.bots.filter(b => b.next).sort((a, b) => new Date(a.next) - new Date(b.next))[0];
+
+  // Total runs last 24h
+  const dayAgo = Date.now() - 864e5;
+  const runs24 = d.bots.reduce((n, b) => n + (b.runs || []).filter(r => new Date(r.t) > dayAgo && (r.d >= 60 || r.s === 'failure')).length, 0);
+
+  const num = v => (v == null || v === '') ? '—' : fmt(v);
+  const tm = t => new Date(t).toLocaleTimeString('hi-IN', { hour: '2-digit', minute: '2-digit' });
+
+  // Channel card
+  const chC = c => {
+    const nm = c.name || c.title || c.id || 'Channel';
+    const ic = c.icon || c.thumb || c.thumbnail || c.img || '';
+    const av = /^https?:/.test(ic)
+      ? `<img src="${esc(ic)}" alt="">`
+      : `<div class="av">${esc(String(nm).slice(0, 2).toUpperCase())}</div>`;
+    const active = !c.error;
+    return `<div class="yt-card">
+      ${av}
+      <b>${esc(nm)}</b>
+      <div class="id">ID: ${esc((c.id || '—').slice(0, 12))}…</div>
+      <span class="chip ${active ? '' : 'e'}">${active ? '● Active' : 'Error'}</span>
+      <div class="nums"><span>👁 ${num(c.views ?? c.viewCount)}</span><span>👥 ${num(c.subs ?? c.subscribers)}</span></div>
+      <a class="manage" href="youtube.html">Manage</a>
+    </div>`;
+  };
+
+  // Website card
+  const stC = x => {
+    const u = x.url || x.link || '';
+    const tag = x.tag || '';
+    const articles = (x.days || {})[T] || 0;
+    const colors = ['#e11d48', '#2563eb', '#7c3aed', '#0891b2', '#d97706'];
+    const col = colors[(x.name || '').length % colors.length];
+    return `<div class="ws-card">
+      <div class="top">
+        <div class="icon" style="background:${col}22;color:${col}">🌐</div>
+        <div>
+          <b>${esc(x.name || x.title || 'Site')}</b>
+          ${tag ? `<div class="tag">${esc(tag)}</div>` : ''}
+        </div>
+      </div>
+      ${u ? `<div class="url">${esc(u)}</div>` : ''}
+      <div class="meta">
+        <span>📰 Articles: ${articles}</span>
+        <span>Last: ${ago(x.updated || d.updated)}</span>
+      </div>
+      <div class="actions">
+        <a href="sites.html">Manage</a>
+        ${u ? `<a class="primary" href="${esc(u)}" target="_blank" rel="noopener">View Site ↗</a>` : ''}
+      </div>
+    </div>`;
+  };
+
+  // Events for logs & recent
+  const ev = d.bots.flatMap(b => (b.runs || [])
+    .filter(r => r.d >= 60 || r.s === 'failure')
+    .map(r => ({ n: b.name, r, tag: b.tag || '' })))
+    .sort((a, b) => new Date(b.r.t) - new Date(a.r.t));
+
+  const li = (e, showTime) => {
+    const icon = e.r.s === 'success' ? '✔' : (e.r.s === 'failure' ? '✖' : '⏳');
+    return `<div class="li">
+      <span class="dot s-${e.r.s}">${icon}</span>
+      <div><b>${esc(e.n)}</b><small style="display:block;color:var(--mu)">${esc(e.r.s)} • ${Math.ceil(e.r.d / 60)} min</small></div>
+      <span class="t">${showTime ? tm(e.r.t) : ago(e.r.t)}</span>
+    </div>`;
+  };
+
+  const lg = ev.slice(0, 12).map(e => li(e, 1)).join('') || '<small style="color:var(--mu)">Abhi koi activity nahi.</small>';
+  const ra = ev.slice(0, 6).map(e => li(e, 0)).join('') || '<small style="color:var(--mu)">Abhi koi activity nahi.</small>';
+
+  const chs = d.channels || [];
+  const sites = d.sites || d.websites || [];
+
+  // Telegram count approximation (from recent bot activity that mentions telegram or just show 0 if none)
+  const tgCount = (d.telegram && d.telegram.length) || (d.messages && d.messages.length) || 0;
+
+  $('#main').innerHTML = `
+  <div class="dg">
+    <!-- LEFT / MAIN COLUMN -->
+    <div>
+      <!-- Welcome -->
+      <div class="card wel">
+        <div>
+          <h2>👋 Welcome, Bhavesh!</h2>
+          <small>Your YouTube automation dashboard. All data is loaded securely from GitHub Secrets.</small>
+        </div>
+        <div class="dt">
+          <span id="clk">${nowS()}</span>
+          <span class="lv">Live</span>
+        </div>
+      </div>
+
+      <!-- 4 Big Stats -->
+      <div class="stats4">
+        <div class="stat4">
+          <div class="ico" style="background:#dc262622;color:#f87171">▶</div>
+          <small>Total Channels</small>
+          <b>${chs.length}</b>
+          <div class="sub">+ Add more anytime</div>
+        </div>
+        <div class="stat4">
+          <div class="ico" style="background:#16a34a22;color:#4ade80">⟳</div>
+          <small>Total Runs</small>
+          <b>${runs24}</b>
+          <div class="sub">Last 24 hours</div>
+        </div>
+        <div class="stat4">
+          <div class="ico" style="background:#2563eb22;color:#60a5fa">✈</div>
+          <small>Telegram Messages</small>
+          <b>${tgCount || '—'}</b>
+          <div class="sub">Unread messages</div>
+        </div>
+        <div class="stat4">
+          <div class="ico" style="background:#7c3aed22;color:#a78bfa">⏱</div>
+          <small>Last Job</small>
+          <b style="font-size:1.25rem">${ago(last && last.time)}</b>
+          <div class="sub">${last ? 'Completed successfully' : 'No recent job'}</div>
+        </div>
+      </div>
+
+      <!-- YouTube Channels -->
+      <div class="card">
+        <div class="hd">
+          <h2>▶ YouTube Channels</h2>
+          <a class="btn" href="youtube.html">+ Add Channel</a>
+        </div>
+        <small style="display:block;margin:-8px 0 14px;color:var(--mu)">Manage your YouTube channels. Add more anytime (no need to re-enter tokens).</small>
+        <div class="yt-grid">
+          ${chs.map(chC).join('') || '<small>Koi channel nahi mila.</small>'}
+          <a class="yt-card yt-add" href="youtube.html">
+            <div class="plus">+</div>
+            <b>Add New Channel</b>
+            <small>You can add unlimited YouTube channels</small>
+          </a>
+        </div>
+      </div>
+
+      <!-- Websites / Projects -->
+      <div class="card">
+        <div class="hd">
+          <h2>🌐 Websites / Projects</h2>
+          <a class="btn g" href="sites.html">+ Add Website</a>
+        </div>
+        <small style="display:block;margin:-8px 0 14px;color:var(--mu)">Manage your websites and automation for each project.</small>
+        <div class="ws-grid">
+          ${sites.map(stC).join('') || '<small>Koi website nahi mili.</small>'}
+        </div>
+      </div>
+
+      <!-- Bottom 3 cards -->
+      <div class="three">
+        <div class="card">
+          <div class="hd"><h2>Automation Overview</h2></div>
+          <div class="k">
+            <div><small>Total Jobs</small><b>${s.ok + s.bad}</b></div>
+            <div class="ok"><small>Success</small><b>${s.ok}</b></div>
+            <div class="er"><small>Failed</small><b>${s.bad}</b></div>
+            <div class="wa"><small>Pending</small><b>${run}</b></div>
+          </div>
+          <a class="btn g" href="control.html" style="width:100%;justify-content:center;margin-top:8px">View All Jobs →</a>
+        </div>
+
+        <div class="card">
+          <div class="hd">
+            <h2>Recent Activity</h2>
+            <a class="btn g" href="logs.html">View All</a>
+          </div>
+          ${ra}
+        </div>
+
+        <div class="card qa">
+          <div class="hd"><h2>Quick Actions</h2></div>
+          <a href="control.html">▶ Run All Automation <span>→</span></a>
+          <a href="sites.html">📝 Generate Article <span>→</span></a>
+          <a href="youtube.html">⬆ Upload Video <span>→</span></a>
+          <a href="logs.html">✈ Check Telegram <span>→</span></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div>
+      <div class="card">
+        <div class="hd">
+          <h2>💻 Live Logs</h2>
+          <span class="lv">Live</span>
+        </div>
+        <div class="logs">${lg}</div>
+      </div>
+
+      <div class="card">
+        <div class="hd">
+          <h2>✈ Recent Telegram Messages</h2>
+          <a class="btn g" href="logs.html">View All</a>
+        </div>
+        <div id="tgList">
+          ${ev.slice(0, 4).map(e => `
+            <div class="li">
+              <span class="dot s-${e.r.s}">${e.r.s === 'success' ? '✔' : '•'}</span>
+              <div>
+                <b>${esc(e.n)}</b>
+                <small style="display:block;color:var(--mu)">${e.r.s === 'success' ? 'Job completed' : esc(e.r.s)}</small>
+              </div>
+              <span class="t">${ago(e.r.t)}</span>
+            </div>`).join('') || '<small style="color:var(--mu)">No recent messages</small>'}
+        </div>
+      </div>
+
+      <div class="ok-box ${fail ? 'bad' : ''}">
+        ${fail
+          ? `⚠ ${fail} project fail hua`
+          : `✔ All Systems Running<br><small style="font-weight:500;opacity:.8">GitHub Actions • YouTube • Telegram • Websites</small>`}
+      </div>
+    </div>
+  </div>`;
+});
+</script>
+</body>
+</html>
