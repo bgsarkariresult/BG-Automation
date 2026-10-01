@@ -56,8 +56,9 @@ if key and ids:
 
 # --- Bots: runs, failed step, next schedule ---
 hdr = {"Accept": "application/vnd.github+json"}
-if os.environ.get("GH_PAT"):
-    hdr["Authorization"] = "Bearer " + os.environ["GH_PAT"]
+token = os.environ.get("GH_PAT") or os.environ.get("GH_TOKEN", "")
+if token:
+    hdr["Authorization"] = "Bearer " + token
 
 
 def cron_next(expr):
@@ -86,24 +87,32 @@ for b in cfg["bots"]:
                 d = int((P(r["updated_at"]) - P(r["run_started_at"])).total_seconds())
             except Exception:
                 pass
-            row["runs"].append({"id": r["id"], "s": r.get("conclusion") or r.get("status"), "t": r["updated_at"],
+            row["runs"].append({"id": r["id"], "number": r.get("run_number"),
+                                "s": r.get("conclusion") or r.get("status"), "t": r.get("updated_at"),
+                                "started": r.get("run_started_at"), "created": r.get("created_at"),
                                 "d": d, "e": r.get("event"), "n": r.get("display_title") or r.get("name"),
-                                "u": r["html_url"]})
+                                "branch": r.get("head_branch"), "actor": (r.get("actor") or {}).get("login"),
+                                "u": r.get("html_url")})
         if row["runs"]:
             r0 = row["runs"][0]
-            row.update(status=r0["s"], time=r0["t"], url=r0["u"])
-    except Exception:
-        pass
-    f = next((r for r in row["runs"][:5] if r["s"] == "failure"), None)
+            row.update(status=r0["s"], time=r0["t"], url=r0["u"],
+                       last_run_id=r0["id"], run_number=r0.get("number"),
+                       branch=r0.get("branch"), event=r0.get("e"),
+                       actor=r0.get("actor"), html_url=r0["u"])
+    except Exception as e:
+        row["api_error"] = str(e)[:300]
+    f = next((r for r in row["runs"][:10] if r["s"] == "failure"), None)
     if f:
         try:
             for j in get(base + "runs/%s/jobs" % f["id"], hdr).get("jobs", []):
                 for s_ in j.get("steps", []):
                     if s_.get("conclusion") == "failure":
-                        row["failed"] = {"job": j["name"], "step": s_["name"], "url": f["u"], "t": f["t"]}
+                        row["failed"] = {"job": j["name"], "step": s_["name"],
+                                         "message": "Workflow step failed: " + s_["name"],
+                                         "url": f["u"], "t": f["t"], "run_id": f["id"]}
                         break
-        except Exception:
-            pass
+        except Exception as e:
+            row["failure_lookup_error"] = str(e)[:250]
     if b.get("workflow"):
         try:
             y = get("https://api.github.com/repos/%s/contents/.github/workflows/%s" % (b["repo"], b["workflow"]),
@@ -152,6 +161,7 @@ for s in cfg.get("sites", []):
         row["error"] = "feed nahi mila — config.json me sahi sitemap.xml / rss URL daalo"
     sites.append(row)
 
-json.dump({"updated": now, "channels": channels, "bots": bots, "sites": sites,
+json.dump({"updated": now, "checked_at": now, "refresh_interval_seconds": 300,
+          "source": "GitHub Actions API", "channels": channels, "bots": bots, "sites": sites,
           "websites": cfg.get("websites", []), "messages": msgs},
-          open("data/dashboard.json", "w", encoding="utf-8"), ensure_ascii=False)
+          open("data/dashboard.json", "w", encoding="utf-8"), ensure_ascii=False, indent=2)
