@@ -133,12 +133,17 @@ function showLiveLogs(i){
    try{
      const data=await callWorker({action:"logs",repo:b.repo,workflow:b.workflow});
      if(!data.ok)throw new Error(data.error||("HTTP "+(data.status||"error")));
-     const term=document.getElementById("logTerminal");
      const lines=Array.isArray(data.lines)?data.lines:[];
-     term.textContent=lines.length?lines.join("\n"):"Abhi raw log lines uplabdh nahi. Neeche step status dikh raha hai.";
-     term.scrollTop=term.scrollHeight;
-     const steps=(data.jobs||[]).flatMap(j=>[{job:j.name,status:j.status,conclusion:j.conclusion,jobHead:true},...(j.steps||[]).map(s=>({...s,job:j.name}))]);
-     document.getElementById("logSteps").innerHTML=steps.map(s=>s.jobHead?'<div class="li"><b>'+esc(s.job)+'</b>'+chip(s.status||s.conclusion||"queued")+'</div>':'<div class="li"><span>'+esc(s.number||"")+'. '+esc(s.name)+'</span>'+chip(s.conclusion||s.status||"queued")+'</div>').join("");
+     const jobs=data.jobs||[];
+     const activeJob=jobs.find(j=>j.status==="in_progress")||jobs.find(j=>j.status==="queued");
+     const activeStep=activeJob&&(activeJob.steps||[]).find(s=>s.status==="in_progress");
+     const stepsHtml=jobs.map(j=>'<div class="li"><b>'+esc(j.name)+'</b>'+chip(j.conclusion||j.status||"queued")+'</div>'+(j.steps||[]).map(s=>{
+       const active=j===activeJob&&s===activeStep;
+       const icon=s.conclusion==="success"?"✓":s.conclusion==="failure"?"✕":s.status==="in_progress"?"⏳":"○";
+       return '<div style="margin-left:12px;padding:7px 0;border-bottom:1px solid var(--line)"><div class="li"><span>'+icon+' '+esc(s.number||"")+'. '+esc(s.name)+'</span>'+chip(s.conclusion||s.status||"queued")+'</div>'+(active?'<div style="margin:6px 0 10px 8px;background:#071426;color:#dce8fa;border:1px solid #22354f;border-radius:10px;padding:12px;max-height:320px;overflow:auto;font:12px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere">'+esc(lines.length?lines.join("\n"):"⏳ Is step ke raw log lines GitHub se abhi nahi mile. Status har 5 second mein refresh ho raha hai.")+'</div>':'');
+     }).join('')).join('');
+     document.getElementById("logSteps").innerHTML=stepsHtml;
+     document.getElementById("logMsg").textContent=data.message||"";
      document.getElementById("logMsg").textContent=data.message||"";
      if(data.run){document.getElementById("liveLogTitle").textContent="— "+b.name+" · #"+data.run.id+" · "+(data.run.conclusion||data.run.status); }
    }catch(e){const term=document.getElementById("logTerminal");if(term)term.textContent="Logs load nahi hue: "+e.message;}
