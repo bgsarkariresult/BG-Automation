@@ -335,3 +335,24 @@ input,select,textarea{max-width:100%}
   .btn{max-width:100%;white-space:normal}
   .auto-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+
+/* Control page: clear, touch-friendly Logs / Run / Runs actions */
+.project-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:4px}
+.project-actions .btn{justify-content:center;min-height:38px;padding:8px 9px;font-size:.78rem;white-space:nowrap}
+.project-actions .run-action{background:linear-gradient(135deg,#2563eb,#1d4ed8)}
+.project-actions .btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.hn{display:block;overflow-wrap:anywhere;line-height:1.5}
+.rs{margin-top:2px;padding:8px 0 0}
+.runs-heading{font-size:.74rem;font-weight:700;color:var(--mu);padding:3px 0 7px}
+.run-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--bd);min-width:0}
+.run-info{display:flex;flex:1;flex-direction:column;min-width:0;gap:2px}
+.run-info b{font-size:.76rem;overflow-wrap:anywhere}
+.run-info small{font-size:.68rem}
+.run-item .btn{flex-shrink:0;padding:5px 8px;font-size:.7rem}
+@media(max-width:420px){
+  .project-actions{gap:6px}
+  .project-actions .btn{font-size:.72rem;padding:7px 5px;min-height:40px}
+  .run-item{gap:6px}
+  .run-item .btn{padding:5px 6px}
+}
