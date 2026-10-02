@@ -89,7 +89,19 @@ setInterval(()=>{const el=document.querySelector('#clock');if(el)el.textContent=
 </script>
 <script>
 (async function loadDashboardTrending(){
- const box=document.querySelector('#dashTrending');
+ // boot() inserts the dashboard after its async data fetch; wait for the card.
+ let box=document.querySelector('#dashTrending');
+ if(!box){
+  await new Promise(resolve=>{
+   const observer=new MutationObserver(()=>{
+    box=document.querySelector('#dashTrending');
+    if(box){observer.disconnect();resolve();}
+   });
+   observer.observe(document.body,{childList:true,subtree:true});
+   // Avoid leaving an observer behind if the dashboard cannot render.
+   setTimeout(()=>{observer.disconnect();resolve();},15000);
+  });
+ }
  if(!box)return;
  const url='https://raw.githubusercontent.com/bgtechlab/Trending-Topic-Finder/main/history.json';
  try{
