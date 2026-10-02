@@ -125,10 +125,25 @@ function closeLiveLogs(){const p=document.getElementById("liveLogPanel");if(p)p.
 function showLiveLogs(i){
  const b=window.D.bots[i], panel=document.getElementById("liveLogPanel"); if(!b||!panel)return;
  panel.hidden=false;document.getElementById("liveLogTitle").textContent="— "+b.name;
- const draw=()=>{const current=(window.D.bots.find(x=>x.repo===b.repo)||b);const runs=current.runs||[];
- document.getElementById("liveLogBody").innerHTML=`<div class="li"><b>वर्तमान स्थिति</b>${chip(current.status||"unknown")}</div><small>यह पैनल हर 15 सेकंड में Dashboard के नवीनतम रन डेटा से अपडेट होता है।</small>`+
- (runs.length?runs.slice(0,10).map(r=>`<div class="li"><span><b>#${esc(r.number||r.id||"—")} · ${esc(r.n||"Workflow run")}</b><br><small>${esc(r.s||"unknown")} · ${at(r.t)} · ${Math.ceil((+r.d||0)/60)} मिनट</small></span><a class="btn g" href="${esc(r.u||("#"))}" target="_blank" rel="noopener">पूरा लॉग ↗</a></div>`).join(""):"<small>अभी कोई रन लॉग उपलब्ध नहीं है।</small>");};
- draw();if(liveLogTimer)clearInterval(liveLogTimer);liveLogTimer=setInterval(async()=>{try{const r=await fetch(RAW+"?t="+Date.now(),{cache:"no-store"});if(r.ok){const fresh=await r.json();const x=(fresh.bots||[]).find(x=>x.repo===b.repo);if(x){window.D.bots=window.D.bots.map(y=>y.repo===b.repo?{...y,...x}:y);draw();}}}catch(_){}},15000);
+ const body=document.getElementById("liveLogBody");
+ body.innerHTML='<small>⏳ GitHub Actions se asli logs liye ja rahe hain…</small>';
+ const draw=async()=>{
+   const current=window.D.bots.find(x=>x.repo===b.repo)||b;
+   body.innerHTML='<div class="li"><b>स्थिति</b>'+chip(current.status||"unknown")+'</div><small>GitHub Actions se har 5 second mein refresh hota hai.</small><div class="log-terminal" id="logTerminal" style="background:#071426;color:#dce8fa;border:1px solid #22354f;border-radius:12px;padding:14px;max-height:420px;overflow:auto;font:13px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere">⏳ Logs load ho rahe hain…</div><div id="logSteps" style="margin-top:10px"></div><small id="logMsg"></small>';
+   try{
+     const data=await callWorker({action:"logs",repo:b.repo,workflow:b.workflow});
+     if(!data.ok)throw new Error(data.error||("HTTP "+(data.status||"error")));
+     const term=document.getElementById("logTerminal");
+     const lines=Array.isArray(data.lines)?data.lines:[];
+     term.textContent=lines.length?lines.join("\n"):"Abhi raw log lines uplabdh nahi. Neeche step status dikh raha hai.";
+     term.scrollTop=term.scrollHeight;
+     const steps=(data.jobs||[]).flatMap(j=>[{job:j.name,status:j.status,conclusion:j.conclusion,jobHead:true},...(j.steps||[]).map(s=>({...s,job:j.name}))]);
+     document.getElementById("logSteps").innerHTML=steps.map(s=>s.jobHead?'<div class="li"><b>'+esc(s.job)+'</b>'+chip(s.status||s.conclusion||"queued")+'</div>':'<div class="li"><span>'+esc(s.number||"")+'. '+esc(s.name)+'</span>'+chip(s.conclusion||s.status||"queued")+'</div>').join("");
+     document.getElementById("logMsg").textContent=data.message||"";
+     if(data.run){document.getElementById("liveLogTitle").textContent="— "+b.name+" · #"+data.run.id+" · "+(data.run.conclusion||data.run.status); }
+   }catch(e){const term=document.getElementById("logTerminal");if(term)term.textContent="Logs load nahi hue: "+e.message;}
+ };
+ draw();if(liveLogTimer)clearInterval(liveLogTimer);liveLogTimer=setInterval(()=>{if(!panel.hidden)draw()},5000);
 }
 function tg(i) {
   const e = document.getElementById('rs' + i);
