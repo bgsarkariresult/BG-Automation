@@ -61,7 +61,13 @@ boot('control.html', 'GitHub Actions Control Center', d => {
     <div class="card">
       <h2>🌐 Websites <small>(वेबसाइट)</small></h2>
       <div class="sites">
-        ${d.bots.filter(b => ['bgsarkariresult/SG-News18','bgsarkariresult/TechGlow-India','bgsarkariresult/bgsarkariresult'].includes(b.repo)).map(b => renderProjectCard(b)).join('')}
+        ${d.websites.map(w => {
+          const b = d.bots.find(x => x.repo === w.repo);
+          return b ? renderProjectCard(b) : `<div class="site">
+            <div class="row"><div><b>${esc(w.name)}</b><br><small>${esc(w.tag || 'Website')}</small></div></div>
+            <div class="r"><a class="btn g" href="${esc(w.url)}" target="_blank" rel="noopener">Open</a><a class="btn" href="https://github.com/${esc(w.repo)}" target="_blank" rel="noopener">GitHub</a></div>
+          </div>`;
+        }).join('')}
       </div>
       <button class="btn g" onclick="addProject('website')">＋ Add Website</button>
     </div>
