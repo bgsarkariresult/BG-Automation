@@ -5835,6 +5835,11 @@
       "url": "https://bgnewswab.github.io/sgnewswab/index.html",
       "articles": [
         {
+          "t": "ICC ODI World Cup 2027 Schedule: भारत-पाक मैच 10 अक्टूबर",
+          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=100",
+          "d": "2026-10-02"
+        },
+        {
           "t": "IND W vs JPN W: 5 ओवरों का कमाल, टीम इंडिया रिकॉर्ड से मालामाल; ह",
           "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=99",
           "d": ""
@@ -5878,14 +5883,11 @@
           "t": "IND vs AFG: वरुण चक्रवर्ती हुए बाहर, अब कौन लेगा उनकी जगह? इन दो ",
           "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=91",
           "d": ""
-        },
-        {
-          "t": "IND vs AFG Live Streaming: भारत-अफगानिस्तान दूसरे T20I मैच को फ्र",
-          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=90",
-          "d": ""
         }
       ],
-      "days": {},
+      "days": {
+        "2026-10-02": 1
+      },
       "total": 100
     },
     {
