@@ -5,392 +5,285 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BG Automation | Dashboard</title>
 <link rel="stylesheet" href="app.css">
-<style>
-/* Index-only extras for neon dashboard layout */
-.welcome {
-  display: flex; align-items: center; justify-content: space-between; gap: 16px;
-  padding: 22px 24px; border-radius: var(--radius);
-  background: linear-gradient(135deg, rgba(99,102,241,0.18), rgba(34,211,238,0.08));
-  border: 1px solid rgba(99,102,241,0.25);
-  position: relative; overflow: hidden;
-}
-.welcome::after {
-  content: ""; position: absolute; top: -50%; right: -10%;
-  width: 280px; height: 280px;
-  background: radial-gradient(circle, rgba(34,211,238,0.12), transparent 70%);
-  pointer-events: none;
-}
-.welcome h1 { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.3px; }
-.welcome p { color: var(--mu); font-size: 0.88rem; margin-top: 4px; }
-.welcome-actions { display: flex; gap: 8px; flex-shrink: 0; position: relative; z-index: 1; }
-
-.grid3 {
-  display: grid;
-  grid-template-columns: 1fr 1fr 300px;
-  gap: 16px; align-items: start;
-}
-.col-stack { display: flex; flex-direction: column; gap: 16px; }
-
-.yt-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 10px;
-}
-.yt-card {
-  display: flex; flex-direction: column; align-items: center; gap: 5px;
-  text-align: center; padding: 14px 8px;
-  border-radius: 12px; background: var(--cd2);
-  border: 1px solid var(--bd); transition: all 0.2s;
-}
-.yt-card:hover {
-  transform: translateY(-3px); border-color: var(--ac);
-  box-shadow: 0 8px 24px rgba(99,102,241,0.15);
-}
-.yt-card img, .yt-card .av {
-  width: 42px; height: 42px; border-radius: 50%; object-fit: cover;
-  background: linear-gradient(135deg,#6366f1,#22d3ee);
-  display: grid; place-items: center; font-weight: 800; font-size: 13px; color: #fff;
-}
-.yt-card b { font-size: 0.8rem; }
-.yt-card .id { font-size: 0.65rem; color: var(--mu2); word-break: break-all; }
-.yt-card .manage {
-  width: 100%; padding: 5px; border-radius: 7px; font-size: 0.7rem; font-weight: 600;
-  background: var(--cd); border: 1px solid var(--bd); color: var(--mu); margin-top: 2px;
-  transition: all 0.15s;
-}
-.yt-card .manage:hover { background: var(--ac); border-color: var(--ac); color: #fff; }
-
-.ws-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-  gap: 10px;
-}
-.ws-card {
-  padding: 14px; border-radius: 12px; background: var(--cd2);
-  border: 1px solid var(--bd); transition: all 0.2s;
-}
-.ws-card:hover {
-  transform: translateY(-2px); border-color: var(--ac);
-  box-shadow: 0 8px 24px rgba(99,102,241,0.12);
-}
-.site-head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
-.site-icon {
-  width: 32px; height: 32px; border-radius: 9px;
-  display: grid; place-items: center; font-size: 15px;
-  background: rgba(99,102,241,0.12); flex-shrink: 0;
-}
-.ws-card b { font-size: 0.88rem; font-weight: 600; }
-.url { font-size: 0.72rem; color: var(--cyan); word-break: break-all; margin-bottom: 4px; }
-.meta-t { font-size: 0.72rem; color: var(--mu); margin-bottom: 8px; }
-.actions { display: flex; gap: 6px; }
-.actions a {
-  flex: 1; text-align: center; padding: 6px; border-radius: 7px;
-  font-size: 0.72rem; font-weight: 600;
-  background: var(--cd); border: 1px solid var(--bd); color: var(--mu);
-  transition: all 0.15s;
-}
-.actions a:hover { color: var(--tx); border-color: var(--bd-strong); }
-.actions a.primary {
-  background: linear-gradient(135deg,#6366f1,#4f46e5);
-  border-color: transparent; color: #fff;
-}
-
-.kpi-box {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
-}
-.kpi-box div {
-  text-align: center; padding: 12px 8px; border-radius: 10px;
-  background: var(--cd2); border: 1px solid var(--bd);
-}
-.kpi-box b { display: block; font-size: 1.4rem; font-weight: 800; }
-.kpi-box span { font-size: 0.72rem; color: var(--mu); }
-
-.trend-row {
-  display: flex; align-items: center; gap: 10px;
-  padding: 8px 0; border-bottom: 1px solid rgba(80,120,200,0.1);
-}
-.trend-row:last-child { border-bottom: 0; }
-.trend-rank {
-  width: 24px; height: 24px; border-radius: 7px; flex-shrink: 0;
-  display: grid; place-items: center; font-size: 0.7rem; font-weight: 800;
-  background: var(--cd2); color: var(--mu);
-}
-.trend-rank.top3 { background: rgba(251,191,36,0.12); color: var(--wa); }
-.trend-title { min-width: 0; flex: 1; }
-.trend-title b {
-  display: block; font-size: 0.8rem; font-weight: 600;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.trend-title small { display: block; color: var(--mu); font-size: 0.68rem; margin-top: 1px; }
-.trend-score {
-  font-size: 0.68rem; font-weight: 700; color: var(--wa);
-  background: rgba(251,191,36,0.1); border-radius: 10px; padding: 2px 7px; white-space: nowrap;
-}
-
-.top-btns { display: flex; gap: 8px; align-items: center; margin-left: auto; }
-.btn-top {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 7px 13px; border-radius: 8px; font-size: 0.78rem; font-weight: 600;
-  border: 1px solid var(--bd); background: var(--cd2); color: var(--tx); cursor: pointer;
-  transition: all 0.15s;
-}
-.btn-top:hover { border-color: var(--ac); background: rgba(99,102,241,0.12); }
-.btn-top.primary {
-  background: linear-gradient(135deg,#6366f1,#4f46e5);
-  border-color: transparent; color: #fff;
-  box-shadow: 0 4px 14px rgba(99,102,241,0.3);
-}
-.btn-top:disabled { opacity: 0.55; cursor: wait; }
-.avatar-top {
-  width: 32px; height: 32px; border-radius: 50%;
-  background: linear-gradient(135deg,#6366f1,#22d3ee);
-  display: grid; place-items: center; font-weight: 800; font-size: 11px; color: #fff;
-}
-
-@media (max-width: 1100px) {
-  .grid3 { grid-template-columns: 1fr 1fr; }
-  .col-stack:last-child { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-}
-@media (max-width: 700px) {
-  .grid3 { grid-template-columns: 1fr; }
-  .col-stack:last-child { grid-template-columns: 1fr; }
-  .welcome { flex-direction: column; align-items: flex-start; }
-  .welcome h1 { font-size: 1.15rem; }
-  .yt-grid { grid-template-columns: repeat(2, 1fr); }
-  .ws-grid { grid-template-columns: 1fr; }
-  .top-btns .btn-top { padding: 6px 10px; font-size: 0.72rem; }
-}
-</style>
 </head>
 <body>
 <script src="app.js"></script>
 <script>
-function clockText() {
-  return new Date().toLocaleString('hi-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+const RAW = 'https://raw.githubusercontent.com/bgsarkariresult/BG-Automation/main/data/dashboard.json';
+const LIVE = 'https://bg-automation-live.garhwalbhavesh2002.workers.dev/api/status';
+const TREND_URL = 'https://raw.githubusercontent.com/bgtechlab/Trending-Topic-Finder/main/history.json';
+
+const colors = ['#ef4444','#f97316','#2b6fff','#8b5cf6','#06b6d4','#22c55e','#ec4899','#eab308'];
+
+function agoText(t) {
+  if (!t) return '—';
+  let m = Math.max(0, (Date.now() - new Date(t)) / 60000);
+  return m < 1 ? 'अभी' : m < 60 ? Math.round(m) + 'm ago' : m < 1440 ? Math.round(m / 60) + 'h ago' : Math.round(m / 1440) + 'd ago';
+}
+function timeHHMM(t) {
+  if (!t) return '--:--';
+  const d = new Date(t);
+  return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 }
 
-boot('index.html', 'YouTube • GitHub • Telegram • All Projects', d => {
+async function loadData() {
+  let d = {};
+  try {
+    let r = await fetch(RAW + '?t=' + Date.now(), { cache: 'no-store' }).catch(() => null);
+    if (!r || !r.ok) r = await fetch('data/dashboard.json?t=' + Date.now(), { cache: 'no-store' });
+    if (r && r.ok) d = await r.json();
+  } catch (_) {}
+  try {
+    const lr = await fetch(LIVE + '?t=' + Date.now(), { cache: 'no-store' });
+    if (lr.ok) {
+      const live = await lr.json();
+      if (live && live.ok && Array.isArray(live.bots) && live.bots.length) {
+        const byRepo = new Map(live.bots.map(b => [String(b.repo || '').toLowerCase(), b]));
+        d.bots = (d.bots || []).map(b => {
+          const fresh = byRepo.get(String(b.repo || '').toLowerCase());
+          return fresh ? { ...b, ...fresh, runs: Array.isArray(fresh.runs) ? fresh.runs : b.runs } : b;
+        });
+        for (const b of live.bots) {
+          if (!(d.bots || []).some(x => String(x.repo || '').toLowerCase() === String(b.repo || '').toLowerCase()))
+            d.bots.push(b);
+        }
+        d.live_updated = live.updated || live.checked_at || new Date().toISOString();
+        d.live_state = 'live';
+      }
+    }
+  } catch (_) {}
+  return d;
+}
+
+function render(d) {
   const channels = d.channels || [];
   const sites = d.websites || d.sites || [];
   const bots = d.bots || [];
-  const runs = bots.flatMap(b => (b.runs || []).map(r => ({ name: b.name || b.id || 'Automation', r })))
+  const msgs = d.telegram || d.messages || [];
+  const runs = bots.flatMap(b => (b.runs || []).map(r => ({ name: b.name || b.id || 'Bot', r, bot: b })))
     .sort((a, b) => new Date(b.r.t) - new Date(a.r.t));
-  const recent = runs.filter(x => x.r.d >= 60 || x.r.s === 'failure');
-  const today = new Date().toLocaleDateString('en-CA');
-  const todayRuns = recent.filter(x => new Date(x.r.t).toLocaleDateString('en-CA') === today).length;
+  const recent = runs.filter(x => x.r.d >= 30 || x.r.s === 'failure' || x.r.s === 'success');
   const success = recent.filter(x => x.r.s === 'success').length;
   const failed = recent.filter(x => x.r.s === 'failure').length;
-  const messages = (d.telegram || d.messages || []).length;
-  const lastJob = runs[0];
+  const totalRuns = recent.length || runs.length;
 
-  const agoText = t => {
-    if (!t) return '—';
-    let m = Math.max(0, (Date.now() - new Date(t)) / 60000);
-    return m < 1 ? 'अभी' : m < 60 ? Math.round(m) + ' मिनट पहले' : m < 1440 ? Math.round(m / 60) + ' घंटे पहले' : Math.round(m / 1440) + ' दिन पहले';
-  };
+  /* channel rows */
+  const chRows = channels.map((c, i) => {
+    const name = c.name || c.title || 'Channel';
+    const img = c.icon || c.thumb || '';
+    const av = /^https?:/.test(img)
+      ? `<img class="list-av" src="${esc(img)}" alt="">`
+      : `<div class="list-av" style="background:${colors[i % colors.length]}">${esc(String(name).slice(0, 2).toUpperCase())}</div>`;
+    const status = c.error ? 'paused' : 'active';
+    const label = c.error ? 'Paused' : 'Active';
+    return `<div class="list-row">
+      ${av}
+      <div class="list-info"><b>${esc(name)}</b><small>${esc((c.id || '').slice(0, 18) || 'YouTube')}</small></div>
+      <div class="list-meta"><span class="subs">${fmt(c.subs ?? c.subscribers)} subs</span><span class="badge-s ${status}">${label}</span></div>
+    </div>`;
+  }).join('') || '<small class="mu">No channels yet</small>';
 
-  const row = x => `<div class="li">
-    <span class="dot ${x.r.s}">${x.r.s === 'success' ? '✓' : x.r.s === 'failure' ? '✕' : '…'}</span>
-    <div><b>${esc(x.name)}</b><small>${esc(x.r.s || 'unknown')} · ${Math.ceil((+x.r.d || 0) / 60)} मिनट</small></div>
-    <span class="t">${agoText(x.r.t)}</span>
+  /* website rows */
+  const siteRows = (sites.length ? sites : bots.filter(b => b.site).map(b => ({ name: b.name, url: b.site, tag: b.tag }))).map((s, i) => {
+    const url = s.url || s.link || s.site || '';
+    const icons = ['🌐', '⚙', '▶', '🐙', '✈'];
+    return `<div class="list-row">
+      <div class="list-av sq" style="background:${colors[(i + 2) % colors.length]}">${icons[i % icons.length]}</div>
+      <div class="list-info"><b>${esc(s.name || s.title || 'Project')}</b><small>${esc(url.slice(0, 40) || s.tag || '')}</small></div>
+      <span class="badge-s live">Live</span>
+    </div>`;
+  }).join('') || '<small class="mu">No websites</small>';
+
+  /* activity rows */
+  const actRows = recent.slice(0, 7).map(x => {
+    const icons = { success: '✓', failure: '✕', in_progress: '⏳', queued: '…' };
+    const ic = icons[x.r.s] || '•';
+    const badge = x.r.s === 'success' ? 'success' : x.r.s === 'failure' ? 'failure' : x.r.s === 'in_progress' || x.r.s === 'queued' ? 'running' : 'paused';
+    const label = x.r.s === 'success' ? 'Success' : x.r.s === 'failure' ? 'Failed' : x.r.s === 'in_progress' ? 'Running' : (x.r.s || 'Unknown');
+    return `<div class="act-row">
+      <div class="act-ico">${ic}</div>
+      <div class="act-info"><b>${esc(x.name)}</b><small>${esc(x.r.n || x.r.s || 'Workflow')} · ${Math.ceil((+x.r.d || 0) / 60)} min</small></div>
+      <div class="act-right"><span class="time">${agoText(x.r.t)}</span><span class="badge-s ${badge}">${label}</span></div>
+    </div>`;
+  }).join('') || '<small class="mu">No recent activity</small>';
+
+  /* log lines from recent runs */
+  const logLines = runs.slice(0, 6).map(x => {
+    const tag = x.r.s === 'success' ? 'success' : x.r.s === 'failure' ? 'error' : 'info';
+    const msg = x.r.s === 'success' ? `${esc(x.name)} completed successfully`
+      : x.r.s === 'failure' ? `${esc(x.name)} failed`
+      : `${esc(x.name)} — ${esc(x.r.s || 'running')}`;
+    return `<div class="log-line"><span class="log-time">${timeHHMM(x.r.t)}</span><span class="log-tag ${tag}">[${tag.toUpperCase()}]</span><span class="log-msg">${msg}</span></div>`;
+  }).join('') || '<div class="log-line"><span class="log-msg">Waiting for activity…</span></div>';
+
+  /* telegram */
+  const tgRows = msgs.slice(0, 5).map((m, i) => {
+    const text = (m.text || m.message || '').slice(0, 50);
+    return `<div class="tg-row">
+      <div class="tg-av">✈</div>
+      <div class="tg-info"><b>${esc(m.from || m.bot || 'Telegram')}</b><small>${esc(text || 'Message')}</small></div>
+      <span class="tg-time">${agoText(m.t || m.time || m.date)}</span>
+    </div>`;
+  }).join('') || '<small class="mu">No messages yet</small>';
+
+  document.body.innerHTML = `
+  <div class="top">
+    <button class="burger" onclick="document.querySelector('nav').classList.toggle('open')">☰</button>
+    <div class="logo">
+      <div class="logo-bot">🤖</div>
+      <div>BG <span>Automation</span><small>AI + Automation | Grow Together</small></div>
+    </div>
+    <div class="goal-banner">✨ 🚀 आज का लक्ष्य: 100 नए लीड · 5 वेबसाइट अपडेट · 1 यूट्यूब वीडियो · ग्रोथ जारी रखें!</div>
+    <div class="top-right">
+      <button class="icon-btn" title="Theme">☀</button>
+      <button class="icon-btn" title="Notifications">🔔<span class="badge">${Math.min(msgs.length || 0, 9) || 0}</span></button>
+      <div class="user-chip"><div class="user-av">B</div> Bhavesh ▾</div>
+    </div>
+  </div>
+
+  <div class="app">
+    <nav>
+      <a class="on" href="index.html"><span class="nav-icon">⌂</span> Dashboard</a>
+      <a href="youtube.html"><span class="nav-icon">▶</span> YouTube Channels</a>
+      <a href="sites.html"><span class="nav-icon">🌐</span> Websites</a>
+      <a href="control.html"><span class="nav-icon">⚙</span> Automation</a>
+      <a href="logs.html"><span class="nav-icon">&lt;/&gt;</span> Live Logs</a>
+      <a href="logs.html"><span class="nav-icon">✈</span> Telegram</a>
+      <a href="trending.html"><span class="nav-icon">🔥</span> Trending</a>
+      <a href="reports.html"><span class="nav-icon">💰</span> Reports</a>
+      <a href="https://github.com/bgsarkariresult/BG-Automation/settings/secrets/actions" target="_blank" rel="noopener"><span class="nav-icon">⚙</span> Settings</a>
+      <div class="nav-promo">
+        <div class="rocket">🚀</div>
+        <b>Dream · Automate · Grow</b>
+        <small>सोचो नहीं, ऑटोमेट करो!</small>
+        <div class="ver">BG Automation v1.0</div>
+      </div>
+      <div class="nav-quote">
+        "छोटे कदम भी बड़ी सफलता की ओर ले जाते हैं।"
+        <cite>— Bhavesh</cite>
+      </div>
+    </nav>
+
+    <main>
+      <div class="kpi-row">
+        <div class="kpi red">
+          <div class="kpi-top">
+            <div class="kpi-icon">▶</div>
+            <span style="opacity:.4;font-size:18px">📊</span>
+          </div>
+          <label>Total Channels</label>
+          <div class="num">${channels.length}</div>
+          <div class="sub"><span>YouTube Automation</span><span class="up">↑ Active</span></div>
+        </div>
+        <div class="kpi purple">
+          <div class="kpi-top">
+            <div class="kpi-icon">⚙</div>
+            <span style="opacity:.4;font-size:18px">📈</span>
+          </div>
+          <label>Total Runs</label>
+          <div class="num">${totalRuns}</div>
+          <div class="sub"><span>Automation Jobs</span><span class="up">↑ ${success} ok</span></div>
+        </div>
+        <div class="kpi blue">
+          <div class="kpi-top">
+            <div class="kpi-icon">✈</div>
+            <span style="opacity:.4;font-size:18px">📉</span>
+          </div>
+          <label>Telegram Messages</label>
+          <div class="num">${msgs.length || '—'}</div>
+          <div class="sub"><span>Last 7 days</span><span class="up">↑ Live</span></div>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+        <!-- LEFT -->
+        <div class="col">
+          <div class="card">
+            <div class="hd"><h2>▶ YouTube Channels</h2><a href="youtube.html">View All →</a></div>
+            ${chRows}
+          </div>
+          <div class="card">
+            <div class="hd"><h2>🌐 Websites / Projects</h2><a href="sites.html">View All →</a></div>
+            ${siteRows}
+          </div>
+        </div>
+
+        <!-- MIDDLE -->
+        <div class="col">
+          <div class="card">
+            <div class="hd"><h2>⚙ Automation Overview</h2><a href="control.html">View Details →</a></div>
+            <div class="auto-grid">
+              <div class="auto-item">
+                <div class="ai" style="background:rgba(239,68,68,.12)">▶</div>
+                <b>YouTube</b><small>${channels.length} Channels</small>
+                <div class="bar r"><i></i></div><div class="bar-pct">100%</div>
+              </div>
+              <div class="auto-item">
+                <div class="ai" style="background:rgba(139,92,246,.12)">🌐</div>
+                <b>Websites</b><small>${sites.length || bots.filter(b=>b.site).length} Projects</small>
+                <div class="bar p"><i></i></div><div class="bar-pct">100%</div>
+              </div>
+              <div class="auto-item">
+                <div class="ai" style="background:rgba(34,211,238,.12)">✈</div>
+                <b>Telegram</b><small>1 Bot</small>
+                <div class="bar c"><i></i></div><div class="bar-pct">100%</div>
+              </div>
+              <div class="auto-item">
+                <div class="ai" style="background:rgba(245,158,11,.12)">🐙</div>
+                <b>GitHub</b><small>${bots.length} Repo${bots.length!==1?'s':''}</small>
+                <div class="bar a"><i></i></div><div class="bar-pct">${failed ? Math.max(0, 100 - failed * 10) : 100}%</div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="hd"><h2>🕐 Recent Activity</h2><a href="logs.html">View All →</a></div>
+            ${actRows}
+          </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="col">
+          <div class="card">
+            <div class="hd"><h2>🔥 Trending Topics</h2><a href="trending.html">View All →</a></div>
+            <div id="trendBox"><small class="mu">Loading…</small></div>
+          </div>
+          <div class="card">
+            <div class="hd"><h2>&lt;/&gt; Live Logs</h2><span class="live-dot">Live</span></div>
+            ${logLines}
+            <div style="text-align:right;margin-top:8px"><a href="logs.html" style="font-size:.75rem;color:var(--ac2);font-weight:600">View All Logs →</a></div>
+          </div>
+          <div class="card">
+            <div class="hd"><h2>✈ Recent Telegram Messages</h2><a href="logs.html">View All →</a></div>
+            ${tgRows}
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div><b style="color:var(--ac2)">BG</b> Automation · AI + Automation | Grow Together</div>
+        <div class="footer-links">
+          <a href="https://github.com/bgsarkariresult/BG-Automation" target="_blank" rel="noopener">🐙 GitHub</a>
+          <a href="logs.html">✈ Telegram</a>
+          <a href="youtube.html">▶ YouTube</a>
+          <a href="sites.html">🌐 Website</a>
+        </div>
+        <div class="status-ok">All Systems Operational</div>
+      </div>
+    </main>
   </div>`;
 
-  /* Override top bar for richer controls */
-  const top = document.querySelector('.top');
-  if (top) {
-    top.innerHTML = `
-      <button class="burger" aria-label="Menu" onclick="document.querySelector('nav').classList.toggle('open')">☰</button>
-      <div class="logo">⚙ BG Automation<small>Automate · Create · Grow</small></div>
-      <div class="top-btns">
-        <button id="refreshBtn" class="btn-top" onclick="window.refreshDashboard&&window.refreshDashboard()">↻ Refresh</button>
-        <button id="runSyncBtn" class="btn-top primary" onclick="window.runDashboardSync&&window.runDashboardSync()">▶ Run Sync</button>
-        <div class="pill" id="pill">● Live</div>
-        <div class="avatar-top">BG</div>
-      </div>`;
-  }
+  /* load trending async */
+  loadTrends();
+}
 
-  const channelCard = c => {
-    const name = c.name || c.title || c.id || 'Channel';
-    const img = c.icon || c.thumb || c.thumbnail || c.img || '';
-    const avatar = /^https?:/.test(img)
-      ? `<img src="${esc(img)}" alt="" loading="lazy">`
-      : `<div class="av">${esc(String(name).slice(0, 2).toUpperCase())}</div>`;
-    return `<div class="yt-card">
-      ${avatar}
-      <b>${esc(name)}</b>
-      <div class="id">${esc((c.id || '—').slice(0, 16))}</div>
-      <span class="chip ${c.error ? 'e' : ''}">${c.error ? 'Error' : '● Active'}</span>
-      <div class="nums"><span>👁 ${fmt(c.views ?? c.viewCount)}</span><span>👥 ${fmt(c.subs ?? c.subscribers)}</span></div>
-      <a class="manage" href="youtube.html">Manage</a>
-    </div>`;
-  };
-
-  const siteCard = x => {
-    const url = x.url || x.link || x.site || '';
-    return `<div class="ws-card">
-      <div class="site-head"><div class="site-icon">🌐</div><b>${esc(x.name || x.title || 'Website')}</b></div>
-      <div class="url">${esc(url || '—')}</div>
-      <div class="meta-t">Updated: ${agoText(x.updated || d.updated)}</div>
-      <div class="actions">
-        <a href="sites.html">Manage</a>
-        ${url ? `<a class="primary" href="${esc(url)}" target="_blank" rel="noopener">Open ↗</a>` : ''}
-      </div>
-    </div>`;
-  };
-
-  document.querySelector('#main').innerHTML = `
-    <div class="stats">
-      <div class="stat">
-        <div class="ico blue">▶</div>
-        <div><small>Total Channels</small><b>${channels.length}</b><small style="color:var(--mu2)">+ Add anytime</small></div>
-      </div>
-      <div class="stat">
-        <div class="ico cyan">⟳</div>
-        <div><small>Total Runs</small><b>${todayRuns || recent.length}</b><small style="color:var(--mu2)">Last 24 hours</small></div>
-      </div>
-      <div class="stat">
-        <div class="ico purple">✈</div>
-        <div><small>Telegram</small><b>${messages || '—'}</b><small style="color:var(--mu2)">Messages</small></div>
-      </div>
-      <div class="stat">
-        <div class="ico ${failed > 0 ? 'red' : 'green'}">⏱</div>
-        <div><small>Last Job</small><b style="font-size:1.1rem">${lastJob ? agoText(lastJob.r.t) : '—'}</b>
-          <small style="color:var(--mu2)">${lastJob ? (lastJob.r.s === 'success' ? 'Completed ✓' : lastJob.r.s) : 'No jobs'}</small></div>
-      </div>
-    </div>
-
-    <div class="grid3">
-      <div class="col-stack">
-        <div class="card">
-          <div class="hd">
-            <h2>▶ YouTube Channels</h2>
-            <a class="btn" href="youtube.html">+ Add</a>
-          </div>
-          <div class="yt-grid">
-            ${channels.length ? channels.map(channelCard).join('') : '<small class="mu">No channels yet.</small>'}
-          </div>
-        </div>
-        <div class="card">
-          <div class="hd">
-            <h2>🌐 Websites / Projects</h2>
-            <a class="btn" href="sites.html">+ Add</a>
-          </div>
-          <div class="ws-grid">
-            ${sites.length ? sites.map(siteCard).join('') : '<small class="mu">No websites configured.</small>'}
-          </div>
-        </div>
-      </div>
-
-      <div class="col-stack">
-        <div class="card">
-          <div class="hd">
-            <h2>⚡ Automation Overview</h2>
-            <a class="btn g" href="control.html">View All →</a>
-          </div>
-          <div class="kpi-box">
-            <div><b>${recent.length}</b><span>Total Jobs</span></div>
-            <div><b class="ok">${success}</b><span>Success</span></div>
-            <div><b class="err">${failed}</b><span>Failed</span></div>
-            <div><b class="warn">${Math.max(0, recent.length - success - failed)}</b><span>Other</span></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="hd">
-            <h2>📋 Recent Activity</h2>
-            <a class="btn g" href="logs.html">View All</a>
-          </div>
-          <div class="logs" style="max-height:260px">
-            ${recent.slice(0, 8).map(row).join('') || '<small class="mu">No recent activity</small>'}
-          </div>
-        </div>
-        <div class="card">
-          <div class="hd"><h2>🚀 Quick Actions</h2></div>
-          <div class="qa">
-            <a href="control.html">⚡ Run Automation <span>→</span></a>
-            <a href="youtube.html">▶ Manage Channels <span>→</span></a>
-            <a href="trending.html">🔥 Trending Topics <span>→</span></a>
-            <a href="sites.html">🌐 Manage Websites <span>→</span></a>
-            <a href="logs.html">📨 Telegram & Logs <span>→</span></a>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-stack">
-        <div class="card">
-          <div class="hd">
-            <h2>🔥 Trending Topics</h2>
-            <a class="btn g" href="trending.html">Full →</a>
-          </div>
-          <div id="dashTrending"><small class="mu">Loading trends…</small></div>
-        </div>
-        <div class="card">
-          <div class="hd">
-            <h2>💬 Telegram</h2>
-            <a class="btn g" href="logs.html">Open →</a>
-          </div>
-          ${(d.telegram || d.messages || []).slice(0, 5).map(m => `
-            <div class="li">
-              <span class="dot">✉</span>
-              <div><b>${esc((m.text || m.message || '').slice(0, 55))}</b><small>${agoText(m.t || m.time || m.date)}</small></div>
-            </div>
-          `).join('') || '<small class="mu">No messages yet</small>'}
-        </div>
-      </div>
-    </div>
-
-    <div class="ok-box ${failed > 3 ? 'bad' : ''}">
-      ${failed > 3
-        ? `⚠ ${failed} jobs failed recently — check Activity Logs`
-        : `✓ System healthy · ${success} successful jobs · Data from ${d.live_state === 'live' ? 'Cloudflare Live' : 'GitHub cache'}`
-      }
-    </div>
-  `;
-});
-
-window.runDashboardSync = async function () {
-  const btn = document.getElementById('runSyncBtn');
-  if (!btn) return;
-  btn.disabled = true;
-  btn.textContent = '⏳ Syncing…';
-  try {
-    const r = await fetch('https://bg-automation-live.garhwalbhavesh2002.workers.dev/api/sync', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }
-    });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    btn.textContent = '✓ Synced!';
-    setTimeout(() => { window.refreshDashboard && window.refreshDashboard(); }, 2000);
-  } catch (e) {
-    btn.textContent = '⚠ Failed';
-    console.warn('Sync failed:', e.message || e);
-  } finally {
-    setTimeout(() => { btn.disabled = false; btn.textContent = '▶ Run Sync'; }, 3000);
-  }
-};
-
-setInterval(() => {
-  const el = document.querySelector('#clock');
-  if (el) el.textContent = clockText();
-}, 30000);
-</script>
-<script>
-(async function loadDashboardTrending() {
-  let box = document.querySelector('#dashTrending');
-  if (!box) {
-    await new Promise(resolve => {
-      const observer = new MutationObserver(() => {
-        box = document.querySelector('#dashTrending');
-        if (box) { observer.disconnect(); resolve(); }
-      });
-      observer.observe(document.body, { childList: true, subtree: true });
-      setTimeout(() => { observer.disconnect(); resolve(); }, 15000);
-    });
-  }
+async function loadTrends() {
+  const box = document.getElementById('trendBox');
   if (!box) return;
-  const url = 'https://raw.githubusercontent.com/bgtechlab/Trending-Topic-Finder/main/history.json';
   try {
-    const r = await fetch(url + '?t=' + Date.now(), { cache: 'no-store' });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const data = await r.json(), rows = [];
+    const r = await fetch(TREND_URL + '?t=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) throw 0;
+    const data = await r.json();
+    const rows = [];
     Object.entries(data || {}).forEach(([channel, group]) => {
       if (!group) return;
       const list = Array.isArray(group.latest) ? group.latest : (Array.isArray(group.suggested) ? group.suggested : []);
@@ -400,27 +293,25 @@ setInterval(() => {
     const top = rows.filter(t => t && t.title).filter(t => {
       const k = String(t.title).trim().toLowerCase();
       if (seen.has(k)) return false; seen.add(k); return true;
-    }).sort((a, b) => new Date(b.updated_at || 0) - new Date(a.updated_at || 0)).slice(0, 8);
+    }).sort((a, b) => (+b.score || 0) - (+a.score || 0)).slice(0, 5);
 
-    box.innerHTML = top.length
-      ? '<small class="mu" style="display:block;margin-bottom:8px">Latest · ' +
-        esc(top[0].updated_at ? new Date(top[0].updated_at).toLocaleString('hi-IN') : '—') + '</small>' +
-        top.map((t, i) => {
-          const title = esc(t.title);
-          const score = Number.isFinite(+t.score) ? Math.round(+t.score) : '—';
-          const source = esc(t.source || 'unknown');
-          const link = esc(t.url || '#');
-          return `<a href="${link}" target="_blank" rel="noopener" class="trend-row">
-            <span class="trend-rank ${i < 3 ? 'top3' : ''}">${i + 1}</span>
-            <span class="trend-title"><b>${title}</b><small>${source} · ${esc(t.channel || '')}</small></span>
-            <span class="trend-score">Score ${score}</span>
-          </a>`;
-        }).join('')
-      : '<small class="mu">No trending data yet</small>';
-  } catch (e) {
-    box.innerHTML = '<small class="mu">Trending unavailable. <a href="trending.html" style="color:var(--cyan)">Open page →</a></small>';
+    box.innerHTML = top.length ? top.map((t, i) => `
+      <div class="trend-item">
+        <div class="trend-num n${i + 1}">${i + 1}</div>
+        <div class="trend-info">
+          <b>${esc(t.title)}</b>
+          <small>${esc(t.source || t.channel || 'trend')} · ${Number.isFinite(+t.score) ? Math.round(+t.score) + ' score' : ''}</small>
+        </div>
+        <span class="trend-up">↑</span>
+      </div>
+    `).join('') : '<small class="mu">No trending data</small>';
+  } catch (_) {
+    box.innerHTML = '<small class="mu">Trending unavailable · <a href="trending.html" style="color:var(--ac2)">Open →</a></small>';
   }
-})();
+}
+
+loadData().then(render).catch(() => render({}));
+setInterval(() => { if (!document.hidden) loadData().then(render); }, 30000);
 </script>
 </body>
 </html>
