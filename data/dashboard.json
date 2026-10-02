@@ -1,6 +1,6 @@
 {
-  "updated": "2026-10-02T01:38:01Z",
-  "checked_at": "2026-10-02T01:38:01Z",
+  "updated": "2026-10-02T02:35:49Z",
+  "checked_at": "2026-10-02T02:35:49Z",
   "refresh_interval_seconds": 300,
   "source": "GitHub Actions API",
   "channels": [
@@ -1038,7 +1038,7 @@
       "actor": "bgsarkariresult",
       "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/36948226252",
       "cron": "*/5 * * * *",
-      "next": "2026-10-02T01:40:00Z"
+      "next": "2026-10-02T02:40:00Z"
     },
     {
       "name": "TechGlow India",
@@ -1726,7 +1726,7 @@
         "run_id": 36841713410
       },
       "cron": "*/5 * * * *",
-      "next": "2026-10-02T01:40:00Z"
+      "next": "2026-10-02T02:40:00Z"
     },
     {
       "name": "BK GrowUp",
@@ -5734,7 +5734,7 @@
       "actor": "bgtechlab",
       "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/36947522279",
       "cron": "*/5 * * * *",
-      "next": "2026-10-02T01:40:00Z"
+      "next": "2026-10-02T02:40:00Z"
     }
   ],
   "sites": [
@@ -5835,6 +5835,11 @@
       "url": "https://bgnewswab.github.io/sgnewswab/index.html",
       "articles": [
         {
+          "t": "ICC के नए टेस्ट नियम: दिन में पिंक बॉल से घटेगा ओवरों का नुकसान",
+          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=136",
+          "d": "2026-10-02"
+        },
+        {
           "t": "IND W vs JPN W: 5 ओवरों का कमाल, टीम इंडिया रिकॉर्ड से मालामाल; ह",
           "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=99",
           "d": ""
@@ -5878,14 +5883,11 @@
           "t": "IND vs AFG: वरुण चक्रवर्ती हुए बाहर, अब कौन लेगा उनकी जगह? इन दो ",
           "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=91",
           "d": ""
-        },
-        {
-          "t": "IND vs AFG Live Streaming: भारत-अफगानिस्तान दूसरे T20I मैच को फ्र",
-          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=90",
-          "d": ""
         }
       ],
-      "days": {},
+      "days": {
+        "2026-10-02": 1
+      },
       "total": 100
     },
     {
