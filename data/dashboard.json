@@ -1,6 +1,6 @@
 {
-  "updated": "2026-10-02T01:04:56Z",
-  "checked_at": "2026-10-02T01:04:56Z",
+  "updated": "2026-10-02T01:17:58Z",
+  "checked_at": "2026-10-02T01:17:58Z",
   "refresh_interval_seconds": 300,
   "source": "GitHub Actions API",
   "channels": [
@@ -1038,7 +1038,7 @@
       "actor": "bgsarkariresult",
       "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/36948226252",
       "cron": "*/5 * * * *",
-      "next": "2026-10-02T01:05:00Z"
+      "next": "2026-10-02T01:20:00Z"
     },
     {
       "name": "TechGlow India",
@@ -1726,7 +1726,7 @@
         "run_id": 36841713410
       },
       "cron": "*/5 * * * *",
-      "next": "2026-10-02T01:05:00Z"
+      "next": "2026-10-02T01:20:00Z"
     },
     {
       "name": "BK GrowUp",
@@ -5734,7 +5734,7 @@
       "actor": "bgtechlab",
       "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/36947522279",
       "cron": "*/5 * * * *",
-      "next": "2026-10-02T01:05:00Z"
+      "next": "2026-10-02T01:20:00Z"
     }
   ],
   "sites": [
