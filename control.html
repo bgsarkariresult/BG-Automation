@@ -70,8 +70,19 @@ boot('control.html', 'GitHub Actions Control Center', d => {
           {name:'News Blog Auto Publisher',tag:'Website',repo:'bgtechlab/News-Blog-Auto-Publisher',url:'https://bgtechlab.github.io/News-Blog-Auto-Publisher/'},
           {name:'Trending-Topic-Finder',tag:'Trending Topics',repo:'bgtechlab/Trending-Topic-Finder',url:'https://bgtechlab.github.io/Trending-Topic-Finder/'}
         ].map(w => {
-          const bot=d.bots.find(x=>x.repo===w.repo);
-          return bot ? renderProjectCard(bot) : `<div class="site"><div class="row"><div><b>${esc(w.name)}</b><br><small>${esc(w.tag)}</small></div></div><div class="r"><a class="btn g" href="${esc(w.url)}" target="_blank" rel="noopener">Open</a><a class="btn" href="https://github.com/${esc(w.repo)}" target="_blank" rel="noopener">GitHub</a></div></div>`;
+          let bot=d.bots.find(x=>x.repo===w.repo);
+          if (!bot) {
+            const workflows={
+              'bgtechlab/Job-Page-Auto-Publisher':'job-page-publisher.yml',
+              'bgtechlab/amazon_to_blogger':'amazon_to_blogger.yml',
+              'bgtechlab/News-Blog-Auto-Publisher':'news-blog-publisher.yml',
+              'bgtechlab/Trending-Topic-Finder':'daily-auto-run.yml'
+            };
+            bot={name:w.name,repo:w.repo,workflow:workflows[w.repo],site:w.url,tag:w.tag,status:'unknown',runs:[]};
+            d.bots.push(bot);
+          }
+          if (!bot.site) bot.site=w.url;
+          return renderProjectCard(bot);
         }).join('')}
       </div>
       <button class="btn g" onclick="addProject('website')">＋ Add Website</button>
