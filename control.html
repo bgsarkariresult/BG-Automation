@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-  <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#3b5bff">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/BG-Automation/sw.js', { scope: '/BG-Automation/' });
-  }
-</script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Actions Control</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#3b5bff">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/BG-Automation/sw.js', { scope: '/BG-Automation/' });
+    }
+  </script>
+
   <link rel="stylesheet" href="app.css">
 </head>
 <body>
@@ -152,7 +155,6 @@ function showLiveLogs(i){
      }).join('')).join('');
      document.getElementById("logSteps").innerHTML=stepsHtml;
      document.getElementById("logMsg").textContent=data.message||"";
-     document.getElementById("logMsg").textContent=data.message||"";
      if(data.run){document.getElementById("liveLogTitle").textContent="— "+b.name+" · #"+data.run.id+" · "+(data.run.conclusion||data.run.status); }
    }catch(e){const term=document.getElementById("logTerminal");if(term)term.textContent="Logs load nahi hue: "+e.message;}
  };
@@ -164,17 +166,39 @@ function tg(i) {
 }
 
 /* ========== Worker se workflow dispatch ========== */
-async function callWorker(payload) {
+
+/* Optional PIN: Worker PIN maange (401 + "PIN") to ek baar poochh kar yaad rakhta hai */
+function getPin() {
+  try { return localStorage.getItem('bg_pin') || ''; } catch (_) { return ''; }
+}
+function savePin(p) {
+  try { localStorage.setItem('bg_pin', p); } catch (_) {}
+}
+
+async function callWorker(payload, retried) {
+  const body = Object.assign({}, payload || {});
+  const pin = getPin();
+  if (pin) body.pin = pin;
+
   const res = await fetch(WORKER_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload || {})
+    body: JSON.stringify(body)
   });
   let data = {};
   try {
     data = await res.json();
   } catch (_) {
     data = { ok: false, error: 'Invalid response', status: res.status };
+  }
+
+  const pinNeeded = (res.status === 401 || data.status === 401) && /pin/i.test(String(data.error || ''));
+  if (pinNeeded && !retried) {
+    const p = prompt('PIN daalo:');
+    if (p) {
+      savePin(p.trim());
+      return callWorker(payload, true);
+    }
   }
   return data;
 }
@@ -230,7 +254,7 @@ async function runBot(i) {
     if (data.ok) {
       hn.innerHTML = '✅ <b>Start ho gaya!</b> Status 30–60 sec baad refresh hoga.';
     } else if (data.status === 401 || data.status === 403) {
-      hn.textContent = '❌ Worker / PAT permission error (GH_TOKEN check karo)';
+      hn.textContent = '❌ Worker / PAT permission error (GH_TOKEN ya PIN check karo)';
     } else if (data.status === 404) {
       hn.textContent = '❌ Workflow ya repo nahi mila: ' + b.workflow;
     } else if (data.status === 422) {
