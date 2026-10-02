@@ -61,12 +61,15 @@ boot('control.html', 'GitHub Actions Control Center', d => {
     <div class="card">
       <h2>🌐 Websites <small>(वेबसाइट)</small></h2>
       <div class="sites">
-        ${d.websites.map(w => {
-          const b = d.bots.find(x => x.repo === w.repo);
-          return b ? renderProjectCard(b) : `<div class="site">
-            <div class="row"><div><b>${esc(w.name)}</b><br><small>${esc(w.tag || 'Website')}</small></div></div>
-            <div class="r"><a class="btn g" href="${esc(w.url)}" target="_blank" rel="noopener">Open</a><a class="btn" href="https://github.com/${esc(w.repo)}" target="_blank" rel="noopener">GitHub</a></div>
-          </div>`;
+        ${[
+          {name:'Job Page Auto Publisher',tag:'Website',repo:'bgtechlab/Job-Page-Auto-Publisher',url:'https://bgtechlab.github.io/Job-Page-Auto-Publisher/'},
+          {name:'Amazon to Blogger',tag:'Website',repo:'bgtechlab/amazon_to_blogger',url:'https://bgtechlab.github.io/amazon_to_blogger/'},
+          {name:'News Blog Auto Publisher',tag:'Website',repo:'bgtechlab/News-Blog-Auto-Publisher',url:'https://bgtechlab.github.io/News-Blog-Auto-Publisher/'},
+          {name:'Trending-Topic-Finder',tag:'Trending Topics',repo:'bgtechlab/Trending-Topic-Finder',url:'https://bgtechlab.github.io/Trending-Topic-Finder/'},
+          ...d.websites.filter(w => !['bgtechlab/Job-Page-Auto-Publisher','bgtechlab/amazon_to_blogger','bgtechlab/News-Blog-Auto-Publisher','bgtechlab/Trending-Topic-Finder'].includes(w.repo))
+        ].map(w => {
+          const b=d.bots.find(x=>x.repo===w.repo);
+          return b ? renderProjectCard(b) : `<div class="site"><div class="row"><div><b>${esc(w.name)}</b><br><small>${esc(w.tag || 'Website')}</small></div></div><div class="r"><a class="btn g" href="${esc(w.url)}" target="_blank" rel="noopener">Open</a><a class="btn" href="https://github.com/${esc(w.repo)}" target="_blank" rel="noopener">GitHub</a></div></div>`;
         }).join('')}
       </div>
       <button class="btn g" onclick="addProject('website')">＋ Add Website</button>
