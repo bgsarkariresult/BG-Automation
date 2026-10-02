@@ -4,137 +4,864 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BG Automation | Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#070d1c;--surface:#0d1830;--surface2:#101f3d;--line:#203456;--text:#edf3ff;--muted:#91a4c5;--blue:#3984ff;--cyan:#29c8e8;--green:#25d6a0;--red:#ff657d;--amber:#ffbd58}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:radial-gradient(ellipse at 45% -15%,#142750 0,transparent 46%),var(--bg);color:var(--text);font:13px/1.5 system-ui,-apple-system,"Segoe UI","Noto Sans Devanagari",sans-serif}
-a{color:inherit;text-decoration:none}
-.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:20px;padding:11px 22px;min-height:72px;background:rgba(8,17,36,.94);border-bottom:1px solid #1c3153;backdrop-filter:blur(14px)}
-.logo{font-size:21px;font-weight:800;letter-spacing:-.45px;white-space:nowrap}.logo small{display:block;color:var(--muted);font-size:10px;font-weight:500;letter-spacing:.2px}
-.topnav{display:flex;align-items:center;gap:5px;margin:auto}.topnav a{padding:9px 12px;border-radius:9px;color:#c1cfe7;white-space:nowrap;transition:.15s}.topnav a:hover,.topnav a.on{background:#17376b;color:#fff}
-.topright{display:flex;align-items:center;gap:9px;white-space:nowrap}.status{font-size:10px;color:var(--muted);border-left:1px solid var(--line);padding-left:12px}.status b{display:block;color:var(--green);font-size:11px}.status b:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:6px;box-shadow:0 0 9px #25d6a088}.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#287bff,#18b7df);font-weight:800;color:#fff}
-.burger{display:none;background:none;border:0;color:var(--text);font-size:22px;cursor:pointer}.refresh-btn{border:1px solid #285bb0;background:#14366d;color:#eaf2ff;border-radius:8px;padding:8px 11px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.15s}.refresh-btn:hover{background:#1c4b91}.refresh-btn:disabled{opacity:.6;cursor:wait}
-.app{display:grid;grid-template-columns:205px minmax(0,1fr);gap:17px;padding:17px 19px;max-width:1800px;margin:auto;min-height:calc(100vh - 72px)}
-nav{display:flex;flex-direction:column;gap:5px;min-width:0;align-self:stretch}nav>a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;color:#b9c8e2;font-size:12px;transition:background .15s,color .15s}nav>a.on,nav>a:hover{background:linear-gradient(100deg,#1765d7,#17418a);color:#fff;box-shadow:inset 3px 0 #38c8f3}nav .cnt{margin-left:auto;background:#1a3156;border:1px solid #29466e;border-radius:12px;padding:1px 7px;font-size:10px}nav .sys{margin-top:auto;padding:12px;border:1px solid var(--line);background:linear-gradient(145deg,#101e3a,#0b162d);border-radius:10px}nav .sys b{color:var(--green);font-size:11px}nav small{color:var(--muted);font-size:10px}
-main{min-width:0}
-.dg{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1.12fr) minmax(265px,.88fr);grid-template-areas:"stats stats trending" "youtube automation logs" "websites activity telegram" "status status status";gap:13px;align-items:start}
-.dg>.col{display:contents}.two{display:contents}.wel{display:none!important}
-.stats{grid-area:stats;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.dg>.col:first-child>.card:nth-of-type(3){grid-area:youtube}.dg>.col:first-child>.card:nth-of-type(4){grid-area:websites}.dg>.col:first-child>.two>section:first-child{grid-area:automation}.dg>.col:first-child>.two>section:last-child{grid-area:activity}.dg>.col:last-child>.card:nth-of-type(1){grid-area:trending}.dg>.col:last-child>.card:nth-of-type(2){grid-area:logs}.dg>.col:last-child>.card:nth-of-type(3){grid-area:telegram}.dg>.col:last-child>.okbox{grid-area:status}
-.card,.stat{background:linear-gradient(150deg,rgba(16,31,59,.98),rgba(10,21,42,.98));border:1px solid #20395e;border-radius:11px;padding:13px;min-width:0;box-shadow:0 7px 22px rgba(0,0,0,.13)}
-.card{transition:border-color .15s,transform .15s}.card:hover{border-color:#315787}
-.stat{display:grid;grid-template-columns:42px 1fr;gap:4px 10px;align-items:center;padding:13px 14px;min-height:91px}.ico{grid-row:span 2;width:41px;height:41px;border-radius:11px;display:grid;place-items:center;font-size:20px;background:#17376f}.stat small{color:#aebfdb;font-size:11px}.stat strong{font-size:25px;line-height:1.1;letter-spacing:-.5px}.sub{grid-column:1/-1;color:var(--muted);font-size:10px;margin-top:4px;display:flex;justify-content:space-between;gap:8px}
-.hd{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px;padding-bottom:9px;border-bottom:1px solid #1d3455}.hd h2{font-size:14px;margin:0;font-weight:700;letter-spacing:.05px}.btn{display:inline-block;background:#1859ba;border:1px solid #2d69c6;border-radius:7px;padding:5px 9px;color:#f5f8ff;font-size:10px;font-weight:600;white-space:nowrap}.btn:hover{background:#246dd7}.btn.alt{background:#11264a;border-color:#29466e}
-.yt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}.yt-card{display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;background:#0a152b;border:1px solid #1e3455;border-radius:9px;padding:10px 7px;min-width:0}.yt-card img,.av{width:39px;height:39px;border-radius:50%;object-fit:cover;background:#194f9b;display:grid;place-items:center;font-weight:800}.yt-card b{font-size:11px}.id{font-size:9px;color:var(--muted);overflow-wrap:anywhere}.chip{font-size:9px;border-radius:13px;padding:2px 8px;color:var(--green);background:#0c2d2a;border:1px solid #165747}.chip.e{color:var(--red);background:#2a141d;border-color:#633044}.nums{display:flex;gap:8px;color:var(--muted);font-size:9px}.manage{width:100%;padding:5px;border-radius:6px;background:#12284b;border:1px solid #29466e;font-size:9px}.manage:hover{background:#1a3c70}
-.ws-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:8px}.ws-card{display:grid;gap:6px;background:#0a152b;border:1px solid #1e3455;border-radius:9px;padding:10px;min-width:0}.site-head{display:flex;align-items:center;gap:8px}.site-icon{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;background:#17418d}.url{font-size:9px;color:#76b7ff;overflow-wrap:anywhere}.meta{font-size:9px;color:var(--muted)}.actions{display:flex;gap:6px}.actions a{flex:1;text-align:center;padding:5px;border:1px solid #29466e;border-radius:6px;background:#12284b;font-size:9px}.actions a.primary{background:#1859ba;border-color:#2d69c6}
-.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.k{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.k div{background:#0a152b;border:1px solid #1e3455;border-radius:8px;padding:8px;text-align:center}.k b{display:block;font-size:18px}.ok{color:var(--green)}.err{color:var(--red)}.warn{color:var(--amber)}
-.li{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #1c3150;min-width:0}.li:last-child{border:0}.dot{width:23px;height:23px;flex-shrink:0;border-radius:7px;background:#142750;display:grid;place-items:center;font-size:11px}.dot.success{color:var(--green)}.dot.failure{color:var(--red)}.li b{font-size:10px}.li small{display:block;font-size:9px;color:var(--muted)}.time{margin-left:auto;color:var(--muted);font-size:9px;white-space:nowrap}.qa a{display:flex;justify-content:space-between;align-items:center;padding:9px;border:1px solid #244477;background:#10234c;border-radius:8px;margin-bottom:7px;font-size:11px;font-weight:600}.qa a:hover{background:#173875}.logs{max-height:270px;overflow:auto}.okbox{border:1px solid #176e60;background:#0b2929;border-radius:9px;padding:10px;color:#4be0b4;font-size:11px;font-weight:700}
-.trend-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #1c3150;min-width:0}.trend-row:last-child{border-bottom:0}.trend-rank{width:24px;height:24px;border-radius:7px;background:#142750;display:grid;place-items:center;font-size:10px;font-weight:800;flex-shrink:0}.trend-title{min-width:0;flex:1}.trend-title b{display:block;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.trend-title small{display:block;color:var(--muted);font-size:9px;margin-top:2px}.trend-score{font-size:9px;color:#ffae69;background:#2a1b16;border-radius:12px;padding:3px 6px;white-space:nowrap}
-@media(max-width:1180px){.app{grid-template-columns:175px minmax(0,1fr);gap:12px;padding:12px}.dg{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 245px;gap:10px}.top{gap:10px;padding:10px 14px}.topnav a{padding:8px 9px;font-size:11px}}
-@media(max-width:940px){.dg{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"stats stats" "youtube automation" "websites activity" "trending logs" "telegram telegram" "status status"}.app{grid-template-columns:160px minmax(0,1fr)}.topnav{display:none}}
-@media(max-width:680px){.top{padding:9px 12px;gap:9px;min-height:58px}.burger{display:block}.logo{font-size:17px}.logo small{font-size:9px}.topright{margin-left:auto;gap:7px}.status{font-size:9px;padding-left:8px}.avatar{width:30px;height:30px}.app{display:block;padding:10px}.dg{grid-template-columns:1fr;grid-template-areas:"stats" "youtube" "websites" "automation" "activity" "trending" "logs" "telegram" "status";gap:10px}.app nav{position:fixed;inset:0 22% 0 0;z-index:30;background:var(--surface);padding:62px 12px 12px;transform:translateX(-110%);transition:transform .2s;overflow:auto;border-right:1px solid var(--line)}nav.open{transform:translateX(0)}.col{gap:10px}.stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.stat{padding:9px;grid-template-columns:30px 1fr;gap:4px 6px;min-height:75px}.ico{width:29px;height:29px;font-size:14px;border-radius:8px}.stat strong{font-size:19px}.stat small{font-size:9px}.sub{font-size:8px}.card{padding:11px}.hd h2{font-size:13px}.two{grid-template-columns:1fr}.yt-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ws-grid{grid-template-columns:1fr}}
-@media(max-width:390px){.stats{grid-template-columns:1fr}.status{display:none}.refresh-btn{padding:6px 8px;font-size:9px}}
+:root {
+  --bg: #060b16;
+  --bg2: #0a1224;
+  --surface: #0d1629;
+  --surface2: #121e36;
+  --surface3: #182744;
+  --border: rgba(56, 110, 180, 0.28);
+  --border-hover: rgba(80, 150, 255, 0.45);
+  --text: #f0f5ff;
+  --muted: #8ba0c0;
+  --muted2: #6b7f9e;
+  --blue: #3b8aff;
+  --blue2: #1a6ef0;
+  --cyan: #22d3ee;
+  --green: #22d3a0;
+  --red: #ff6b81;
+  --amber: #fbbf24;
+  --purple: #a78bfa;
+  --glow-blue: rgba(59, 138, 255, 0.15);
+  --glow-green: rgba(34, 211, 160, 0.12);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.35);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(ellipse 80% 50% at 70% -10%, rgba(40, 100, 220, 0.12), transparent 50%),
+    radial-gradient(ellipse 60% 40% at 10% 60%, rgba(20, 180, 200, 0.06), transparent 45%),
+    var(--bg);
+  color: var(--text);
+  font: 14px/1.55 "Inter", "Noto Sans Devanagari", system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+/* ─── TOP BAR ─── */
+.top {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; gap: 16px;
+  padding: 0 24px; height: 64px;
+  background: rgba(6, 11, 22, 0.85);
+  backdrop-filter: blur(20px) saturate(1.4);
+  border-bottom: 1px solid var(--border);
+}
+.logo {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 18px; font-weight: 800; letter-spacing: -0.4px; white-space: nowrap;
+}
+.logo-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: linear-gradient(135deg, #3b8aff, #22d3ee);
+  display: grid; place-items: center; font-size: 16px;
+  box-shadow: 0 4px 16px rgba(59, 138, 255, 0.35);
+}
+.logo small { display: block; font-size: 10px; font-weight: 500; color: var(--muted); letter-spacing: 0.3px; margin-top: 1px; }
+
+.topnav { display: flex; align-items: center; gap: 4px; margin: 0 auto; }
+.topnav a {
+  padding: 7px 14px; border-radius: 8px;
+  color: var(--muted); font-size: 13px; font-weight: 500;
+  transition: all 0.15s;
+}
+.topnav a:hover, .topnav a.on { background: rgba(59, 138, 255, 0.12); color: #fff; }
+
+.topright { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.btn-top {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: 8px;
+  font-size: 12px; font-weight: 600;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  transition: all 0.15s;
+}
+.btn-top:hover { background: var(--surface3); border-color: var(--border-hover); }
+.btn-top.primary {
+  background: linear-gradient(135deg, #3b8aff, #1a6ef0);
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(59, 138, 255, 0.3);
+}
+.btn-top.primary:hover { box-shadow: 0 6px 20px rgba(59, 138, 255, 0.4); transform: translateY(-1px); }
+.btn-top:disabled { opacity: 0.55; cursor: wait; transform: none !important; }
+
+.status-pill {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 12px; border-radius: 20px;
+  background: rgba(34, 211, 160, 0.08);
+  border: 1px solid rgba(34, 211, 160, 0.25);
+  font-size: 11px; color: var(--muted);
+}
+.status-pill .dot-live {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, #3b8aff, #22d3ee);
+  display: grid; place-items: center;
+  font-weight: 800; font-size: 12px; color: #fff;
+}
+.burger { display: none; font-size: 22px; padding: 4px; }
+
+/* ─── LAYOUT ─── */
+.app {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 20px;
+  padding: 20px 24px;
+  max-width: 1600px;
+  margin: 0 auto;
+  min-height: calc(100vh - 64px);
+}
+
+/* ─── SIDEBAR ─── */
+nav {
+  display: flex; flex-direction: column; gap: 3px;
+  position: sticky; top: 84px; align-self: start;
+  padding: 12px 10px;
+  background: linear-gradient(180deg, rgba(13, 22, 41, 0.95), rgba(10, 18, 36, 0.95));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+nav > a {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: var(--radius-sm);
+  color: var(--muted); font-size: 13px; font-weight: 500;
+  transition: all 0.15s;
+}
+nav > a:hover { background: rgba(59, 138, 255, 0.08); color: var(--text); }
+nav > a.on {
+  background: linear-gradient(135deg, rgba(59, 138, 255, 0.2), rgba(26, 110, 240, 0.12));
+  color: #fff;
+  box-shadow: inset 3px 0 0 var(--cyan);
+}
+nav .cnt {
+  margin-left: auto;
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1px 8px;
+  font-size: 11px; font-weight: 600;
+  color: var(--muted);
+}
+nav .sys {
+  margin-top: auto;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(145deg, rgba(20, 40, 70, 0.6), rgba(10, 20, 40, 0.6));
+  border: 1px solid var(--border);
+  font-size: 11px;
+}
+nav .sys b { color: var(--green); font-size: 12px; }
+nav .sys small { color: var(--muted2); display: block; margin-top: 4px; }
+
+/* ─── MAIN ─── */
+main { min-width: 0; }
+
+/* Welcome banner */
+.welcome {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 20px 24px;
+  margin-bottom: 18px;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, rgba(30, 80, 180, 0.18), rgba(20, 50, 120, 0.08));
+  border: 1px solid rgba(59, 138, 255, 0.2);
+  position: relative; overflow: hidden;
+}
+.welcome::before {
+  content: "";
+  position: absolute; top: -40%; right: -5%;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(59, 138, 255, 0.15), transparent 70%);
+  pointer-events: none;
+}
+.welcome h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.4px; }
+.welcome p { color: var(--muted); font-size: 13px; margin-top: 4px; }
+.welcome-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+/* Stats row */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.stat {
+  display: flex; align-items: center; gap: 14px;
+  padding: 18px;
+  border-radius: var(--radius);
+  background: linear-gradient(145deg, rgba(13, 22, 41, 0.95), rgba(10, 18, 36, 0.95));
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  transition: border-color 0.2s, transform 0.2s;
+}
+.stat:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+.stat-ico {
+  width: 48px; height: 48px; border-radius: 14px;
+  display: grid; place-items: center; font-size: 22px; flex-shrink: 0;
+}
+.stat-ico.blue { background: rgba(59, 138, 255, 0.12); }
+.stat-ico.green { background: rgba(34, 211, 160, 0.12); }
+.stat-ico.amber { background: rgba(251, 191, 36, 0.12); }
+.stat-ico.purple { background: rgba(167, 139, 250, 0.12); }
+.stat-ico.cyan { background: rgba(34, 211, 238, 0.12); }
+.stat-ico.red { background: rgba(255, 107, 129, 0.12); }
+.stat small { color: var(--muted); font-size: 12px; font-weight: 500; display: block; }
+.stat strong { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.15; display: block; }
+.stat .sub { color: var(--muted2); font-size: 11px; margin-top: 2px; }
+
+/* Grid layout */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 320px;
+  gap: 16px;
+  align-items: start;
+}
+
+/* Cards */
+.card {
+  background: linear-gradient(145deg, rgba(13, 22, 41, 0.95), rgba(10, 18, 36, 0.95));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--shadow);
+  transition: border-color 0.2s;
+}
+.card:hover { border-color: var(--border-hover); }
+
+.hd {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  margin-bottom: 14px; padding-bottom: 12px;
+  border-bottom: 1px solid rgba(56, 110, 180, 0.15);
+}
+.hd h2 { font-size: 15px; font-weight: 700; letter-spacing: -0.1px; display: flex; align-items: center; gap: 8px; }
+.hd h2 .ico { font-size: 16px; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 12px; border-radius: 8px;
+  font-size: 11px; font-weight: 600;
+  background: linear-gradient(135deg, #3b8aff, #1a6ef0);
+  color: #fff; border: none;
+  transition: all 0.15s;
+  box-shadow: 0 3px 10px rgba(59, 138, 255, 0.2);
+}
+.btn:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(59, 138, 255, 0.3); }
+.btn.alt {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  box-shadow: none;
+  color: var(--muted);
+}
+.btn.alt:hover { background: var(--surface3); color: var(--text); }
+
+/* YouTube channels */
+.yt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+.yt-card {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  text-align: center;
+  padding: 14px 10px;
+  border-radius: 12px;
+  background: var(--surface2);
+  border: 1px solid rgba(56, 110, 180, 0.18);
+  transition: all 0.2s;
+}
+.yt-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--blue);
+  box-shadow: 0 8px 24px rgba(59, 138, 255, 0.15);
+}
+.yt-card img, .av {
+  width: 44px; height: 44px; border-radius: 50%;
+  object-fit: cover;
+  background: linear-gradient(135deg, #3b8aff, #1a6ef0);
+  display: grid; place-items: center;
+  font-weight: 800; font-size: 14px; color: #fff;
+  box-shadow: 0 0 0 3px rgba(59, 138, 255, 0.12);
+}
+.yt-card b { font-size: 12px; font-weight: 600; }
+.yt-card .id { font-size: 9px; color: var(--muted2); word-break: break-all; }
+.chip {
+  font-size: 10px; font-weight: 600;
+  border-radius: 20px; padding: 2px 10px;
+  color: var(--green);
+  background: rgba(34, 211, 160, 0.1);
+  border: 1px solid rgba(34, 211, 160, 0.25);
+}
+.chip.e {
+  color: var(--red);
+  background: rgba(255, 107, 129, 0.1);
+  border-color: rgba(255, 107, 129, 0.25);
+}
+.nums { display: flex; gap: 10px; color: var(--muted); font-size: 10px; }
+.manage {
+  width: 100%; padding: 6px;
+  border-radius: 7px; font-size: 10px; font-weight: 600;
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  transition: all 0.15s;
+}
+.manage:hover { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+/* Websites */
+.ws-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+.ws-card {
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--surface2);
+  border: 1px solid rgba(56, 110, 180, 0.18);
+  transition: all 0.2s;
+}
+.ws-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--blue);
+  box-shadow: 0 8px 24px rgba(59, 138, 255, 0.12);
+}
+.site-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.site-icon {
+  width: 34px; height: 34px; border-radius: 10px;
+  display: grid; place-items: center; font-size: 16px;
+  background: rgba(59, 138, 255, 0.12);
+  flex-shrink: 0;
+}
+.ws-card b { font-size: 13px; font-weight: 600; }
+.url { font-size: 11px; color: var(--blue); word-break: break-all; margin-bottom: 6px; }
+.meta { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+.actions { display: flex; gap: 6px; }
+.actions a {
+  flex: 1; text-align: center; padding: 6px;
+  border-radius: 7px; font-size: 11px; font-weight: 600;
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  transition: all 0.15s;
+}
+.actions a:hover { color: var(--text); border-color: var(--border-hover); }
+.actions a.primary {
+  background: linear-gradient(135deg, #3b8aff, #1a6ef0);
+  border-color: transparent; color: #fff;
+}
+
+/* KPI boxes */
+.kpi {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.kpi div {
+  text-align: center;
+  padding: 14px 10px;
+  border-radius: 12px;
+  background: var(--surface2);
+  border: 1px solid rgba(56, 110, 180, 0.18);
+}
+.kpi b { display: block; font-size: 22px; font-weight: 800; letter-spacing: -0.3px; }
+.kpi span { font-size: 11px; color: var(--muted); }
+.ok { color: var(--green); }
+.err { color: var(--red); }
+.warn { color: var(--amber); }
+
+/* Activity list */
+.li {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(56, 110, 180, 0.12);
+}
+.li:last-child { border-bottom: none; }
+.dot {
+  width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+  display: grid; place-items: center; font-size: 12px; font-weight: 700;
+  background: var(--surface3);
+}
+.dot.success { color: var(--green); background: rgba(34, 211, 160, 0.1); }
+.dot.failure { color: var(--red); background: rgba(255, 107, 129, 0.1); }
+.li b { font-size: 12px; font-weight: 600; display: block; }
+.li small { font-size: 11px; color: var(--muted); }
+.time { margin-left: auto; color: var(--muted2); font-size: 11px; white-space: nowrap; }
+
+/* Logs scroll */
+.logs { max-height: 280px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--surface3) transparent; }
+
+/* Trending */
+.trend-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(56, 110, 180, 0.12);
+  transition: background 0.15s;
+}
+.trend-row:last-child { border-bottom: none; }
+.trend-row:hover { background: rgba(59, 138, 255, 0.04); margin: 0 -8px; padding-left: 8px; padding-right: 8px; border-radius: 8px; }
+.trend-rank {
+  width: 26px; height: 26px; border-radius: 8px; flex-shrink: 0;
+  display: grid; place-items: center;
+  font-size: 11px; font-weight: 800;
+  background: var(--surface3); color: var(--muted);
+}
+.trend-rank.top3 { background: rgba(251, 191, 36, 0.12); color: var(--amber); }
+.trend-title { min-width: 0; flex: 1; }
+.trend-title b {
+  display: block; font-size: 12px; font-weight: 600;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.trend-title small { display: block; color: var(--muted); font-size: 10px; margin-top: 2px; }
+.trend-score {
+  font-size: 10px; font-weight: 600;
+  color: var(--amber);
+  background: rgba(251, 191, 36, 0.1);
+  border-radius: 12px; padding: 3px 8px;
+  white-space: nowrap;
+}
+
+/* Quick actions */
+.qa a {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 11px 14px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  font-size: 13px; font-weight: 600;
+  background: linear-gradient(90deg, rgba(20, 50, 100, 0.5), rgba(15, 35, 70, 0.5));
+  border: 1px solid rgba(56, 110, 180, 0.25);
+  color: #c0d8f5;
+  transition: all 0.18s;
+}
+.qa a:hover {
+  background: linear-gradient(90deg, #1a6ef0, #3b8aff);
+  border-color: transparent;
+  color: #fff;
+  transform: translateX(4px);
+  box-shadow: 0 4px 16px rgba(59, 138, 255, 0.25);
+}
+.qa a:last-child { margin-bottom: 0; }
+
+/* System status box */
+.okbox {
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 12px; font-weight: 600;
+  background: linear-gradient(135deg, rgba(12, 60, 50, 0.4), rgba(8, 35, 35, 0.5));
+  border: 1px solid rgba(34, 211, 160, 0.3);
+  color: var(--green);
+  margin-top: 16px;
+}
+.okbox.bad {
+  background: linear-gradient(135deg, rgba(80, 20, 30, 0.3), rgba(50, 10, 20, 0.4));
+  border-color: rgba(255, 107, 129, 0.3);
+  color: var(--red);
+}
+
+/* Right column stack */
+.col-right { display: flex; flex-direction: column; gap: 16px; }
+
+/* Empty state */
+.empty { text-align: center; padding: 24px; color: var(--muted); font-size: 13px; }
+.empty span { font-size: 28px; display: block; margin-bottom: 8px; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 1200px) {
+  .grid { grid-template-columns: 1fr 1fr; }
+  .col-right { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .stats { grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 940px) {
+  .app { grid-template-columns: 180px 1fr; gap: 14px; padding: 14px; }
+  .topnav { display: none; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .grid { grid-template-columns: 1fr; }
+  .col-right { grid-template-columns: 1fr; }
+}
+@media (max-width: 700px) {
+  .top { padding: 0 12px; height: 56px; gap: 10px; }
+  .burger { display: block; }
+  .logo { font-size: 15px; }
+  .logo-icon { width: 30px; height: 30px; font-size: 13px; }
+  .status-pill { display: none; }
+  .app { display: block; padding: 12px; }
+  nav {
+    position: fixed; inset: 0 25% 0 0; z-index: 60;
+    border-radius: 0; padding: 70px 12px 16px;
+    transform: translateX(-110%);
+    transition: transform 0.25s ease;
+    overflow-y: auto;
+  }
+  nav.open { transform: translateX(0); }
+  .stats { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stat { padding: 14px; }
+  .stat-ico { width: 40px; height: 40px; font-size: 18px; border-radius: 12px; }
+  .stat strong { font-size: 22px; }
+  .welcome { flex-direction: column; align-items: flex-start; padding: 16px; }
+  .welcome h1 { font-size: 18px; }
+  .yt-grid { grid-template-columns: repeat(2, 1fr); }
+  .ws-grid { grid-template-columns: 1fr; }
+  .btn-top { padding: 6px 10px; font-size: 11px; }
+}
+@media (max-width: 400px) {
+  .stats { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
 <script src="app.js"></script>
 <script>
-function clockText(){return new Date().toLocaleString('hi-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}
-boot('index.html','YouTube • GitHub • Telegram • All Projects',d=>{
- const channels=d.channels||[],sites=d.websites||d.sites||[],bots=d.bots||[];
- const runs=bots.flatMap(b=>(b.runs||[]).map(r=>({name:b.name||b.id||'Automation',r}))).sort((a,b)=>new Date(b.r.t)-new Date(a.r.t));
- const recent=runs.filter(x=>x.r.d>=60||x.r.s==='failure');
- const today=new Date().toLocaleDateString('en-CA');
- const todayRuns=recent.filter(x=>new Date(x.r.t).toLocaleDateString('en-CA')===today).length;
- const success=recent.filter(x=>x.r.s==='success').length,failed=recent.filter(x=>x.r.s==='failure').length;
- const messages=(d.telegram||d.messages||[]).length;
- const agoText=t=>{if(!t)return'—';let m=Math.max(0,(Date.now()-new Date(t))/60000);return m<1?'अभी':m<60?Math.round(m)+' मिनट पहले':m<1440?Math.round(m/60)+' घंटे पहले':Math.round(m/1440)+' दिन पहले'};
- const row=x=>`<div class="li"><span class="dot ${x.r.s}">${x.r.s==='success'?'✓':x.r.s==='failure'?'✕':'…'}</span><div><b>${esc(x.name)}</b><small>${esc(x.r.s||'unknown')} · ${Math.ceil((+x.r.d||0)/60)} मिनट</small></div><span class="time">${agoText(x.r.t)}</span></div>`;
- const top=document.querySelector('.top');
- top.innerHTML=`<button class="burger" aria-label="Menu" onclick="document.querySelector('nav').classList.toggle('open')">☰</button><div class="logo"><span style="color:#20baff">⚙ BG</span> Automation<small>Automate　•　Create　•　Grow</small></div><div class="topnav"><a class="on" href="index.html">⌂　Home</a><a href="youtube.html">▶　YouTube</a><a href="https://github.com/bgsarkariresult/BG-Automation" target="_blank" rel="noopener">◉　GitHub</a><a href="logs.html">➤　Telegram</a><a href="sites.html">▦　All Projects</a></div><div class="topright"><button id="refreshBtn" class="refresh-btn" onclick="window.refreshDashboard&&window.refreshDashboard()" title="नया उपलब्ध डेटा लोड करें">↻ Refresh</button><button id="runSyncBtn" class="refresh-btn" onclick="window.runDashboardSync&&window.runDashboardSync()" title="Cloudflare Worker से GitHub Sync शुरू करें">▶ Run Sync</button><div class="status"><b>System Online</b><span id="clock">${clockText()}</span></div><div class="avatar">BG</div></div>`;
- const nav=document.querySelector('nav');
- nav.innerHTML=`<a class="on" href="index.html">⌂　Dashboard</a><a href="youtube.html">▶　YouTube Channels <span class="cnt">${channels.length}</span></a><a href="sites.html">▣　Websites / Projects</a><a href="trending.html">🔥　Trending-Topic</a><a href="control.html">⚙　Automation</a><a href="logs.html">▤　Activity Logs</a><a href="logs.html">➤　Telegram Messages <span class="cnt">${messages}</span></a><a href="https://github.com/bgsarkariresult/BG-Automation/settings/secrets/actions" target="_blank" rel="noopener">⚙　Settings</a><div class="sys"><b>● System Online</b><br><small>Last checked: ${clockText()}</small><br><small>Data updated: ${at(d.live_updated||d.updated)}</small></div>`;
- const channelCard=c=>{const name=c.name||c.title||c.id||'Channel',img=c.icon||c.thumb||c.thumbnail||c.img||'',avatar=/^https?:/.test(img)?`<img src="${esc(img)}" alt="">`:`<div class="av">${esc(String(name).slice(0,2).toUpperCase())}</div>`;return `<div class="yt-card">${avatar}<b>${esc(name)}</b><div class="id">${esc((c.id||'—').slice(0,16))}</div><span class="chip ${c.error?'e':''}">${c.error?'Error':'● Active'}</span><div class="nums"><span>👁 ${fmt(c.views??c.viewCount)}</span><span>👥 ${fmt(c.subs??c.subscribers)}</span></div><a class="manage" href="youtube.html">Manage</a></div>`};
- const siteCard=x=>{const url=x.url||x.link||'';return `<div class="ws-card"><div class="site-head"><div class="site-icon">🌐</div><b>${esc(x.name||x.title||'Website')}</b></div><div class="url">${esc(url)}</div><div class="meta">Updated: ${agoText(x.updated||d.updated)}</div><div class="actions"><a href="sites.html">Manage</a>${url?`<a class="primary" href="${esc(url)}" target="_blank" rel="noopener">Open ↗</a>`:''}</div></div>`};
- document.querySelector('#main').innerHTML=`<div class="dg"><div class="col">
- <section class="card wel"><div><h2>👋 <span>Welcome Back,</span> Bhavesh!</h2><p>Your YouTube, Websites and Automation are running smoothly.</p><small>Keep creating, keep growing. 🚀</small></div><span class="live">● Live</span></section>
- <section class="stats"><div class="stat"><div class="ico" style="background:#e11d4825;color:#fb7185">▶</div><div><small>Total Channels</small><strong>${channels.length}</strong></div><div class="sub">YouTube Automation</div></div><div class="stat"><div class="ico" style="background:#7c3aed25;color:#b69aff">⚙</div><div><small>Total Runs</small><strong>${todayRuns}</strong></div><div class="sub">Automation Jobs · Today</div></div><div class="stat"><div class="ico" style="background:#0891b225;color:#38bdf8">➤</div><div><small>Telegram Messages</small><strong>${messages||'—'}</strong></div><div class="sub">Available messages</div></div></section>
- <section class="card"><div class="hd"><h2>▶ YouTube Channels</h2><a class="btn" href="youtube.html">View All →</a></div><div class="yt-grid">${channels.slice(0,8).map(channelCard).join('')||'<small>No channel found.</small>'}<a class="yt-card" href="youtube.html"><b style="font-size:25px">＋</b><b>Add New Channel</b><small>Manage channels</small></a></div></section>
- <section class="card"><div class="hd"><h2>🌐 Websites / Projects</h2><a class="btn alt" href="sites.html">View All →</a></div><div class="ws-grid">${sites.slice(0,6).map(siteCard).join('')||'<small>No website found.</small>'}</div></section>
- <div class="two"><section class="card"><div class="hd"><h2>⚙ Automation Overview</h2><a class="btn alt" href="control.html">Details →</a></div><div class="k"><div><small>Total Jobs</small><b>${recent.length}</b></div><div class="ok"><small>Success</small><b>${success}</b></div><div class="err"><small>Failed</small><b>${failed}</b></div><div class="warn"><small>Running</small><b>${bots.filter(b=>['in_progress','queued'].includes(b.status)).length}</b></div></div></section><section class="card"><div class="hd"><h2>🕒 Recent Activity</h2><a class="btn alt" href="logs.html">View All →</a></div>${recent.slice(0,4).map(row).join('')||'<small>No recent activity.</small>'}</section></div>
- </div><div class="col"><section class="card"><div class="hd"><h2>🔥 Trending Topics</h2><a class="btn alt" href="trending.html">View All →</a></div><div id="dashTrending"><small>Trending topics लोड हो रहे हैं…</small></div></section>
- <section class="card"><div class="hd"><h2>⌁ Live Logs</h2><span class="live">● Live</span></div><div class="logs">${recent.slice(0,7).map(row).join('')||'<small>No logs available.</small>'}</div><div style="text-align:right;margin-top:8px"><a class="btn alt" href="logs.html">View All Logs →</a></div></section><section class="card"><div class="hd"><h2>➤ Recent Telegram Messages</h2><a class="btn alt" href="logs.html">View All →</a></div>${(d.telegram||d.messages||[]).slice(0,4).map(m=>`<div class="li"><span class="dot">➤</span><div><b>${esc(m.title||m.name||m.text||'Telegram update')}</b><small>${esc(m.message||m.status||'')}</small></div></div>`).join('')||'<small>No Telegram messages in dashboard data.</small>'}</section><div class="okbox">${failed?'⚠ Historical failed jobs: '+failed:'✓ No failed jobs in loaded history'}<small style="display:block;font-weight:400;margin-top:3px">${d.live_state==='live'?'Cloudflare Live · ':'Dashboard cached · '}${at(d.live_updated||d.updated)}</small></div></div></div>`;
-});
-async function runDashboardSync(){
- const btn=document.querySelector('#runSyncBtn');
- if(!btn||btn.disabled)return;
- btn.disabled=true;btn.textContent='⏳ Starting…';
- const oldUpdated=window.D?.updated||'';
- const status=document.querySelector('.okbox');
- if(status)status.innerHTML='⏳ GitHub Actions sync शुरू हो रहा है…';
- try{
-  const response=await fetch('https://bg-runf.garhwalbhavesh2002.workers.dev/',{
-   method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({repo:'bgsarkariresult/BG-Automation',workflow:'sync.yml',ref:'main'})
-  });
-  const result=await response.json().catch(()=>({}));
-  if(!response.ok||!result.ok)throw new Error(result.error||('Worker error: '+response.status));
-  btn.textContent='⏳ Sync चल रहा है…';
-  if(status)status.innerHTML='⏳ GitHub Actions शुरू हो गया। डेटा अपडेट होने की प्रतीक्षा…';
-  const deadline=Date.now()+240000;
-  let updated=false;
-  while(Date.now()<deadline){
-   await new Promise(resolve=>setTimeout(resolve,8000));
-   try{
-    const r=await fetch('https://raw.githubusercontent.com/bgsarkariresult/BG-Automation/main/data/dashboard.json?t='+Date.now(),{cache:'no-store'});
-    if(r.ok){const d=await r.json();if(d.updated&&d.updated!==oldUpdated){updated=true;await window.refreshDashboard?.();break}}
-   }catch(_){}
-  }
-  if(status)status.innerHTML=updated?'✓ Sync पूरा हुआ। Data updated: '+new Date(window.D?.updated||Date.now()).toLocaleString('hi-IN'):'⏳ Sync शुरू हो गया है। डेटा अपडेट होने में अधिक समय लग रहा है; कुछ देर बाद Refresh करें।';
- }catch(e){
-  if(status)status.textContent='⚠ Sync शुरू नहीं हुआ: '+(e.message||'Worker से संपर्क नहीं हो पाया');
- }finally{btn.disabled=false;btn.textContent='▶ Run Sync'}
+function clockText() {
+  return new Date().toLocaleString('hi-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 }
-setInterval(()=>{const el=document.querySelector('#clock');if(el)el.textContent=clockText()},30000);
+
+boot('index.html', 'YouTube • GitHub • Telegram • All Projects', d => {
+  const channels = d.channels || [];
+  const sites = d.websites || d.sites || [];
+  const bots = d.bots || [];
+  const runs = bots.flatMap(b => (b.runs || []).map(r => ({ name: b.name || b.id || 'Automation', r })))
+    .sort((a, b) => new Date(b.r.t) - new Date(a.r.t));
+  const recent = runs.filter(x => x.r.d >= 60 || x.r.s === 'failure');
+  const today = new Date().toLocaleDateString('en-CA');
+  const todayRuns = recent.filter(x => new Date(x.r.t).toLocaleDateString('en-CA') === today).length;
+  const success = recent.filter(x => x.r.s === 'success').length;
+  const failed = recent.filter(x => x.r.s === 'failure').length;
+  const messages = (d.telegram || d.messages || []).length;
+  const lastJob = runs[0];
+
+  const agoText = t => {
+    if (!t) return '—';
+    let m = Math.max(0, (Date.now() - new Date(t)) / 60000);
+    return m < 1 ? 'अभी' : m < 60 ? Math.round(m) + ' मिनट पहले' : m < 1440 ? Math.round(m / 60) + ' घंटे पहले' : Math.round(m / 1440) + ' दिन पहले';
+  };
+
+  const row = x => `<div class="li">
+    <span class="dot ${x.r.s}">${x.r.s === 'success' ? '✓' : x.r.s === 'failure' ? '✕' : '…'}</span>
+    <div><b>${esc(x.name)}</b><small>${esc(x.r.s || 'unknown')} · ${Math.ceil((+x.r.d || 0) / 60)} मिनट</small></div>
+    <span class="time">${agoText(x.r.t)}</span>
+  </div>`;
+
+  // ── Top bar ──
+  const top = document.querySelector('.top');
+  top.innerHTML = `
+    <button class="burger" aria-label="Menu" onclick="document.querySelector('nav').classList.toggle('open')">☰</button>
+    <div class="logo">
+      <div class="logo-icon">⚙</div>
+      <div>BG Automation<small>Automate · Create · Grow</small></div>
+    </div>
+    <div class="topnav">
+      <a class="on" href="index.html">⌂ Home</a>
+      <a href="youtube.html">▶ YouTube</a>
+      <a href="sites.html">▦ Projects</a>
+      <a href="trending.html">🔥 Trending</a>
+      <a href="logs.html">➤ Telegram</a>
+      <a href="https://github.com/bgsarkariresult/BG-Automation" target="_blank" rel="noopener">◉ GitHub</a>
+    </div>
+    <div class="topright">
+      <button id="refreshBtn" class="btn-top" onclick="window.refreshDashboard&&window.refreshDashboard()" title="नया डेटा लोड करें">↻ Refresh</button>
+      <button id="runSyncBtn" class="btn-top primary" onclick="window.runDashboardSync&&window.runDashboardSync()" title="Cloudflare Worker से Sync">▶ Run Sync</button>
+      <div class="status-pill"><span class="dot-live"></span><span id="clock">${clockText()}</span></div>
+      <div class="avatar">BG</div>
+    </div>`;
+
+  // ── Sidebar ──
+  const nav = document.querySelector('nav');
+  nav.innerHTML = `
+    <a class="on" href="index.html">⌂ Dashboard</a>
+    <a href="youtube.html">▶ YouTube Channels <span class="cnt">${channels.length}</span></a>
+    <a href="sites.html">▣ Websites / Projects</a>
+    <a href="trending.html">🔥 Trending Topics</a>
+    <a href="control.html">⚙ Automation</a>
+    <a href="logs.html">▤ Activity Logs</a>
+    <a href="logs.html">➤ Telegram <span class="cnt">${messages}</span></a>
+    <a href="reports.html">💰 Reports</a>
+    <a href="https://github.com/bgsarkariresult/BG-Automation/settings/secrets/actions" target="_blank" rel="noopener">⚙ Settings</a>
+    <div class="sys">
+      <b>● System Online</b>
+      <small>Last checked: ${clockText()}</small>
+      <small>Data: ${at(d.live_updated || d.updated)}</small>
+    </div>`;
+
+  // ── Channel card ──
+  const channelCard = c => {
+    const name = c.name || c.title || c.id || 'Channel';
+    const img = c.icon || c.thumb || c.thumbnail || c.img || '';
+    const avatar = /^https?:/.test(img)
+      ? `<img src="${esc(img)}" alt="" loading="lazy">`
+      : `<div class="av">${esc(String(name).slice(0, 2).toUpperCase())}</div>`;
+    return `<div class="yt-card">
+      ${avatar}
+      <b>${esc(name)}</b>
+      <div class="id">${esc((c.id || '—').slice(0, 18))}</div>
+      <span class="chip ${c.error ? 'e' : ''}">${c.error ? 'Error' : '● Active'}</span>
+      <div class="nums"><span>👁 ${fmt(c.views ?? c.viewCount)}</span><span>👥 ${fmt(c.subs ?? c.subscribers)}</span></div>
+      <a class="manage" href="youtube.html">Manage</a>
+    </div>`;
+  };
+
+  // ── Site card ──
+  const siteCard = x => {
+    const url = x.url || x.link || x.site || '';
+    return `<div class="ws-card">
+      <div class="site-head">
+        <div class="site-icon">🌐</div>
+        <b>${esc(x.name || x.title || 'Website')}</b>
+      </div>
+      <div class="url">${esc(url || '—')}</div>
+      <div class="meta">Updated: ${agoText(x.updated || d.updated)}</div>
+      <div class="actions">
+        <a href="sites.html">Manage</a>
+        ${url ? `<a class="primary" href="${esc(url)}" target="_blank" rel="noopener">Open ↗</a>` : ''}
+      </div>
+    </div>`;
+  };
+
+  // ── Main content ──
+  document.querySelector('#main').innerHTML = `
+    <div class="welcome">
+      <div>
+        <h1>👋 Welcome back!</h1>
+        <p>Your YouTube + GitHub + Telegram automation hub · All data from GitHub Secrets</p>
+      </div>
+      <div class="welcome-actions">
+        <a class="btn" href="control.html">⚡ Run Automation</a>
+        <a class="btn alt" href="trending.html">🔥 Trending</a>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-ico blue">▶</div>
+        <div>
+          <small>Total Channels</small>
+          <strong>${channels.length}</strong>
+          <div class="sub">+ Add anytime</div>
+        </div>
+      </div>
+      <div class="stat">
+        <div class="stat-ico green">⟳</div>
+        <div>
+          <small>Total Runs</small>
+          <strong>${todayRuns || recent.length}</strong>
+          <div class="sub">Last 24 hours</div>
+        </div>
+      </div>
+      <div class="stat">
+        <div class="stat-ico purple">✈</div>
+        <div>
+          <small>Telegram</small>
+          <strong>${messages || '—'}</strong>
+          <div class="sub">Unread messages</div>
+        </div>
+      </div>
+      <div class="stat">
+        <div class="stat-ico ${failed > 0 ? 'red' : 'amber'}">⏱</div>
+        <div>
+          <small>Last Job</small>
+          <strong style="font-size:16px">${lastJob ? agoText(lastJob.r.t) : '—'}</strong>
+          <div class="sub">${lastJob ? (lastJob.r.s === 'success' ? 'Completed ✓' : lastJob.r.s) : 'No jobs yet'}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- Left column -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="card">
+          <div class="hd">
+            <h2><span class="ico">▶</span> YouTube Channels</h2>
+            <a class="btn" href="youtube.html">+ Add Channel</a>
+          </div>
+          <div class="yt-grid">
+            ${channels.length ? channels.map(channelCard).join('') : '<div class="empty"><span>📺</span>No channels yet. Add one!</div>'}
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="hd">
+            <h2><span class="ico">🌐</span> Websites / Projects</h2>
+            <a class="btn" href="sites.html">+ Add Website</a>
+          </div>
+          <div class="ws-grid">
+            ${sites.length ? sites.map(siteCard).join('') : '<div class="empty"><span>🌐</span>No websites configured.</div>'}
+          </div>
+        </div>
+      </div>
+
+      <!-- Middle column -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="card">
+          <div class="hd">
+            <h2><span class="ico">⚡</span> Automation Overview</h2>
+            <a class="btn alt" href="control.html">View All →</a>
+          </div>
+          <div class="kpi">
+            <div><b>${recent.length}</b><span>Total Jobs</span></div>
+            <div><b class="ok">${success}</b><span>Success</span></div>
+            <div><b class="err">${failed}</b><span>Failed</span></div>
+            <div><b class="warn">${Math.max(0, recent.length - success - failed)}</b><span>Other</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="hd">
+            <h2><span class="ico">📋</span> Recent Activity</h2>
+            <a class="btn alt" href="logs.html">View All</a>
+          </div>
+          <div class="logs">
+            ${recent.slice(0, 8).map(row).join('') || '<div class="empty"><span>📭</span>No recent activity</div>'}
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="hd">
+            <h2><span class="ico">🚀</span> Quick Actions</h2>
+          </div>
+          <div class="qa">
+            <a href="control.html">⚡ Run Automation <span>→</span></a>
+            <a href="youtube.html">▶ Manage Channels <span>→</span></a>
+            <a href="trending.html">🔥 Trending Topics <span>→</span></a>
+            <a href="sites.html">🌐 Manage Websites <span>→</span></a>
+            <a href="logs.html">📨 Telegram Messages <span>→</span></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right column -->
+      <div class="col-right">
+        <div class="card">
+          <div class="hd">
+            <h2><span class="ico">🔥</span> Trending Topics</h2>
+            <a class="btn alt" href="trending.html">Full →</a>
+          </div>
+          <div id="dashTrending"><div class="empty"><span>⏳</span>Loading trends…</div></div>
+        </div>
+
+        <div class="card">
+          <div class="hd">
+            <h2><span class="ico">💬</span> Telegram</h2>
+            <a class="btn alt" href="logs.html">Open →</a>
+          </div>
+          <div>
+            ${(d.telegram || d.messages || []).slice(0, 5).map(m => `
+              <div class="li">
+                <span class="dot">✉</span>
+                <div><b>${esc((m.text || m.message || '').slice(0, 60))}</b><small>${agoText(m.t || m.time || m.date)}</small></div>
+              </div>
+            `).join('') || '<div class="empty"><span>💬</span>No messages yet</div>'}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="okbox ${failed > 3 ? 'bad' : ''}">
+      ${failed > 3
+        ? `⚠ ${failed} jobs failed recently — check Activity Logs`
+        : `✓ System healthy · ${success} successful jobs · Data from ${d.live_state === 'live' ? 'Cloudflare Live' : 'GitHub cache'}`
+      }
+    </div>
+  `;
+});
+
+// Run Sync via Cloudflare Worker
+window.runDashboardSync = async function () {
+  const btn = document.getElementById('runSyncBtn');
+  if (!btn) return;
+  btn.disabled = true;
+  btn.textContent = '⏳ Syncing…';
+  try {
+    const r = await fetch('https://bg-automation-live.garhwalbhavesh2002.workers.dev/api/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    btn.textContent = '✓ Synced!';
+    setTimeout(() => { window.refreshDashboard && window.refreshDashboard(); }, 2000);
+  } catch (e) {
+    btn.textContent = '⚠ Failed';
+    console.warn('Sync failed:', e.message || e);
+  } finally {
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = '▶ Run Sync';
+    }, 3000);
+  }
+};
+
+setInterval(() => {
+  const el = document.querySelector('#clock');
+  if (el) el.textContent = clockText();
+}, 30000);
 </script>
 <script>
-(async function loadDashboardTrending(){
- // boot() inserts the dashboard after its async data fetch; wait for the card.
- let box=document.querySelector('#dashTrending');
- if(!box){
-  await new Promise(resolve=>{
-   const observer=new MutationObserver(()=>{
-    box=document.querySelector('#dashTrending');
-    if(box){observer.disconnect();resolve();}
-   });
-   observer.observe(document.body,{childList:true,subtree:true});
-   // Avoid leaving an observer behind if the dashboard cannot render.
-   setTimeout(()=>{observer.disconnect();resolve();},15000);
-  });
- }
- if(!box)return;
- const url='https://raw.githubusercontent.com/bgtechlab/Trending-Topic-Finder/main/history.json';
- try{
-  const r=await fetch(url+'?t='+Date.now(),{cache:'no-store'});
-  if(!r.ok)throw new Error('HTTP '+r.status);
-  const data=await r.json(),rows=[];
-  Object.entries(data||{}).forEach(([channel,group])=>{
-   if(!group)return;
-   const list=Array.isArray(group.latest)?group.latest:(Array.isArray(group.suggested)?group.suggested:[]);
-   list.forEach(t=>rows.push({...t,channel,updated_at:t.fetched_at||group.updated_at||''}));
-  });
-  const seen=new Set();
-  const top=rows.filter(t=>t&&t.title).filter(t=>{
-    const k=String(t.title).trim().toLowerCase();
-    if(seen.has(k))return false;seen.add(k);return true;
-  }).sort((a,b)=>new Date(b.updated_at||0)-new Date(a.updated_at||0)).slice(0,8);
-  box.innerHTML=top.length?'<small class="meta">Latest saved results · '+esc(top[0].updated_at?new Date(top[0].updated_at).toLocaleString('hi-IN'):'update time unavailable')+'</small>'+top.map((t,i)=>{
-   const title=esc(t.title),score=Number.isFinite(+t.score)?Math.round(+t.score):'—',source=esc(t.source||'unknown'),link=esc(t.url||'#');
-   return '<a href="'+link+'" target="_blank" rel="noopener" class="trend-row"><span class="trend-rank">'+(i+1)+'</span><span class="trend-title"><b>'+title+'</b><small>'+source+' · '+esc(t.channel||'')+'</small></span><span class="trend-score">Score '+score+'</span></a>';
-  }).join(''):'<small>अभी कोई नवीनतम ट्रेंड उपलब्ध नहीं है।</small>';
- }catch(e){
-  box.innerHTML='<small>Live trending data उपलब्ध नहीं है। <a href="trending.html" style="color:#64a9ff">Trending page खोलें →</a></small>';
- }
+(async function loadDashboardTrending() {
+  let box = document.querySelector('#dashTrending');
+  if (!box) {
+    await new Promise(resolve => {
+      const observer = new MutationObserver(() => {
+        box = document.querySelector('#dashTrending');
+        if (box) { observer.disconnect(); resolve(); }
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+      setTimeout(() => { observer.disconnect(); resolve(); }, 15000);
+    });
+  }
+  if (!box) return;
+  const url = 'https://raw.githubusercontent.com/bgtechlab/Trending-Topic-Finder/main/history.json';
+  try {
+    const r = await fetch(url + '?t=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const data = await r.json(), rows = [];
+    Object.entries(data || {}).forEach(([channel, group]) => {
+      if (!group) return;
+      const list = Array.isArray(group.latest) ? group.latest : (Array.isArray(group.suggested) ? group.suggested : []);
+      list.forEach(t => rows.push({ ...t, channel, updated_at: t.fetched_at || group.updated_at || '' }));
+    });
+    const seen = new Set();
+    const top = rows.filter(t => t && t.title).filter(t => {
+      const k = String(t.title).trim().toLowerCase();
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    }).sort((a, b) => new Date(b.updated_at || 0) - new Date(a.updated_at || 0)).slice(0, 8);
+
+    box.innerHTML = top.length
+      ? '<small style="color:var(--muted);font-size:11px;display:block;margin-bottom:8px">Latest · ' +
+        esc(top[0].updated_at ? new Date(top[0].updated_at).toLocaleString('hi-IN') : '—') + '</small>' +
+        top.map((t, i) => {
+          const title = esc(t.title);
+          const score = Number.isFinite(+t.score) ? Math.round(+t.score) : '—';
+          const source = esc(t.source || 'unknown');
+          const link = esc(t.url || '#');
+          return `<a href="${link}" target="_blank" rel="noopener" class="trend-row">
+            <span class="trend-rank ${i < 3 ? 'top3' : ''}">${i + 1}</span>
+            <span class="trend-title"><b>${title}</b><small>${source} · ${esc(t.channel || '')}</small></span>
+            <span class="trend-score">Score ${score}</span>
+          </a>`;
+        }).join('')
+      : '<div class="empty"><span>🔥</span>No trending data yet</div>';
+  } catch (e) {
+    box.innerHTML = '<div class="empty"><span>📡</span>Trending unavailable. <a href="trending.html" style="color:var(--blue)">Open page →</a></div>';
+  }
 })();
 </script>
 </body>
