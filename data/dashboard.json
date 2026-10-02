@@ -1,6 +1,6 @@
 {
-  "updated": "2026-10-02T04:13:51Z",
-  "checked_at": "2026-10-02T04:13:51Z",
+  "updated": "2026-10-02T05:30:39Z",
+  "checked_at": "2026-10-02T05:30:39Z",
   "refresh_interval_seconds": 300,
   "source": "GitHub Actions API",
   "channels": [
@@ -1066,7 +1066,7 @@
       "actor": "bgsarkariresult",
       "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/36958986154",
       "cron": "*/5 * * * *",
-      "next": "2026-10-02T04:15:00Z"
+      "next": "2026-10-02T05:35:00Z"
     },
     {
       "name": "TechGlow India",
@@ -1754,7 +1754,7 @@
         "run_id": 36841713410
       },
       "cron": "*/5 * * * *",
-      "next": "2026-10-02T04:15:00Z"
+      "next": "2026-10-02T05:35:00Z"
     },
     {
       "name": "BK GrowUp",
@@ -4863,6 +4863,34 @@
       "status": "success",
       "runs": [
         {
+          "id": 36969080623,
+          "number": 15,
+          "s": "success",
+          "t": "2026-10-02T05:29:25Z",
+          "started": "2026-10-02T05:28:23Z",
+          "created": "2026-10-02T05:28:23Z",
+          "d": 62,
+          "e": "schedule",
+          "n": "Daily Auto Trending Run",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/Trending-Topic-Finder/actions/runs/36969080623"
+        },
+        {
+          "id": 36964314165,
+          "number": 14,
+          "s": "success",
+          "t": "2026-10-02T04:23:58Z",
+          "started": "2026-10-02T04:23:06Z",
+          "created": "2026-10-02T04:23:06Z",
+          "d": 52,
+          "e": "workflow_dispatch",
+          "n": "Daily Auto Trending Run",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgtechlab/Trending-Topic-Finder/actions/runs/36964314165"
+        },
+        {
           "id": 36873130844,
           "number": 13,
           "s": "success",
@@ -5045,14 +5073,14 @@
           "u": "https://github.com/bgtechlab/Trending-Topic-Finder/actions/runs/36287311061"
         }
       ],
-      "time": "2026-10-01T14:02:39Z",
-      "url": "https://github.com/bgtechlab/Trending-Topic-Finder/actions/runs/36873130844",
-      "last_run_id": 36873130844,
-      "run_number": 13,
+      "time": "2026-10-02T05:29:25Z",
+      "url": "https://github.com/bgtechlab/Trending-Topic-Finder/actions/runs/36969080623",
+      "last_run_id": 36969080623,
+      "run_number": 15,
       "branch": "main",
-      "event": "workflow_dispatch",
-      "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgtechlab/Trending-Topic-Finder/actions/runs/36873130844",
+      "event": "schedule",
+      "actor": "bgtechlab",
+      "html_url": "https://github.com/bgtechlab/Trending-Topic-Finder/actions/runs/36969080623",
       "cron": "10 0 * * *",
       "next": "2026-10-03T00:10:00Z"
     },
@@ -5790,7 +5818,251 @@
       "actor": "bgtechlab",
       "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/36947522279",
       "cron": "*/5 * * * *",
-      "next": "2026-10-02T04:15:00Z"
+      "next": "2026-10-02T05:35:00Z"
+    },
+    {
+      "name": "Job Page Auto Publisher",
+      "repo": "bgtechlab/Job-Page-Auto-Publisher",
+      "workflow": "job-page-publisher.yml",
+      "site": "https://bgtechlab.github.io/Job-Page-Auto-Publisher/",
+      "tag": "Website",
+      "cost": "",
+      "kind": "video",
+      "status": "success",
+      "runs": [
+        {
+          "id": 36956809079,
+          "number": 4,
+          "s": "success",
+          "t": "2026-10-02T02:42:49Z",
+          "started": "2026-10-02T02:41:44Z",
+          "created": "2026-10-02T02:41:44Z",
+          "d": 65,
+          "e": "workflow_dispatch",
+          "n": "Job Page Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/Job-Page-Auto-Publisher/actions/runs/36956809079"
+        },
+        {
+          "id": 36859054619,
+          "number": 3,
+          "s": "success",
+          "t": "2026-10-01T12:01:53Z",
+          "started": "2026-10-01T12:01:28Z",
+          "created": "2026-10-01T12:01:28Z",
+          "d": 25,
+          "e": "workflow_dispatch",
+          "n": "Job Page Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/Job-Page-Auto-Publisher/actions/runs/36859054619"
+        },
+        {
+          "id": 36857635364,
+          "number": 2,
+          "s": "failure",
+          "t": "2026-10-01T11:48:27Z",
+          "started": "2026-10-01T11:48:08Z",
+          "created": "2026-10-01T11:48:08Z",
+          "d": 19,
+          "e": "workflow_dispatch",
+          "n": "Job Page Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/Job-Page-Auto-Publisher/actions/runs/36857635364"
+        },
+        {
+          "id": 36857102194,
+          "number": 1,
+          "s": "failure",
+          "t": "2026-10-01T11:43:07Z",
+          "started": "2026-10-01T11:42:59Z",
+          "created": "2026-10-01T11:42:59Z",
+          "d": 8,
+          "e": "workflow_dispatch",
+          "n": "Job Page Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/Job-Page-Auto-Publisher/actions/runs/36857102194"
+        }
+      ],
+      "time": "2026-10-02T02:42:49Z",
+      "url": "https://github.com/bgtechlab/Job-Page-Auto-Publisher/actions/runs/36956809079",
+      "last_run_id": 36956809079,
+      "run_number": 4,
+      "branch": "main",
+      "event": "workflow_dispatch",
+      "actor": "bgtechlab",
+      "html_url": "https://github.com/bgtechlab/Job-Page-Auto-Publisher/actions/runs/36956809079",
+      "failed": {
+        "job": "publish",
+        "step": "Python deps install",
+        "message": "Workflow step failed: Python deps install",
+        "url": "https://github.com/bgtechlab/Job-Page-Auto-Publisher/actions/runs/36857635364",
+        "t": "2026-10-01T11:48:27Z",
+        "run_id": 36857635364
+      }
+    },
+    {
+      "name": "Amazon to Blogger",
+      "repo": "bgtechlab/amazon_to_blogger",
+      "workflow": "amazon_to_blogger.yml",
+      "site": "https://bgtechlab.github.io/amazon_to_blogger/",
+      "tag": "Website",
+      "cost": "",
+      "kind": "video",
+      "status": "success",
+      "runs": [
+        {
+          "id": 36885949787,
+          "number": 6,
+          "s": "success",
+          "t": "2026-10-01T15:41:50Z",
+          "started": "2026-10-01T15:39:16Z",
+          "created": "2026-10-01T15:39:16Z",
+          "d": 154,
+          "e": "workflow_dispatch",
+          "n": "Add Product Review",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/amazon_to_blogger/actions/runs/36885949787"
+        },
+        {
+          "id": 36884872516,
+          "number": 5,
+          "s": "failure",
+          "t": "2026-10-01T15:31:42Z",
+          "started": "2026-10-01T15:31:00Z",
+          "created": "2026-10-01T15:31:00Z",
+          "d": 42,
+          "e": "workflow_dispatch",
+          "n": "Add Product Review",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/amazon_to_blogger/actions/runs/36884872516"
+        },
+        {
+          "id": 36884035760,
+          "number": 4,
+          "s": "failure",
+          "t": "2026-10-01T15:25:21Z",
+          "started": "2026-10-01T15:24:42Z",
+          "created": "2026-10-01T15:24:42Z",
+          "d": 39,
+          "e": "workflow_dispatch",
+          "n": "Add Product Review",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/amazon_to_blogger/actions/runs/36884035760"
+        },
+        {
+          "id": 36882064293,
+          "number": 3,
+          "s": "failure",
+          "t": "2026-10-01T15:11:45Z",
+          "started": "2026-10-01T15:09:44Z",
+          "created": "2026-10-01T15:09:44Z",
+          "d": 121,
+          "e": "workflow_dispatch",
+          "n": "Add Product Review",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/amazon_to_blogger/actions/runs/36882064293"
+        },
+        {
+          "id": 36877894581,
+          "number": 2,
+          "s": "success",
+          "t": "2026-10-01T14:42:03Z",
+          "started": "2026-10-01T14:38:18Z",
+          "created": "2026-10-01T14:38:18Z",
+          "d": 225,
+          "e": "workflow_dispatch",
+          "n": "Add Product Review",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/amazon_to_blogger/actions/runs/36877894581"
+        },
+        {
+          "id": 36876624336,
+          "number": 1,
+          "s": "success",
+          "t": "2026-10-01T14:30:34Z",
+          "started": "2026-10-01T14:28:39Z",
+          "created": "2026-10-01T14:28:39Z",
+          "d": 115,
+          "e": "workflow_dispatch",
+          "n": "Add Product Review",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/amazon_to_blogger/actions/runs/36876624336"
+        }
+      ],
+      "time": "2026-10-01T15:41:50Z",
+      "url": "https://github.com/bgtechlab/amazon_to_blogger/actions/runs/36885949787",
+      "last_run_id": 36885949787,
+      "run_number": 6,
+      "branch": "main",
+      "event": "workflow_dispatch",
+      "actor": "bgtechlab",
+      "html_url": "https://github.com/bgtechlab/amazon_to_blogger/actions/runs/36885949787",
+      "failed": {
+        "job": "publish",
+        "step": "Checkout site repo (bgtech)",
+        "message": "Workflow step failed: Checkout site repo (bgtech)",
+        "url": "https://github.com/bgtechlab/amazon_to_blogger/actions/runs/36884872516",
+        "t": "2026-10-01T15:31:42Z",
+        "run_id": 36884872516
+      }
+    },
+    {
+      "name": "News Blog Auto Publisher",
+      "repo": "bgtechlab/News-Blog-Auto-Publisher",
+      "workflow": "news-blog-publisher.yml",
+      "site": "https://bgtechlab.github.io/News-Blog-Auto-Publisher/",
+      "tag": "Website",
+      "cost": "",
+      "kind": "video",
+      "status": "success",
+      "runs": [
+        {
+          "id": 36955813280,
+          "number": 2,
+          "s": "success",
+          "t": "2026-10-02T02:29:41Z",
+          "started": "2026-10-02T02:28:50Z",
+          "created": "2026-10-02T02:28:50Z",
+          "d": 51,
+          "e": "workflow_dispatch",
+          "n": "News Blog Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/36955813280"
+        },
+        {
+          "id": 36950055921,
+          "number": 1,
+          "s": "success",
+          "t": "2026-10-02T01:16:34Z",
+          "started": "2026-10-02T01:15:26Z",
+          "created": "2026-10-02T01:15:26Z",
+          "d": 68,
+          "e": "workflow_dispatch",
+          "n": "News Blog Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/36950055921"
+        }
+      ],
+      "time": "2026-10-02T02:29:41Z",
+      "url": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/36955813280",
+      "last_run_id": 36955813280,
+      "run_number": 2,
+      "branch": "main",
+      "event": "workflow_dispatch",
+      "actor": "bgtechlab",
+      "html_url": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/36955813280"
     }
   ],
   "sites": [
