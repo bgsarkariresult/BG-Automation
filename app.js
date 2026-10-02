@@ -48,7 +48,7 @@ function boot(key,title,render){
         }
       }
     }catch(_){}
-    d.live_state=liveState;if(d.updated===window.LU&&!force)return;window.LU=d.updated;window.D=d;
+    d.live_state=liveState;window.LU=d.updated;window.D=d;
     const stamp=d.live_state==='live'?(d.live_updated||d.updated):d.updated;const age=stamp?Math.max(0,Math.floor((Date.now()-new Date(stamp).getTime())/60000)):Infinity;
     const channelOk=(d.channels||[]).every(c=>!c.error||/YAHAN/.test(c.id));
     const fresh=age<=7;
