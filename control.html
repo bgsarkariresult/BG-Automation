@@ -94,7 +94,7 @@ boot('control.html', 'GitHub Actions Control Center', d => {
     <div class="card">
       <h2>▶ YouTube Channels <small>(यूट्यूब चैनल)</small></h2>
       <div class="sites">
-        ${d.bots.filter(b => ['bgsarkariresult/Bk-growup-','bgtechlab/BG-Reels-Bot','bgsarkariresult/youtube-live-bot','bgsarkariresult/TechGlow-India'].includes(b.repo)).map(b => renderProjectCard(b)).join('')}
+        ${d.bots.filter(b => ['bgsarkariresult/Bk-growup-','bgtechlab/BG-Reels-Bot','bgsarkariresult/SG-News18','bgsarkariresult/TechGlow-India'].includes(b.repo)).map(b => renderProjectCard(b)).join('')}
       </div>
       <button class="btn g" onclick="addProject('youtube')">＋ Add YouTube Channel</button>
     </div>
