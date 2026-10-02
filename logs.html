@@ -1,34 +1,55 @@
 <!DOCTYPE html>
-<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Automation Monitor & Logs</title><link rel="stylesheet" href="app.css">
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>GitHub Live Logs | BG Automation</title><link rel="stylesheet" href="app.css">
 <style>
-.monitor-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin:12px 0}
-.metric{background:#0b1530;border:1px solid var(--bd);border-radius:9px;padding:12px}.metric b{display:block;font-size:22px}.muted{color:var(--mu);font-size:11px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.toolbar input,.toolbar select{min-width:0;flex:1;padding:9px;border-radius:8px;border:1px solid var(--bd);background:#0b1430;color:var(--tx)}
-.log-card{border:1px solid var(--bd);border-radius:9px;padding:12px;margin:8px 0;background:#0a1530}.log-head{display:flex;align-items:flex-start;gap:9px}.log-head>div{min-width:0;flex:1}.log-head b{display:block;overflow-wrap:anywhere}.log-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}.failure{border-left:3px solid #ff5c6c}.success{border-left:3px solid #2ee59d}.running{border-left:3px solid #ffb13b}
+.logs-wrap{display:grid;gap:12px;min-width:0}
+.log-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.log-toolbar input,.log-toolbar select{min-width:0;flex:1;padding:9px 11px;border-radius:8px;border:1px solid var(--bd);background:var(--cd);color:var(--tx);font:inherit}
+.repo-card{border:1px solid var(--bd);border-radius:12px;background:linear-gradient(160deg,rgba(13,24,48,.96),rgba(10,18,36,.96));padding:13px;min-width:0}
+.repo-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.repo-name{font-weight:700;font-size:.9rem;overflow-wrap:anywhere}
+.repo-link{font-size:.72rem;color:var(--ac2);white-space:nowrap}
+.repo-count{font-size:.7rem;color:var(--mu);white-space:nowrap}
+.log-line{display:grid;grid-template-columns:54px minmax(0,1fr) auto;align-items:start;gap:8px;padding:8px 2px;border-top:1px solid rgba(60,110,200,.12);font-size:.8rem}
+.log-time{font-variant-numeric:tabular-nums;color:var(--mu);white-space:nowrap;padding-top:1px}
+.log-message{min-width:0;overflow-wrap:anywhere}
+.log-status{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.7rem;font-weight:800;white-space:nowrap}
+.log-status.success{color:#22c55e}.log-status.failure{color:#ef4444}.log-status.cancelled{color:#a1a1aa}.log-status.in_progress,.log-status.queued{color:#f59e0b}.log-status.other{color:#8ba3c7}
+.log-open{font-size:.68rem;color:var(--ac2);white-space:nowrap}
+.log-empty{padding:9px 2px;color:var(--mu);font-size:.78rem}
+@media(max-width:560px){.repo-card{padding:10px}.log-line{grid-template-columns:46px minmax(0,1fr);gap:6px}.log-status{grid-column:2;grid-row:2}.log-open{grid-column:2;grid-row:3}.repo-head{align-items:flex-start}.repo-name{font-size:.82rem}}
 </style></head><body><script src="app.js"></script><script>
-let FILTER='all',QUERY='';
-boot('logs.html','Automation Monitor • Logs',d=>{
- const bots=d.bots||[],runs=bots.flatMap(b=>(b.runs||[]).map(r=>({...r,bot:b.name||b.repo,repo:b.repo,failed:b.failed}))).sort((a,b)=>new Date(b.t)-new Date(a.t));
- const failed=runs.filter(r=>r.s==='failure'),running=runs.filter(r=>['in_progress','queued'].includes(r.s));
- const updated=d.updated?new Date(d.updated):null,age=updated?Math.max(0,Math.round((Date.now()-updated.getTime())/60000)):null;
- const freshness=age===null?'Unknown':age<=7?'Fresh':age<=20?'Delayed':'Stale';
- const visible=runs.filter(r=>(FILTER==='all'||(FILTER==='failed'?r.s==='failure':FILTER==='running'?['in_progress','queued'].includes(r.s):r.s===FILTER))&&((r.bot+' '+r.n+' '+r.s+' '+(r.failed?.step||'')).toLowerCase().includes(QUERY.toLowerCase())));
- const runCard=r=>{
-  const status=r.s||'unknown',klass=status==='failure'?'failure':status==='success'?'success':['queued','in_progress'].includes(status)?'running':'';
-  const err=r.failed;
-  return '<div class="log-card '+klass+'"><div class="log-head"><span class="dot '+esc(status)+'">'+st(status)+'</span><div><b>'+esc(r.bot)+' — '+esc(r.n||'Workflow run')+'</b><small class="muted">'+esc(status)+' · '+at(r.t)+' · '+Math.ceil((+r.d||0)/60)+' min · '+esc(r.e||'event unknown')+(r.branch?' · '+esc(r.branch):'')+'</small></div></div>'+
-  (err?'<div style="margin-top:8px;color:#ff8b98"><b>Failure detail:</b> '+esc(err.job||'Job')+' → '+esc(err.step||'Failed step')+'<br><small class="muted">'+esc(err.message||'GitHub reported a failed step. Open the run log for the exact error output.')+'</small></div>':'')+
-  (r.api_error?'<div class="muted">GitHub API: '+esc(r.api_error)+'</div>':'')+
-  '<div class="log-actions"><a class="btn" href="'+esc(r.u||'#')+'" target="_blank" rel="noopener">Open GitHub run ↗</a>'+(err?'<a class="btn alt" href="'+esc(err.url||r.u||'#')+'" target="_blank" rel="noopener">Failure log ↗</a>':'')+'</div></div>';
- };
- $('#main').innerHTML='<section class="card"><div class="hd"><h2>🛰 Automation Monitoring</h2><button class="btn g" onclick="window.refreshDashboard&&window.refreshDashboard()">↻ Refresh data</button></div>'+
- '<div class="monitor-grid"><div class="metric"><span class="muted">Workflows</span><b>'+bots.length+'</b></div><div class="metric"><span class="muted">Failed runs (loaded)</span><b style="color:#ff5c6c">'+failed.length+'</b></div><div class="metric"><span class="muted">Running / queued</span><b style="color:#ffb13b">'+running.length+'</b></div><div class="metric"><span class="muted">Data freshness</span><b style="font-size:17px">'+freshness+'</b><small class="muted">'+(age===null?'No timestamp':age+' min ago')+'</small></div></div>'+
- '<p class="muted">डेटा स्रोत: GitHub Actions API · Dashboard sync: हर 5 मिनट निर्धारित। ब्राउज़र में Refresh उपलब्ध डेटा फिर से पढ़ता है; GitHub Actions की schedule में कुछ देरी हो सकती है।</p></section>'+
- '<section class="card"><div class="hd"><h2>❌ Failure summary</h2><span class="muted">'+failed.length+' loaded</span></div>'+
- (failed.slice(0,20).map(r=>'<div class="log-card failure"><b>'+esc(r.bot)+'</b><div class="muted">'+esc(r.failed?.job||'Failed workflow')+' → '+esc(r.failed?.step||'Failure step not returned')+' · '+ago(r.t)+'</div><div class="log-actions"><a class="btn" href="'+esc(r.failed?.url||r.u||'#')+'" target="_blank" rel="noopener">Open exact GitHub log ↗</a></div></div>').join('')||'<p class="muted">Loaded recent runs mein koi failure nahi mila.</p>')+'</section>'+
- '<section class="card"><div class="hd"><h2>📋 Workflow history</h2><span class="muted">Latest returned runs</span></div><div class="toolbar"><input id="logSearch" placeholder="Search bot, workflow, error…" value="'+esc(QUERY)+'"><select id="logFilter"><option value="all">All statuses</option><option value="failure">Failed</option><option value="running">Running / queued</option><option value="success">Success</option><option value="cancelled">Cancelled</option></select></div><div id="runList">'+(visible.slice(0,100).map(runCard).join('')||'<p class="muted">इस फ़िल्टर में कोई रन नहीं मिला।</p>')+'</div></section>'+
- '<section class="card"><div class="hd"><h2>✈ Telegram Messages</h2></div>'+((d.messages||[]).map(m=>'<div class="log-card"><b>'+esc(m.text||'Telegram update')+'</b><div class="muted">'+ago(m.t)+'</div></div>').join('')||'<small class="muted">कोई Telegram संदेश उपलब्ध नहीं है।</small>')+'</section>';
- const sel=document.querySelector('#logFilter');sel.value=FILTER;
- document.querySelector('#logSearch').addEventListener('input',e=>{QUERY=e.target.value;FILTER=sel.value;window.refreshDashboard?.()});
- sel.addEventListener('change',e=>{FILTER=e.target.value;QUERY=document.querySelector('#logSearch').value;window.refreshDashboard?.()});
-});
+let STATUS='all',SEARCH='';
+const statusLabel=s=>({success:'SUCCESS',failure:'FAILURE',cancelled:'CANCELLED',in_progress:'IN_PROGRESS',queued:'QUEUED'}[s]||String(s||'UNKNOWN').toUpperCase());
+const logTime=t=>t?new Date(t).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false}):'--:--';
+function renderLogs(d){
+ const bots=Array.isArray(d.bots)?d.bots:[];
+ const normalized=bots.map((b,i)=>({...b,_repo:String(b.repo||b.name||('Repository '+(i+1))).trim()}));
+ const filtered=normalized.map(b=>({...b,_runs:(Array.isArray(b.runs)?b.runs:[]).filter(r=>{
+   const s=String(r.s||'unknown').toLowerCase();
+   const ok=STATUS==='all'||(STATUS==='running'?['in_progress','queued'].includes(s):s===STATUS);
+   const q=(b.name+' '+b._repo+' '+(r.n||'')+' '+s).toLowerCase();
+   return ok&&q.includes(SEARCH.toLowerCase());
+ }).sort((a,b)=>new Date(b.t||b.created||0)-new Date(a.t||a.created||0))}))
+ .filter(b=>b._runs.length||(!SEARCH&&STATUS==='all'));
+ const total=normalized.reduce((n,b)=>n+(b.runs||[]).length,0);
+ const shown=filtered.reduce((n,b)=>n+b._runs.length,0);
+ const cards=filtered.map(b=>{
+  const repo=b._repo;
+  const repoUrl='https://github.com/'+repo;
+  const rows=b._runs.slice(0,100).map(r=>{
+   const s=String(r.s||'unknown').toLowerCase();
+   const cls=['success','failure','cancelled','in_progress','queued'].includes(s)?s:'other';
+   const label=statusLabel(s);
+   const title=r.n||'Workflow run';
+   const url=r.u||('https://github.com/'+repo+'/actions');
+   return '<div class="log-line"><span class="log-time">'+logTime(r.t||r.created)+'</span><div class="log-message">'+esc(title)+(r.number?' <span class="muted">#'+esc(r.number)+'</span>':'')+'</div><span class="log-status '+cls+'">['+label+']</span><a class="log-open" href="'+esc(url)+'" target="_blank" rel="noopener">Open ↗</a></div>';
+  }).join('');
+  return '<section class="repo-card"><div class="repo-head"><div class="repo-name">🐙 '+esc(b.name||repo)+'</div><div><span class="repo-count">'+b._runs.length+' logs</span> · <a class="repo-link" href="'+esc(repoUrl)+'/actions" target="_blank" rel="noopener">All runs ↗</a></div></div>'+(rows||'<div class="log-empty">इस रिपॉजिटरी में चुने गए स्टेटस का कोई लॉग उपलब्ध नहीं है।</div>')+'</section>';
+ }).join('');
+ $('#main').innerHTML='<section class="card"><div class="hd"><h2>📋 GitHub Actions Logs</h2><button class="btn g" id="refreshBtn" onclick="window.refreshDashboard&&window.refreshDashboard()">↻ Refresh</button></div><div class="muted">सभी डैशबोर्ड में जुड़े repositories के उपलब्ध GitHub Actions runs · समय स्थानीय (24-hour) · हर लॉग से GitHub run खोलें।</div><div class="log-toolbar"><input id="logSearch" placeholder="Repository या workflow खोजें…" value="'+esc(SEARCH)+'"><select id="logFilter"><option value="all">सभी स्टेटस</option><option value="success">SUCCESS</option><option value="failure">FAILURE</option><option value="cancelled">CANCELLED</option><option value="running">IN_PROGRESS / QUEUED</option></select></div><div class="muted">'+filtered.length+' repositories · '+shown+' matching logs / '+total+' loaded logs</div></section><div class="logs-wrap">'+(cards||'<section class="repo-card"><div class="log-empty">कोई matching log नहीं मिला।</div></section>')+'</div>';
+ const input=$('#logSearch'),select=$('#logFilter');select.value=STATUS;
+ input.addEventListener('input',e=>{SEARCH=e.target.value;STATUS=select.value;window.refreshDashboard?.()});
+ select.addEventListener('change',e=>{STATUS=e.target.value;SEARCH=input.value;window.refreshDashboard?.()});
+}
+boot('logs.html','GitHub Live Logs',renderLogs);
 </script></body></html>
