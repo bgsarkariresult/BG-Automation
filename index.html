@@ -5,34 +5,47 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BG Automation | Dashboard</title>
 <link rel="stylesheet" href="app.css">
+<style>
+  /* Fallback so page is never pure black while loading */
+  body { background: #070d1f; color: #eef4ff; margin: 0; font-family: Inter, system-ui, sans-serif; }
+  #boot-msg { padding: 40px 24px; text-align: center; color: #8ba3c7; }
+  #boot-msg.error { color: #ef4444; }
+</style>
 </head>
 <body>
-<script src="app.js"></script>
+<div id="boot-msg">⏳ Dashboard load ho raha hai…</div>
 <script>
+/* Local helpers — no dependency on app.js globals */
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = n => { n = +n || 0; return n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' : String(Math.round(n)); };
+
 const RAW = 'https://raw.githubusercontent.com/bgsarkariresult/BG-Automation/main/data/dashboard.json';
 const LIVE = 'https://bg-automation-live.garhwalbhavesh2002.workers.dev/api/status';
 const TREND_URL = 'https://raw.githubusercontent.com/bgtechlab/Trending-Topic-Finder/main/history.json';
-
-const colors = ['#ef4444','#f97316','#2b6fff','#8b5cf6','#06b6d4','#22c55e','#ec4899','#eab308'];
+const colors = ['#ef4444', '#f97316', '#2b6fff', '#8b5cf6', '#06b6d4', '#22c55e', '#ec4899', '#eab308'];
 
 function agoText(t) {
   if (!t) return '—';
-  let m = Math.max(0, (Date.now() - new Date(t)) / 60000);
+  const m = Math.max(0, (Date.now() - new Date(t)) / 60000);
   return m < 1 ? 'अभी' : m < 60 ? Math.round(m) + 'm ago' : m < 1440 ? Math.round(m / 60) + 'h ago' : Math.round(m / 1440) + 'd ago';
 }
 function timeHHMM(t) {
   if (!t) return '--:--';
-  const d = new Date(t);
-  return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  return new Date(t).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+}
+function showError(msg) {
+  const el = document.getElementById('boot-msg');
+  if (el) { el.className = 'error'; el.innerHTML = '⚠ Error: ' + esc(msg) + '<br><small>Page refresh karke try karo.</small>'; }
+  console.error(msg);
 }
 
 async function loadData() {
   let d = {};
   try {
     let r = await fetch(RAW + '?t=' + Date.now(), { cache: 'no-store' }).catch(() => null);
-    if (!r || !r.ok) r = await fetch('data/dashboard.json?t=' + Date.now(), { cache: 'no-store' });
+    if (!r || !r.ok) r = await fetch('data/dashboard.json?t=' + Date.now(), { cache: 'no-store' }).catch(() => null);
     if (r && r.ok) d = await r.json();
-  } catch (_) {}
+  } catch (e) { console.warn('dashboard.json:', e); }
   try {
     const lr = await fetch(LIVE + '?t=' + Date.now(), { cache: 'no-store' });
     if (lr.ok) {
@@ -41,239 +54,148 @@ async function loadData() {
         const byRepo = new Map(live.bots.map(b => [String(b.repo || '').toLowerCase(), b]));
         d.bots = (d.bots || []).map(b => {
           const fresh = byRepo.get(String(b.repo || '').toLowerCase());
-          return fresh ? { ...b, ...fresh, runs: Array.isArray(fresh.runs) ? fresh.runs : b.runs } : b;
+          return fresh ? Object.assign({}, b, fresh, { runs: Array.isArray(fresh.runs) ? fresh.runs : b.runs }) : b;
         });
         for (const b of live.bots) {
           if (!(d.bots || []).some(x => String(x.repo || '').toLowerCase() === String(b.repo || '').toLowerCase()))
-            d.bots.push(b);
+            (d.bots = d.bots || []).push(b);
         }
         d.live_updated = live.updated || live.checked_at || new Date().toISOString();
         d.live_state = 'live';
       }
     }
-  } catch (_) {}
+  } catch (e) { console.warn('live API:', e); }
   return d;
 }
 
 function render(d) {
-  const channels = d.channels || [];
-  const sites = d.websites || d.sites || [];
-  const bots = d.bots || [];
-  const msgs = d.telegram || d.messages || [];
-  const runs = bots.flatMap(b => (b.runs || []).map(r => ({ name: b.name || b.id || 'Bot', r, bot: b })))
-    .sort((a, b) => new Date(b.r.t) - new Date(a.r.t));
-  const recent = runs.filter(x => x.r.d >= 30 || x.r.s === 'failure' || x.r.s === 'success');
-  const success = recent.filter(x => x.r.s === 'success').length;
-  const failed = recent.filter(x => x.r.s === 'failure').length;
-  const totalRuns = recent.length || runs.length;
+  try {
+    d = d || {};
+    const channels = d.channels || [];
+    const sites = d.websites || d.sites || [];
+    const bots = d.bots || [];
+    const msgs = d.telegram || d.messages || [];
+    const runs = bots.flatMap(b => (b.runs || []).map(r => ({ name: b.name || b.id || 'Bot', r, bot: b })))
+      .sort((a, b) => new Date(b.r.t) - new Date(a.r.t));
+    const recent = runs.filter(x => (+x.r.d || 0) >= 30 || x.r.s === 'failure' || x.r.s === 'success');
+    const success = recent.filter(x => x.r.s === 'success').length;
+    const failed = recent.filter(x => x.r.s === 'failure').length;
+    const totalRuns = recent.length || runs.length;
 
-  /* channel rows */
-  const chRows = channels.map((c, i) => {
-    const name = c.name || c.title || 'Channel';
-    const img = c.icon || c.thumb || '';
-    const av = /^https?:/.test(img)
-      ? `<img class="list-av" src="${esc(img)}" alt="">`
-      : `<div class="list-av" style="background:${colors[i % colors.length]}">${esc(String(name).slice(0, 2).toUpperCase())}</div>`;
-    const status = c.error ? 'paused' : 'active';
-    const label = c.error ? 'Paused' : 'Active';
-    return `<div class="list-row">
-      ${av}
-      <div class="list-info"><b>${esc(name)}</b><small>${esc((c.id || '').slice(0, 18) || 'YouTube')}</small></div>
-      <div class="list-meta"><span class="subs">${fmt(c.subs ?? c.subscribers)} subs</span><span class="badge-s ${status}">${label}</span></div>
-    </div>`;
-  }).join('') || '<small class="mu">No channels yet</small>';
+    const chRows = channels.map((c, i) => {
+      const name = c.name || c.title || 'Channel';
+      const img = c.icon || c.thumb || '';
+      const av = /^https?:/.test(img)
+        ? '<img class="list-av" src="' + esc(img) + '" alt="">'
+        : '<div class="list-av" style="background:' + colors[i % colors.length] + '">' + esc(String(name).slice(0, 2).toUpperCase()) + '</div>';
+      const status = c.error ? 'paused' : 'active';
+      const label = c.error ? 'Paused' : 'Active';
+      return '<div class="list-row">' + av +
+        '<div class="list-info"><b>' + esc(name) + '</b><small>' + esc((c.id || '').slice(0, 18) || 'YouTube') + '</small></div>' +
+        '<div class="list-meta"><span class="subs">' + fmt(c.subs ?? c.subscribers) + ' subs</span><span class="badge-s ' + status + '">' + label + '</span></div></div>';
+    }).join('') || '<small class="mu">No channels yet</small>';
 
-  /* website rows */
-  const siteRows = (sites.length ? sites : bots.filter(b => b.site).map(b => ({ name: b.name, url: b.site, tag: b.tag }))).map((s, i) => {
-    const url = s.url || s.link || s.site || '';
+    const siteSource = sites.length ? sites : bots.filter(b => b.site).map(b => ({ name: b.name, url: b.site, tag: b.tag }));
     const icons = ['🌐', '⚙', '▶', '🐙', '✈'];
-    return `<div class="list-row">
-      <div class="list-av sq" style="background:${colors[(i + 2) % colors.length]}">${icons[i % icons.length]}</div>
-      <div class="list-info"><b>${esc(s.name || s.title || 'Project')}</b><small>${esc(url.slice(0, 40) || s.tag || '')}</small></div>
-      <span class="badge-s live">Live</span>
-    </div>`;
-  }).join('') || '<small class="mu">No websites</small>';
+    const siteRows = siteSource.map((s, i) => {
+      const url = s.url || s.link || s.site || '';
+      return '<div class="list-row">' +
+        '<div class="list-av sq" style="background:' + colors[(i + 2) % colors.length] + '">' + icons[i % icons.length] + '</div>' +
+        '<div class="list-info"><b>' + esc(s.name || s.title || 'Project') + '</b><small>' + esc(url.slice(0, 40) || s.tag || '') + '</small></div>' +
+        '<span class="badge-s live">Live</span></div>';
+    }).join('') || '<small class="mu">No websites</small>';
 
-  /* activity rows */
-  const actRows = recent.slice(0, 7).map(x => {
-    const icons = { success: '✓', failure: '✕', in_progress: '⏳', queued: '…' };
-    const ic = icons[x.r.s] || '•';
-    const badge = x.r.s === 'success' ? 'success' : x.r.s === 'failure' ? 'failure' : x.r.s === 'in_progress' || x.r.s === 'queued' ? 'running' : 'paused';
-    const label = x.r.s === 'success' ? 'Success' : x.r.s === 'failure' ? 'Failed' : x.r.s === 'in_progress' ? 'Running' : (x.r.s || 'Unknown');
-    return `<div class="act-row">
-      <div class="act-ico">${ic}</div>
-      <div class="act-info"><b>${esc(x.name)}</b><small>${esc(x.r.n || x.r.s || 'Workflow')} · ${Math.ceil((+x.r.d || 0) / 60)} min</small></div>
-      <div class="act-right"><span class="time">${agoText(x.r.t)}</span><span class="badge-s ${badge}">${label}</span></div>
-    </div>`;
-  }).join('') || '<small class="mu">No recent activity</small>';
+    const actRows = recent.slice(0, 7).map(x => {
+      const iconsMap = { success: '✓', failure: '✕', in_progress: '⏳', queued: '…' };
+      const ic = iconsMap[x.r.s] || '•';
+      const badge = x.r.s === 'success' ? 'success' : x.r.s === 'failure' ? 'failure' : (x.r.s === 'in_progress' || x.r.s === 'queued') ? 'running' : 'paused';
+      const label = x.r.s === 'success' ? 'Success' : x.r.s === 'failure' ? 'Failed' : x.r.s === 'in_progress' ? 'Running' : (x.r.s || 'Unknown');
+      return '<div class="act-row"><div class="act-ico">' + ic + '</div>' +
+        '<div class="act-info"><b>' + esc(x.name) + '</b><small>' + esc(x.r.n || x.r.s || 'Workflow') + ' · ' + Math.ceil((+x.r.d || 0) / 60) + ' min</small></div>' +
+        '<div class="act-right"><span class="time">' + agoText(x.r.t) + '</span><span class="badge-s ' + badge + '">' + label + '</span></div></div>';
+    }).join('') || '<small class="mu">No recent activity</small>';
 
-  /* log lines from recent runs */
-  const logLines = runs.slice(0, 6).map(x => {
-    const tag = x.r.s === 'success' ? 'success' : x.r.s === 'failure' ? 'error' : 'info';
-    const msg = x.r.s === 'success' ? `${esc(x.name)} completed successfully`
-      : x.r.s === 'failure' ? `${esc(x.name)} failed`
-      : `${esc(x.name)} — ${esc(x.r.s || 'running')}`;
-    return `<div class="log-line"><span class="log-time">${timeHHMM(x.r.t)}</span><span class="log-tag ${tag}">[${tag.toUpperCase()}]</span><span class="log-msg">${msg}</span></div>`;
-  }).join('') || '<div class="log-line"><span class="log-msg">Waiting for activity…</span></div>';
+    const logLines = runs.slice(0, 6).map(x => {
+      const tag = x.r.s === 'success' ? 'success' : x.r.s === 'failure' ? 'error' : 'info';
+      const msg = x.r.s === 'success' ? esc(x.name) + ' completed successfully'
+        : x.r.s === 'failure' ? esc(x.name) + ' failed'
+        : esc(x.name) + ' — ' + esc(x.r.s || 'running');
+      return '<div class="log-line"><span class="log-time">' + timeHHMM(x.r.t) + '</span><span class="log-tag ' + tag + '">[' + tag.toUpperCase() + ']</span><span class="log-msg">' + msg + '</span></div>';
+    }).join('') || '<div class="log-line"><span class="log-msg">Waiting for activity…</span></div>';
 
-  /* telegram */
-  const tgRows = msgs.slice(0, 5).map((m, i) => {
-    const text = (m.text || m.message || '').slice(0, 50);
-    return `<div class="tg-row">
-      <div class="tg-av">✈</div>
-      <div class="tg-info"><b>${esc(m.from || m.bot || 'Telegram')}</b><small>${esc(text || 'Message')}</small></div>
-      <span class="tg-time">${agoText(m.t || m.time || m.date)}</span>
-    </div>`;
-  }).join('') || '<small class="mu">No messages yet</small>';
+    const tgRows = msgs.slice(0, 5).map(m => {
+      const text = (m.text || m.message || '').slice(0, 50);
+      return '<div class="tg-row"><div class="tg-av">✈</div>' +
+        '<div class="tg-info"><b>' + esc(m.from || m.bot || 'Telegram') + '</b><small>' + esc(text || 'Message') + '</small></div>' +
+        '<span class="tg-time">' + agoText(m.t || m.time || m.date) + '</span></div>';
+    }).join('') || '<small class="mu">No messages yet</small>';
 
-  document.body.innerHTML = `
-  <div class="top">
-    <button class="burger" onclick="document.querySelector('nav').classList.toggle('open')">☰</button>
-    <div class="logo">
-      <div class="logo-bot">🤖</div>
-      <div>BG <span>Automation</span><small>AI + Automation | Grow Together</small></div>
-    </div>
-    <div class="goal-banner">✨ 🚀 आज का लक्ष्य: 100 नए लीड · 5 वेबसाइट अपडेट · 1 यूट्यूब वीडियो · ग्रोथ जारी रखें!</div>
-    <div class="top-right">
-      <button class="icon-btn" title="Theme">☀</button>
-      <button class="icon-btn" title="Notifications">🔔<span class="badge">${Math.min(msgs.length || 0, 9) || 0}</span></button>
-      <div class="user-chip"><div class="user-av">B</div> Bhavesh ▾</div>
-    </div>
-  </div>
+    document.body.innerHTML =
+      '<div class="top">' +
+        '<button class="burger" onclick="document.querySelector(\'nav\').classList.toggle(\'open\')">☰</button>' +
+        '<div class="logo"><div class="logo-bot">🤖</div><div>BG <span>Automation</span><small>AI + Automation | Grow Together</small></div></div>' +
+        '<div class="goal-banner">✨ 🚀 आज का लक्ष्य: 100 नए लीड · 5 वेबसाइट अपडेट · 1 यूट्यूब वीडियो · ग्रोथ जारी रखें!</div>' +
+        '<div class="top-right">' +
+          '<button class="icon-btn" title="Theme">☀</button>' +
+          '<button class="icon-btn" title="Notifications">🔔<span class="badge">' + Math.min(msgs.length || 0, 9) + '</span></button>' +
+          '<div class="user-chip"><div class="user-av">B</div> Bhavesh ▾</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="app">' +
+        '<nav>' +
+          '<a class="on" href="index.html"><span class="nav-icon">⌂</span> Dashboard</a>' +
+          '<a href="youtube.html"><span class="nav-icon">▶</span> YouTube Channels</a>' +
+          '<a href="sites.html"><span class="nav-icon">🌐</span> Websites</a>' +
+          '<a href="control.html"><span class="nav-icon">⚙</span> Automation</a>' +
+          '<a href="logs.html"><span class="nav-icon">📋</span> Live Logs</a>' +
+          '<a href="logs.html"><span class="nav-icon">✈</span> Telegram</a>' +
+          '<a href="trending.html"><span class="nav-icon">🔥</span> Trending</a>' +
+          '<a href="reports.html"><span class="nav-icon">💰</span> Reports</a>' +
+          '<a href="https://github.com/bgsarkariresult/BG-Automation/settings/secrets/actions" target="_blank" rel="noopener"><span class="nav-icon">⚙</span> Settings</a>' +
+          '<div class="nav-promo"><div class="rocket">🚀</div><b>Dream · Automate · Grow</b><small>सोचो नहीं, ऑटोमेट करो!</small><div class="ver">BG Automation v1.0</div></div>' +
+          '<div class="nav-quote">"छोटे कदम भी बड़ी सफलता की ओर ले जाते हैं।"<cite>— Bhavesh</cite></div>' +
+        '</nav>' +
+        '<main>' +
+          '<div class="kpi-row">' +
+            '<div class="kpi red"><div class="kpi-top"><div class="kpi-icon">▶</div><span style="opacity:.4;font-size:18px">📊</span></div><label>Total Channels</label><div class="num">' + channels.length + '</div><div class="sub"><span>YouTube Automation</span><span class="up">↑ Active</span></div></div>' +
+            '<div class="kpi purple"><div class="kpi-top"><div class="kpi-icon">⚙</div><span style="opacity:.4;font-size:18px">📈</span></div><label>Total Runs</label><div class="num">' + totalRuns + '</div><div class="sub"><span>Automation Jobs</span><span class="up">↑ ' + success + ' ok</span></div></div>' +
+            '<div class="kpi blue"><div class="kpi-top"><div class="kpi-icon">✈</div><span style="opacity:.4;font-size:18px">📉</span></div><label>Telegram Messages</label><div class="num">' + (msgs.length || '—') + '</div><div class="sub"><span>Last 7 days</span><span class="up">↑ Live</span></div></div>' +
+          '</div>' +
+          '<div class="dash-grid">' +
+            '<div class="col">' +
+              '<div class="card"><div class="hd"><h2>▶ YouTube Channels</h2><a href="youtube.html">View All →</a></div>' + chRows + '</div>' +
+              '<div class="card"><div class="hd"><h2>🌐 Websites / Projects</h2><a href="sites.html">View All →</a></div>' + siteRows + '</div>' +
+            '</div>' +
+            '<div class="col">' +
+              '<div class="card"><div class="hd"><h2>⚙ Automation Overview</h2><a href="control.html">View Details →</a></div>' +
+                '<div class="auto-grid">' +
+                  '<div class="auto-item"><div class="ai" style="background:rgba(239,68,68,.12)">▶</div><b>YouTube</b><small>' + channels.length + ' Channels</small><div class="bar r"><i></i></div><div class="bar-pct">100%</div></div>' +
+                  '<div class="auto-item"><div class="ai" style="background:rgba(139,92,246,.12)">🌐</div><b>Websites</b><small>' + (sites.length || bots.filter(function(b){return b.site}).length) + ' Projects</small><div class="bar p"><i></i></div><div class="bar-pct">100%</div></div>' +
+                  '<div class="auto-item"><div class="ai" style="background:rgba(34,211,238,.12)">✈</div><b>Telegram</b><small>1 Bot</small><div class="bar c"><i></i></div><div class="bar-pct">100%</div></div>' +
+                  '<div class="auto-item"><div class="ai" style="background:rgba(245,158,11,.12)">🐙</div><b>GitHub</b><small>' + bots.length + ' Repo' + (bots.length !== 1 ? 's' : '') + '</small><div class="bar a"><i></i></div><div class="bar-pct">' + (failed ? Math.max(0, 100 - failed * 10) : 100) + '%</div></div>' +
+                '</div>' +
+              '</div>' +
+              '<div class="card"><div class="hd"><h2>🕐 Recent Activity</h2><a href="logs.html">View All →</a></div>' + actRows + '</div>' +
+            '</div>' +
+            '<div class="col">' +
+              '<div class="card"><div class="hd"><h2>🔥 Trending Topics</h2><a href="trending.html">View All →</a></div><div id="trendBox"><small class="mu">Loading…</small></div></div>' +
+              '<div class="card"><div class="hd"><h2>📋 Live Logs</h2><span class="live-dot">Live</span></div>' + logLines +
+                '<div style="text-align:right;margin-top:8px"><a href="logs.html" style="font-size:.75rem;color:var(--ac2);font-weight:600">View All Logs →</a></div></div>' +
+              '<div class="card"><div class="hd"><h2>✈ Recent Telegram Messages</h2><a href="logs.html">View All →</a></div>' + tgRows + '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="footer">' +
+            '<div><b style="color:var(--ac2)">BG</b> Automation · AI + Automation | Grow Together</div>' +
+            '<div class="footer-links"><a href="https://github.com/bgsarkariresult/BG-Automation" target="_blank" rel="noopener">🐙 GitHub</a><a href="logs.html">✈ Telegram</a><a href="youtube.html">▶ YouTube</a><a href="sites.html">🌐 Website</a></div>' +
+            '<div class="status-ok">All Systems Operational</div>' +
+          '</div>' +
+        '</main>' +
+      '</div>';
 
-  <div class="app">
-    <nav>
-      <a class="on" href="index.html"><span class="nav-icon">⌂</span> Dashboard</a>
-      <a href="youtube.html"><span class="nav-icon">▶</span> YouTube Channels</a>
-      <a href="sites.html"><span class="nav-icon">🌐</span> Websites</a>
-      <a href="control.html"><span class="nav-icon">⚙</span> Automation</a>
-      <a href="logs.html"><span class="nav-icon">&lt;/&gt;</span> Live Logs</a>
-      <a href="logs.html"><span class="nav-icon">✈</span> Telegram</a>
-      <a href="trending.html"><span class="nav-icon">🔥</span> Trending</a>
-      <a href="reports.html"><span class="nav-icon">💰</span> Reports</a>
-      <a href="https://github.com/bgsarkariresult/BG-Automation/settings/secrets/actions" target="_blank" rel="noopener"><span class="nav-icon">⚙</span> Settings</a>
-      <div class="nav-promo">
-        <div class="rocket">🚀</div>
-        <b>Dream · Automate · Grow</b>
-        <small>सोचो नहीं, ऑटोमेट करो!</small>
-        <div class="ver">BG Automation v1.0</div>
-      </div>
-      <div class="nav-quote">
-        "छोटे कदम भी बड़ी सफलता की ओर ले जाते हैं।"
-        <cite>— Bhavesh</cite>
-      </div>
-    </nav>
-
-    <main>
-      <div class="kpi-row">
-        <div class="kpi red">
-          <div class="kpi-top">
-            <div class="kpi-icon">▶</div>
-            <span style="opacity:.4;font-size:18px">📊</span>
-          </div>
-          <label>Total Channels</label>
-          <div class="num">${channels.length}</div>
-          <div class="sub"><span>YouTube Automation</span><span class="up">↑ Active</span></div>
-        </div>
-        <div class="kpi purple">
-          <div class="kpi-top">
-            <div class="kpi-icon">⚙</div>
-            <span style="opacity:.4;font-size:18px">📈</span>
-          </div>
-          <label>Total Runs</label>
-          <div class="num">${totalRuns}</div>
-          <div class="sub"><span>Automation Jobs</span><span class="up">↑ ${success} ok</span></div>
-        </div>
-        <div class="kpi blue">
-          <div class="kpi-top">
-            <div class="kpi-icon">✈</div>
-            <span style="opacity:.4;font-size:18px">📉</span>
-          </div>
-          <label>Telegram Messages</label>
-          <div class="num">${msgs.length || '—'}</div>
-          <div class="sub"><span>Last 7 days</span><span class="up">↑ Live</span></div>
-        </div>
-      </div>
-
-      <div class="dash-grid">
-        <!-- LEFT -->
-        <div class="col">
-          <div class="card">
-            <div class="hd"><h2>▶ YouTube Channels</h2><a href="youtube.html">View All →</a></div>
-            ${chRows}
-          </div>
-          <div class="card">
-            <div class="hd"><h2>🌐 Websites / Projects</h2><a href="sites.html">View All →</a></div>
-            ${siteRows}
-          </div>
-        </div>
-
-        <!-- MIDDLE -->
-        <div class="col">
-          <div class="card">
-            <div class="hd"><h2>⚙ Automation Overview</h2><a href="control.html">View Details →</a></div>
-            <div class="auto-grid">
-              <div class="auto-item">
-                <div class="ai" style="background:rgba(239,68,68,.12)">▶</div>
-                <b>YouTube</b><small>${channels.length} Channels</small>
-                <div class="bar r"><i></i></div><div class="bar-pct">100%</div>
-              </div>
-              <div class="auto-item">
-                <div class="ai" style="background:rgba(139,92,246,.12)">🌐</div>
-                <b>Websites</b><small>${sites.length || bots.filter(b=>b.site).length} Projects</small>
-                <div class="bar p"><i></i></div><div class="bar-pct">100%</div>
-              </div>
-              <div class="auto-item">
-                <div class="ai" style="background:rgba(34,211,238,.12)">✈</div>
-                <b>Telegram</b><small>1 Bot</small>
-                <div class="bar c"><i></i></div><div class="bar-pct">100%</div>
-              </div>
-              <div class="auto-item">
-                <div class="ai" style="background:rgba(245,158,11,.12)">🐙</div>
-                <b>GitHub</b><small>${bots.length} Repo${bots.length!==1?'s':''}</small>
-                <div class="bar a"><i></i></div><div class="bar-pct">${failed ? Math.max(0, 100 - failed * 10) : 100}%</div>
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="hd"><h2>🕐 Recent Activity</h2><a href="logs.html">View All →</a></div>
-            ${actRows}
-          </div>
-        </div>
-
-        <!-- RIGHT -->
-        <div class="col">
-          <div class="card">
-            <div class="hd"><h2>🔥 Trending Topics</h2><a href="trending.html">View All →</a></div>
-            <div id="trendBox"><small class="mu">Loading…</small></div>
-          </div>
-          <div class="card">
-            <div class="hd"><h2>&lt;/&gt; Live Logs</h2><span class="live-dot">Live</span></div>
-            ${logLines}
-            <div style="text-align:right;margin-top:8px"><a href="logs.html" style="font-size:.75rem;color:var(--ac2);font-weight:600">View All Logs →</a></div>
-          </div>
-          <div class="card">
-            <div class="hd"><h2>✈ Recent Telegram Messages</h2><a href="logs.html">View All →</a></div>
-            ${tgRows}
-          </div>
-        </div>
-      </div>
-
-      <div class="footer">
-        <div><b style="color:var(--ac2)">BG</b> Automation · AI + Automation | Grow Together</div>
-        <div class="footer-links">
-          <a href="https://github.com/bgsarkariresult/BG-Automation" target="_blank" rel="noopener">🐙 GitHub</a>
-          <a href="logs.html">✈ Telegram</a>
-          <a href="youtube.html">▶ YouTube</a>
-          <a href="sites.html">🌐 Website</a>
-        </div>
-        <div class="status-ok">All Systems Operational</div>
-      </div>
-    </main>
-  </div>`;
-
-  /* load trending async */
-  loadTrends();
+    loadTrends();
+  } catch (e) {
+    showError(e && e.message ? e.message : String(e));
+  }
 }
 
 async function loadTrends() {
@@ -281,37 +203,39 @@ async function loadTrends() {
   if (!box) return;
   try {
     const r = await fetch(TREND_URL + '?t=' + Date.now(), { cache: 'no-store' });
-    if (!r.ok) throw 0;
+    if (!r.ok) throw new Error('HTTP ' + r.status);
     const data = await r.json();
     const rows = [];
-    Object.entries(data || {}).forEach(([channel, group]) => {
+    Object.keys(data || {}).forEach(function (channel) {
+      const group = data[channel];
       if (!group) return;
       const list = Array.isArray(group.latest) ? group.latest : (Array.isArray(group.suggested) ? group.suggested : []);
-      list.forEach(t => rows.push({ ...t, channel, updated_at: t.fetched_at || group.updated_at || '' }));
+      list.forEach(function (t) { rows.push(Object.assign({}, t, { channel: channel, updated_at: t.fetched_at || group.updated_at || '' })); });
     });
-    const seen = new Set();
-    const top = rows.filter(t => t && t.title).filter(t => {
+    const seen = {};
+    const top = rows.filter(function (t) { return t && t.title; }).filter(function (t) {
       const k = String(t.title).trim().toLowerCase();
-      if (seen.has(k)) return false; seen.add(k); return true;
-    }).sort((a, b) => (+b.score || 0) - (+a.score || 0)).slice(0, 5);
+      if (seen[k]) return false; seen[k] = 1; return true;
+    }).sort(function (a, b) { return (+b.score || 0) - (+a.score || 0); }).slice(0, 5);
 
-    box.innerHTML = top.length ? top.map((t, i) => `
-      <div class="trend-item">
-        <div class="trend-num n${i + 1}">${i + 1}</div>
-        <div class="trend-info">
-          <b>${esc(t.title)}</b>
-          <small>${esc(t.source || t.channel || 'trend')} · ${Number.isFinite(+t.score) ? Math.round(+t.score) + ' score' : ''}</small>
-        </div>
-        <span class="trend-up">↑</span>
-      </div>
-    `).join('') : '<small class="mu">No trending data</small>';
-  } catch (_) {
+    box.innerHTML = top.length ? top.map(function (t, i) {
+      return '<div class="trend-item"><div class="trend-num n' + (i + 1) + '">' + (i + 1) + '</div>' +
+        '<div class="trend-info"><b>' + esc(t.title) + '</b><small>' + esc(t.source || t.channel || 'trend') +
+        (Number.isFinite(+t.score) ? ' · ' + Math.round(+t.score) + ' score' : '') + '</small></div>' +
+        '<span class="trend-up">↑</span></div>';
+    }).join('') : '<small class="mu">No trending data</small>';
+  } catch (e) {
     box.innerHTML = '<small class="mu">Trending unavailable · <a href="trending.html" style="color:var(--ac2)">Open →</a></small>';
   }
 }
 
-loadData().then(render).catch(() => render({}));
-setInterval(() => { if (!document.hidden) loadData().then(render); }, 30000);
+loadData().then(render).catch(function (e) {
+  showError(e && e.message ? e.message : 'Load failed');
+  render({});
+});
+setInterval(function () {
+  if (!document.hidden) loadData().then(render).catch(function () {});
+}, 30000);
 </script>
 </body>
 </html>
