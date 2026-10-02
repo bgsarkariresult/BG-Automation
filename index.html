@@ -4,526 +4,161 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BG Automation | Dashboard</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
 <style>
-:root {
-  --bg: #060b16;
-  --bg2: #0a1224;
-  --surface: #0d1629;
-  --surface2: #121e36;
-  --surface3: #182744;
-  --border: rgba(56, 110, 180, 0.28);
-  --border-hover: rgba(80, 150, 255, 0.45);
-  --text: #f0f5ff;
-  --muted: #8ba0c0;
-  --muted2: #6b7f9e;
-  --blue: #3b8aff;
-  --blue2: #1a6ef0;
-  --cyan: #22d3ee;
-  --green: #22d3a0;
-  --red: #ff6b81;
-  --amber: #fbbf24;
-  --purple: #a78bfa;
-  --glow-blue: rgba(59, 138, 255, 0.15);
-  --glow-green: rgba(34, 211, 160, 0.12);
-  --radius: 16px;
-  --radius-sm: 10px;
-  --shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.35);
-}
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body {
-  background:
-    radial-gradient(ellipse 80% 50% at 70% -10%, rgba(40, 100, 220, 0.12), transparent 50%),
-    radial-gradient(ellipse 60% 40% at 10% 60%, rgba(20, 180, 200, 0.06), transparent 45%),
-    var(--bg);
-  color: var(--text);
-  font: 14px/1.55 "Inter", "Noto Sans Devanagari", system-ui, -apple-system, sans-serif;
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-}
-a { color: inherit; text-decoration: none; }
-button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
-
-/* ─── TOP BAR ─── */
-.top {
-  position: sticky; top: 0; z-index: 50;
-  display: flex; align-items: center; gap: 16px;
-  padding: 0 24px; height: 64px;
-  background: rgba(6, 11, 22, 0.85);
-  backdrop-filter: blur(20px) saturate(1.4);
-  border-bottom: 1px solid var(--border);
-}
-.logo {
-  display: flex; align-items: center; gap: 10px;
-  font-size: 18px; font-weight: 800; letter-spacing: -0.4px; white-space: nowrap;
-}
-.logo-icon {
-  width: 36px; height: 36px; border-radius: 10px;
-  background: linear-gradient(135deg, #3b8aff, #22d3ee);
-  display: grid; place-items: center; font-size: 16px;
-  box-shadow: 0 4px 16px rgba(59, 138, 255, 0.35);
-}
-.logo small { display: block; font-size: 10px; font-weight: 500; color: var(--muted); letter-spacing: 0.3px; margin-top: 1px; }
-
-.topnav { display: flex; align-items: center; gap: 4px; margin: 0 auto; }
-.topnav a {
-  padding: 7px 14px; border-radius: 8px;
-  color: var(--muted); font-size: 13px; font-weight: 500;
-  transition: all 0.15s;
-}
-.topnav a:hover, .topnav a.on { background: rgba(59, 138, 255, 0.12); color: #fff; }
-
-.topright { display: flex; align-items: center; gap: 10px; margin-left: auto; }
-.btn-top {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 7px 14px; border-radius: 8px;
-  font-size: 12px; font-weight: 600;
-  border: 1px solid var(--border);
-  background: var(--surface2);
-  color: var(--text);
-  transition: all 0.15s;
-}
-.btn-top:hover { background: var(--surface3); border-color: var(--border-hover); }
-.btn-top.primary {
-  background: linear-gradient(135deg, #3b8aff, #1a6ef0);
-  border-color: transparent;
-  box-shadow: 0 4px 14px rgba(59, 138, 255, 0.3);
-}
-.btn-top.primary:hover { box-shadow: 0 6px 20px rgba(59, 138, 255, 0.4); transform: translateY(-1px); }
-.btn-top:disabled { opacity: 0.55; cursor: wait; transform: none !important; }
-
-.status-pill {
-  display: flex; align-items: center; gap: 8px;
-  padding: 6px 12px; border-radius: 20px;
-  background: rgba(34, 211, 160, 0.08);
-  border: 1px solid rgba(34, 211, 160, 0.25);
-  font-size: 11px; color: var(--muted);
-}
-.status-pill .dot-live {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: var(--green);
-  box-shadow: 0 0 8px var(--green);
-  animation: pulse 2s infinite;
-}
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-.avatar {
-  width: 34px; height: 34px; border-radius: 50%;
-  background: linear-gradient(135deg, #3b8aff, #22d3ee);
-  display: grid; place-items: center;
-  font-weight: 800; font-size: 12px; color: #fff;
-}
-.burger { display: none; font-size: 22px; padding: 4px; }
-
-/* ─── LAYOUT ─── */
-.app {
-  display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
-  gap: 20px;
-  padding: 20px 24px;
-  max-width: 1600px;
-  margin: 0 auto;
-  min-height: calc(100vh - 64px);
-}
-
-/* ─── SIDEBAR ─── */
-nav {
-  display: flex; flex-direction: column; gap: 3px;
-  position: sticky; top: 84px; align-self: start;
-  padding: 12px 10px;
-  background: linear-gradient(180deg, rgba(13, 22, 41, 0.95), rgba(10, 18, 36, 0.95));
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-}
-nav > a {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 12px; border-radius: var(--radius-sm);
-  color: var(--muted); font-size: 13px; font-weight: 500;
-  transition: all 0.15s;
-}
-nav > a:hover { background: rgba(59, 138, 255, 0.08); color: var(--text); }
-nav > a.on {
-  background: linear-gradient(135deg, rgba(59, 138, 255, 0.2), rgba(26, 110, 240, 0.12));
-  color: #fff;
-  box-shadow: inset 3px 0 0 var(--cyan);
-}
-nav .cnt {
-  margin-left: auto;
-  background: var(--surface3);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 1px 8px;
-  font-size: 11px; font-weight: 600;
-  color: var(--muted);
-}
-nav .sys {
-  margin-top: auto;
-  padding: 14px;
-  border-radius: var(--radius-sm);
-  background: linear-gradient(145deg, rgba(20, 40, 70, 0.6), rgba(10, 20, 40, 0.6));
-  border: 1px solid var(--border);
-  font-size: 11px;
-}
-nav .sys b { color: var(--green); font-size: 12px; }
-nav .sys small { color: var(--muted2); display: block; margin-top: 4px; }
-
-/* ─── MAIN ─── */
-main { min-width: 0; }
-
-/* Welcome banner */
+/* Index-only extras for neon dashboard layout */
 .welcome {
   display: flex; align-items: center; justify-content: space-between; gap: 16px;
-  padding: 20px 24px;
-  margin-bottom: 18px;
-  border-radius: var(--radius);
-  background: linear-gradient(135deg, rgba(30, 80, 180, 0.18), rgba(20, 50, 120, 0.08));
-  border: 1px solid rgba(59, 138, 255, 0.2);
+  padding: 22px 24px; border-radius: var(--radius);
+  background: linear-gradient(135deg, rgba(99,102,241,0.18), rgba(34,211,238,0.08));
+  border: 1px solid rgba(99,102,241,0.25);
   position: relative; overflow: hidden;
 }
-.welcome::before {
-  content: "";
-  position: absolute; top: -40%; right: -5%;
-  width: 200px; height: 200px;
-  background: radial-gradient(circle, rgba(59, 138, 255, 0.15), transparent 70%);
+.welcome::after {
+  content: ""; position: absolute; top: -50%; right: -10%;
+  width: 280px; height: 280px;
+  background: radial-gradient(circle, rgba(34,211,238,0.12), transparent 70%);
   pointer-events: none;
 }
-.welcome h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.4px; }
-.welcome p { color: var(--muted); font-size: 13px; margin-top: 4px; }
-.welcome-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.welcome h1 { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.3px; }
+.welcome p { color: var(--mu); font-size: 0.88rem; margin-top: 4px; }
+.welcome-actions { display: flex; gap: 8px; flex-shrink: 0; position: relative; z-index: 1; }
 
-/* Stats row */
-.stats {
+.grid3 {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
-  margin-bottom: 18px;
+  grid-template-columns: 1fr 1fr 300px;
+  gap: 16px; align-items: start;
 }
-.stat {
-  display: flex; align-items: center; gap: 14px;
-  padding: 18px;
-  border-radius: var(--radius);
-  background: linear-gradient(145deg, rgba(13, 22, 41, 0.95), rgba(10, 18, 36, 0.95));
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow);
-  transition: border-color 0.2s, transform 0.2s;
-}
-.stat:hover { border-color: var(--border-hover); transform: translateY(-2px); }
-.stat-ico {
-  width: 48px; height: 48px; border-radius: 14px;
-  display: grid; place-items: center; font-size: 22px; flex-shrink: 0;
-}
-.stat-ico.blue { background: rgba(59, 138, 255, 0.12); }
-.stat-ico.green { background: rgba(34, 211, 160, 0.12); }
-.stat-ico.amber { background: rgba(251, 191, 36, 0.12); }
-.stat-ico.purple { background: rgba(167, 139, 250, 0.12); }
-.stat-ico.cyan { background: rgba(34, 211, 238, 0.12); }
-.stat-ico.red { background: rgba(255, 107, 129, 0.12); }
-.stat small { color: var(--muted); font-size: 12px; font-weight: 500; display: block; }
-.stat strong { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.15; display: block; }
-.stat .sub { color: var(--muted2); font-size: 11px; margin-top: 2px; }
+.col-stack { display: flex; flex-direction: column; gap: 16px; }
 
-/* Grid layout */
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 320px;
-  gap: 16px;
-  align-items: start;
-}
-
-/* Cards */
-.card {
-  background: linear-gradient(145deg, rgba(13, 22, 41, 0.95), rgba(10, 18, 36, 0.95));
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 18px;
-  box-shadow: var(--shadow);
-  transition: border-color 0.2s;
-}
-.card:hover { border-color: var(--border-hover); }
-
-.hd {
-  display: flex; align-items: center; justify-content: space-between; gap: 10px;
-  margin-bottom: 14px; padding-bottom: 12px;
-  border-bottom: 1px solid rgba(56, 110, 180, 0.15);
-}
-.hd h2 { font-size: 15px; font-weight: 700; letter-spacing: -0.1px; display: flex; align-items: center; gap: 8px; }
-.hd h2 .ico { font-size: 16px; }
-
-.btn {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 6px 12px; border-radius: 8px;
-  font-size: 11px; font-weight: 600;
-  background: linear-gradient(135deg, #3b8aff, #1a6ef0);
-  color: #fff; border: none;
-  transition: all 0.15s;
-  box-shadow: 0 3px 10px rgba(59, 138, 255, 0.2);
-}
-.btn:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(59, 138, 255, 0.3); }
-.btn.alt {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  box-shadow: none;
-  color: var(--muted);
-}
-.btn.alt:hover { background: var(--surface3); color: var(--text); }
-
-/* YouTube channels */
 .yt-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
   gap: 10px;
 }
 .yt-card {
-  display: flex; flex-direction: column; align-items: center; gap: 6px;
-  text-align: center;
-  padding: 14px 10px;
-  border-radius: 12px;
-  background: var(--surface2);
-  border: 1px solid rgba(56, 110, 180, 0.18);
-  transition: all 0.2s;
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  text-align: center; padding: 14px 8px;
+  border-radius: 12px; background: var(--cd2);
+  border: 1px solid var(--bd); transition: all 0.2s;
 }
 .yt-card:hover {
-  transform: translateY(-3px);
-  border-color: var(--blue);
-  box-shadow: 0 8px 24px rgba(59, 138, 255, 0.15);
+  transform: translateY(-3px); border-color: var(--ac);
+  box-shadow: 0 8px 24px rgba(99,102,241,0.15);
 }
-.yt-card img, .av {
-  width: 44px; height: 44px; border-radius: 50%;
-  object-fit: cover;
-  background: linear-gradient(135deg, #3b8aff, #1a6ef0);
-  display: grid; place-items: center;
-  font-weight: 800; font-size: 14px; color: #fff;
-  box-shadow: 0 0 0 3px rgba(59, 138, 255, 0.12);
+.yt-card img, .yt-card .av {
+  width: 42px; height: 42px; border-radius: 50%; object-fit: cover;
+  background: linear-gradient(135deg,#6366f1,#22d3ee);
+  display: grid; place-items: center; font-weight: 800; font-size: 13px; color: #fff;
 }
-.yt-card b { font-size: 12px; font-weight: 600; }
-.yt-card .id { font-size: 9px; color: var(--muted2); word-break: break-all; }
-.chip {
-  font-size: 10px; font-weight: 600;
-  border-radius: 20px; padding: 2px 10px;
-  color: var(--green);
-  background: rgba(34, 211, 160, 0.1);
-  border: 1px solid rgba(34, 211, 160, 0.25);
-}
-.chip.e {
-  color: var(--red);
-  background: rgba(255, 107, 129, 0.1);
-  border-color: rgba(255, 107, 129, 0.25);
-}
-.nums { display: flex; gap: 10px; color: var(--muted); font-size: 10px; }
-.manage {
-  width: 100%; padding: 6px;
-  border-radius: 7px; font-size: 10px; font-weight: 600;
-  background: var(--surface3);
-  border: 1px solid var(--border);
-  color: var(--muted);
+.yt-card b { font-size: 0.8rem; }
+.yt-card .id { font-size: 0.65rem; color: var(--mu2); word-break: break-all; }
+.yt-card .manage {
+  width: 100%; padding: 5px; border-radius: 7px; font-size: 0.7rem; font-weight: 600;
+  background: var(--cd); border: 1px solid var(--bd); color: var(--mu); margin-top: 2px;
   transition: all 0.15s;
 }
-.manage:hover { background: var(--blue); border-color: var(--blue); color: #fff; }
+.yt-card .manage:hover { background: var(--ac); border-color: var(--ac); color: #fff; }
 
-/* Websites */
 .ws-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
   gap: 10px;
 }
 .ws-card {
-  padding: 14px;
-  border-radius: 12px;
-  background: var(--surface2);
-  border: 1px solid rgba(56, 110, 180, 0.18);
-  transition: all 0.2s;
+  padding: 14px; border-radius: 12px; background: var(--cd2);
+  border: 1px solid var(--bd); transition: all 0.2s;
 }
 .ws-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--blue);
-  box-shadow: 0 8px 24px rgba(59, 138, 255, 0.12);
+  transform: translateY(-2px); border-color: var(--ac);
+  box-shadow: 0 8px 24px rgba(99,102,241,0.12);
 }
-.site-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.site-head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
 .site-icon {
-  width: 34px; height: 34px; border-radius: 10px;
-  display: grid; place-items: center; font-size: 16px;
-  background: rgba(59, 138, 255, 0.12);
-  flex-shrink: 0;
+  width: 32px; height: 32px; border-radius: 9px;
+  display: grid; place-items: center; font-size: 15px;
+  background: rgba(99,102,241,0.12); flex-shrink: 0;
 }
-.ws-card b { font-size: 13px; font-weight: 600; }
-.url { font-size: 11px; color: var(--blue); word-break: break-all; margin-bottom: 6px; }
-.meta { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+.ws-card b { font-size: 0.88rem; font-weight: 600; }
+.url { font-size: 0.72rem; color: var(--cyan); word-break: break-all; margin-bottom: 4px; }
+.meta-t { font-size: 0.72rem; color: var(--mu); margin-bottom: 8px; }
 .actions { display: flex; gap: 6px; }
 .actions a {
-  flex: 1; text-align: center; padding: 6px;
-  border-radius: 7px; font-size: 11px; font-weight: 600;
-  background: var(--surface3);
-  border: 1px solid var(--border);
-  color: var(--muted);
+  flex: 1; text-align: center; padding: 6px; border-radius: 7px;
+  font-size: 0.72rem; font-weight: 600;
+  background: var(--cd); border: 1px solid var(--bd); color: var(--mu);
   transition: all 0.15s;
 }
-.actions a:hover { color: var(--text); border-color: var(--border-hover); }
+.actions a:hover { color: var(--tx); border-color: var(--bd-strong); }
 .actions a.primary {
-  background: linear-gradient(135deg, #3b8aff, #1a6ef0);
+  background: linear-gradient(135deg,#6366f1,#4f46e5);
   border-color: transparent; color: #fff;
 }
 
-/* KPI boxes */
-.kpi {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+.kpi-box {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
 }
-.kpi div {
-  text-align: center;
-  padding: 14px 10px;
-  border-radius: 12px;
-  background: var(--surface2);
-  border: 1px solid rgba(56, 110, 180, 0.18);
+.kpi-box div {
+  text-align: center; padding: 12px 8px; border-radius: 10px;
+  background: var(--cd2); border: 1px solid var(--bd);
 }
-.kpi b { display: block; font-size: 22px; font-weight: 800; letter-spacing: -0.3px; }
-.kpi span { font-size: 11px; color: var(--muted); }
-.ok { color: var(--green); }
-.err { color: var(--red); }
-.warn { color: var(--amber); }
+.kpi-box b { display: block; font-size: 1.4rem; font-weight: 800; }
+.kpi-box span { font-size: 0.72rem; color: var(--mu); }
 
-/* Activity list */
-.li {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 0;
-  border-bottom: 1px solid rgba(56, 110, 180, 0.12);
-}
-.li:last-child { border-bottom: none; }
-.dot {
-  width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
-  display: grid; place-items: center; font-size: 12px; font-weight: 700;
-  background: var(--surface3);
-}
-.dot.success { color: var(--green); background: rgba(34, 211, 160, 0.1); }
-.dot.failure { color: var(--red); background: rgba(255, 107, 129, 0.1); }
-.li b { font-size: 12px; font-weight: 600; display: block; }
-.li small { font-size: 11px; color: var(--muted); }
-.time { margin-left: auto; color: var(--muted2); font-size: 11px; white-space: nowrap; }
-
-/* Logs scroll */
-.logs { max-height: 280px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--surface3) transparent; }
-
-/* Trending */
 .trend-row {
   display: flex; align-items: center; gap: 10px;
-  padding: 9px 0;
-  border-bottom: 1px solid rgba(56, 110, 180, 0.12);
-  transition: background 0.15s;
+  padding: 8px 0; border-bottom: 1px solid rgba(80,120,200,0.1);
 }
-.trend-row:last-child { border-bottom: none; }
-.trend-row:hover { background: rgba(59, 138, 255, 0.04); margin: 0 -8px; padding-left: 8px; padding-right: 8px; border-radius: 8px; }
+.trend-row:last-child { border-bottom: 0; }
 .trend-rank {
-  width: 26px; height: 26px; border-radius: 8px; flex-shrink: 0;
-  display: grid; place-items: center;
-  font-size: 11px; font-weight: 800;
-  background: var(--surface3); color: var(--muted);
+  width: 24px; height: 24px; border-radius: 7px; flex-shrink: 0;
+  display: grid; place-items: center; font-size: 0.7rem; font-weight: 800;
+  background: var(--cd2); color: var(--mu);
 }
-.trend-rank.top3 { background: rgba(251, 191, 36, 0.12); color: var(--amber); }
+.trend-rank.top3 { background: rgba(251,191,36,0.12); color: var(--wa); }
 .trend-title { min-width: 0; flex: 1; }
 .trend-title b {
-  display: block; font-size: 12px; font-weight: 600;
+  display: block; font-size: 0.8rem; font-weight: 600;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.trend-title small { display: block; color: var(--muted); font-size: 10px; margin-top: 2px; }
+.trend-title small { display: block; color: var(--mu); font-size: 0.68rem; margin-top: 1px; }
 .trend-score {
-  font-size: 10px; font-weight: 600;
-  color: var(--amber);
-  background: rgba(251, 191, 36, 0.1);
-  border-radius: 12px; padding: 3px 8px;
-  white-space: nowrap;
+  font-size: 0.68rem; font-weight: 700; color: var(--wa);
+  background: rgba(251,191,36,0.1); border-radius: 10px; padding: 2px 7px; white-space: nowrap;
 }
 
-/* Quick actions */
-.qa a {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 11px 14px;
-  border-radius: 10px;
-  margin-bottom: 8px;
-  font-size: 13px; font-weight: 600;
-  background: linear-gradient(90deg, rgba(20, 50, 100, 0.5), rgba(15, 35, 70, 0.5));
-  border: 1px solid rgba(56, 110, 180, 0.25);
-  color: #c0d8f5;
-  transition: all 0.18s;
+.top-btns { display: flex; gap: 8px; align-items: center; margin-left: auto; }
+.btn-top {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 13px; border-radius: 8px; font-size: 0.78rem; font-weight: 600;
+  border: 1px solid var(--bd); background: var(--cd2); color: var(--tx); cursor: pointer;
+  transition: all 0.15s;
 }
-.qa a:hover {
-  background: linear-gradient(90deg, #1a6ef0, #3b8aff);
-  border-color: transparent;
-  color: #fff;
-  transform: translateX(4px);
-  box-shadow: 0 4px 16px rgba(59, 138, 255, 0.25);
+.btn-top:hover { border-color: var(--ac); background: rgba(99,102,241,0.12); }
+.btn-top.primary {
+  background: linear-gradient(135deg,#6366f1,#4f46e5);
+  border-color: transparent; color: #fff;
+  box-shadow: 0 4px 14px rgba(99,102,241,0.3);
 }
-.qa a:last-child { margin-bottom: 0; }
-
-/* System status box */
-.okbox {
-  border-radius: 12px;
-  padding: 14px 16px;
-  font-size: 12px; font-weight: 600;
-  background: linear-gradient(135deg, rgba(12, 60, 50, 0.4), rgba(8, 35, 35, 0.5));
-  border: 1px solid rgba(34, 211, 160, 0.3);
-  color: var(--green);
-  margin-top: 16px;
-}
-.okbox.bad {
-  background: linear-gradient(135deg, rgba(80, 20, 30, 0.3), rgba(50, 10, 20, 0.4));
-  border-color: rgba(255, 107, 129, 0.3);
-  color: var(--red);
+.btn-top:disabled { opacity: 0.55; cursor: wait; }
+.avatar-top {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg,#6366f1,#22d3ee);
+  display: grid; place-items: center; font-weight: 800; font-size: 11px; color: #fff;
 }
 
-/* Right column stack */
-.col-right { display: flex; flex-direction: column; gap: 16px; }
-
-/* Empty state */
-.empty { text-align: center; padding: 24px; color: var(--muted); font-size: 13px; }
-.empty span { font-size: 28px; display: block; margin-bottom: 8px; }
-
-/* ─── RESPONSIVE ─── */
-@media (max-width: 1200px) {
-  .grid { grid-template-columns: 1fr 1fr; }
-  .col-right { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .stats { grid-template-columns: repeat(4, 1fr); }
-}
-@media (max-width: 940px) {
-  .app { grid-template-columns: 180px 1fr; gap: 14px; padding: 14px; }
-  .topnav { display: none; }
-  .stats { grid-template-columns: repeat(2, 1fr); }
-  .grid { grid-template-columns: 1fr; }
-  .col-right { grid-template-columns: 1fr; }
+@media (max-width: 1100px) {
+  .grid3 { grid-template-columns: 1fr 1fr; }
+  .col-stack:last-child { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 }
 @media (max-width: 700px) {
-  .top { padding: 0 12px; height: 56px; gap: 10px; }
-  .burger { display: block; }
-  .logo { font-size: 15px; }
-  .logo-icon { width: 30px; height: 30px; font-size: 13px; }
-  .status-pill { display: none; }
-  .app { display: block; padding: 12px; }
-  nav {
-    position: fixed; inset: 0 25% 0 0; z-index: 60;
-    border-radius: 0; padding: 70px 12px 16px;
-    transform: translateX(-110%);
-    transition: transform 0.25s ease;
-    overflow-y: auto;
-  }
-  nav.open { transform: translateX(0); }
-  .stats { grid-template-columns: 1fr 1fr; gap: 10px; }
-  .stat { padding: 14px; }
-  .stat-ico { width: 40px; height: 40px; font-size: 18px; border-radius: 12px; }
-  .stat strong { font-size: 22px; }
-  .welcome { flex-direction: column; align-items: flex-start; padding: 16px; }
-  .welcome h1 { font-size: 18px; }
+  .grid3 { grid-template-columns: 1fr; }
+  .col-stack:last-child { grid-template-columns: 1fr; }
+  .welcome { flex-direction: column; align-items: flex-start; }
+  .welcome h1 { font-size: 1.15rem; }
   .yt-grid { grid-template-columns: repeat(2, 1fr); }
   .ws-grid { grid-template-columns: 1fr; }
-  .btn-top { padding: 6px 10px; font-size: 11px; }
-}
-@media (max-width: 400px) {
-  .stats { grid-template-columns: 1fr; }
+  .top-btns .btn-top { padding: 6px 10px; font-size: 0.72rem; }
 }
 </style>
 </head>
@@ -557,51 +192,23 @@ boot('index.html', 'YouTube • GitHub • Telegram • All Projects', d => {
   const row = x => `<div class="li">
     <span class="dot ${x.r.s}">${x.r.s === 'success' ? '✓' : x.r.s === 'failure' ? '✕' : '…'}</span>
     <div><b>${esc(x.name)}</b><small>${esc(x.r.s || 'unknown')} · ${Math.ceil((+x.r.d || 0) / 60)} मिनट</small></div>
-    <span class="time">${agoText(x.r.t)}</span>
+    <span class="t">${agoText(x.r.t)}</span>
   </div>`;
 
-  // ── Top bar ──
+  /* Override top bar for richer controls */
   const top = document.querySelector('.top');
-  top.innerHTML = `
-    <button class="burger" aria-label="Menu" onclick="document.querySelector('nav').classList.toggle('open')">☰</button>
-    <div class="logo">
-      <div class="logo-icon">⚙</div>
-      <div>BG Automation<small>Automate · Create · Grow</small></div>
-    </div>
-    <div class="topnav">
-      <a class="on" href="index.html">⌂ Home</a>
-      <a href="youtube.html">▶ YouTube</a>
-      <a href="sites.html">▦ Projects</a>
-      <a href="trending.html">🔥 Trending</a>
-      <a href="logs.html">➤ Telegram</a>
-      <a href="https://github.com/bgsarkariresult/BG-Automation" target="_blank" rel="noopener">◉ GitHub</a>
-    </div>
-    <div class="topright">
-      <button id="refreshBtn" class="btn-top" onclick="window.refreshDashboard&&window.refreshDashboard()" title="नया डेटा लोड करें">↻ Refresh</button>
-      <button id="runSyncBtn" class="btn-top primary" onclick="window.runDashboardSync&&window.runDashboardSync()" title="Cloudflare Worker से Sync">▶ Run Sync</button>
-      <div class="status-pill"><span class="dot-live"></span><span id="clock">${clockText()}</span></div>
-      <div class="avatar">BG</div>
-    </div>`;
+  if (top) {
+    top.innerHTML = `
+      <button class="burger" aria-label="Menu" onclick="document.querySelector('nav').classList.toggle('open')">☰</button>
+      <div class="logo">⚙ BG Automation<small>Automate · Create · Grow</small></div>
+      <div class="top-btns">
+        <button id="refreshBtn" class="btn-top" onclick="window.refreshDashboard&&window.refreshDashboard()">↻ Refresh</button>
+        <button id="runSyncBtn" class="btn-top primary" onclick="window.runDashboardSync&&window.runDashboardSync()">▶ Run Sync</button>
+        <div class="pill" id="pill">● Live</div>
+        <div class="avatar-top">BG</div>
+      </div>`;
+  }
 
-  // ── Sidebar ──
-  const nav = document.querySelector('nav');
-  nav.innerHTML = `
-    <a class="on" href="index.html">⌂ Dashboard</a>
-    <a href="youtube.html">▶ YouTube Channels <span class="cnt">${channels.length}</span></a>
-    <a href="sites.html">▣ Websites / Projects</a>
-    <a href="trending.html">🔥 Trending Topics</a>
-    <a href="control.html">⚙ Automation</a>
-    <a href="logs.html">▤ Activity Logs</a>
-    <a href="logs.html">➤ Telegram <span class="cnt">${messages}</span></a>
-    <a href="reports.html">💰 Reports</a>
-    <a href="https://github.com/bgsarkariresult/BG-Automation/settings/secrets/actions" target="_blank" rel="noopener">⚙ Settings</a>
-    <div class="sys">
-      <b>● System Online</b>
-      <small>Last checked: ${clockText()}</small>
-      <small>Data: ${at(d.live_updated || d.updated)}</small>
-    </div>`;
-
-  // ── Channel card ──
   const channelCard = c => {
     const name = c.name || c.title || c.id || 'Channel';
     const img = c.icon || c.thumb || c.thumbnail || c.img || '';
@@ -611,23 +218,19 @@ boot('index.html', 'YouTube • GitHub • Telegram • All Projects', d => {
     return `<div class="yt-card">
       ${avatar}
       <b>${esc(name)}</b>
-      <div class="id">${esc((c.id || '—').slice(0, 18))}</div>
+      <div class="id">${esc((c.id || '—').slice(0, 16))}</div>
       <span class="chip ${c.error ? 'e' : ''}">${c.error ? 'Error' : '● Active'}</span>
       <div class="nums"><span>👁 ${fmt(c.views ?? c.viewCount)}</span><span>👥 ${fmt(c.subs ?? c.subscribers)}</span></div>
       <a class="manage" href="youtube.html">Manage</a>
     </div>`;
   };
 
-  // ── Site card ──
   const siteCard = x => {
     const url = x.url || x.link || x.site || '';
     return `<div class="ws-card">
-      <div class="site-head">
-        <div class="site-icon">🌐</div>
-        <b>${esc(x.name || x.title || 'Website')}</b>
-      </div>
+      <div class="site-head"><div class="site-icon">🌐</div><b>${esc(x.name || x.title || 'Website')}</b></div>
       <div class="url">${esc(url || '—')}</div>
-      <div class="meta">Updated: ${agoText(x.updated || d.updated)}</div>
+      <div class="meta-t">Updated: ${agoText(x.updated || d.updated)}</div>
       <div class="actions">
         <a href="sites.html">Manage</a>
         ${url ? `<a class="primary" href="${esc(url)}" target="_blank" rel="noopener">Open ↗</a>` : ''}
@@ -635,145 +238,118 @@ boot('index.html', 'YouTube • GitHub • Telegram • All Projects', d => {
     </div>`;
   };
 
-  // ── Main content ──
   document.querySelector('#main').innerHTML = `
     <div class="welcome">
       <div>
         <h1>👋 Welcome back!</h1>
-        <p>Your YouTube + GitHub + Telegram automation hub · All data from GitHub Secrets</p>
+        <p>Your YouTube + GitHub + Telegram automation hub · Data from GitHub Secrets</p>
       </div>
       <div class="welcome-actions">
         <a class="btn" href="control.html">⚡ Run Automation</a>
-        <a class="btn alt" href="trending.html">🔥 Trending</a>
+        <a class="btn g" href="trending.html">🔥 Trending</a>
       </div>
     </div>
 
     <div class="stats">
       <div class="stat">
-        <div class="stat-ico blue">▶</div>
-        <div>
-          <small>Total Channels</small>
-          <strong>${channels.length}</strong>
-          <div class="sub">+ Add anytime</div>
-        </div>
+        <div class="ico blue">▶</div>
+        <div><small>Total Channels</small><b>${channels.length}</b><small style="color:var(--mu2)">+ Add anytime</small></div>
       </div>
       <div class="stat">
-        <div class="stat-ico green">⟳</div>
-        <div>
-          <small>Total Runs</small>
-          <strong>${todayRuns || recent.length}</strong>
-          <div class="sub">Last 24 hours</div>
-        </div>
+        <div class="ico cyan">⟳</div>
+        <div><small>Total Runs</small><b>${todayRuns || recent.length}</b><small style="color:var(--mu2)">Last 24 hours</small></div>
       </div>
       <div class="stat">
-        <div class="stat-ico purple">✈</div>
-        <div>
-          <small>Telegram</small>
-          <strong>${messages || '—'}</strong>
-          <div class="sub">Unread messages</div>
-        </div>
+        <div class="ico purple">✈</div>
+        <div><small>Telegram</small><b>${messages || '—'}</b><small style="color:var(--mu2)">Messages</small></div>
       </div>
       <div class="stat">
-        <div class="stat-ico ${failed > 0 ? 'red' : 'amber'}">⏱</div>
-        <div>
-          <small>Last Job</small>
-          <strong style="font-size:16px">${lastJob ? agoText(lastJob.r.t) : '—'}</strong>
-          <div class="sub">${lastJob ? (lastJob.r.s === 'success' ? 'Completed ✓' : lastJob.r.s) : 'No jobs yet'}</div>
-        </div>
+        <div class="ico ${failed > 0 ? 'red' : 'green'}">⏱</div>
+        <div><small>Last Job</small><b style="font-size:1.1rem">${lastJob ? agoText(lastJob.r.t) : '—'}</b>
+          <small style="color:var(--mu2)">${lastJob ? (lastJob.r.s === 'success' ? 'Completed ✓' : lastJob.r.s) : 'No jobs'}</small></div>
       </div>
     </div>
 
-    <div class="grid">
-      <!-- Left column -->
-      <div style="display:flex;flex-direction:column;gap:16px">
+    <div class="grid3">
+      <div class="col-stack">
         <div class="card">
           <div class="hd">
-            <h2><span class="ico">▶</span> YouTube Channels</h2>
-            <a class="btn" href="youtube.html">+ Add Channel</a>
+            <h2>▶ YouTube Channels</h2>
+            <a class="btn" href="youtube.html">+ Add</a>
           </div>
           <div class="yt-grid">
-            ${channels.length ? channels.map(channelCard).join('') : '<div class="empty"><span>📺</span>No channels yet. Add one!</div>'}
+            ${channels.length ? channels.map(channelCard).join('') : '<small class="mu">No channels yet.</small>'}
           </div>
         </div>
-
         <div class="card">
           <div class="hd">
-            <h2><span class="ico">🌐</span> Websites / Projects</h2>
-            <a class="btn" href="sites.html">+ Add Website</a>
+            <h2>🌐 Websites / Projects</h2>
+            <a class="btn" href="sites.html">+ Add</a>
           </div>
           <div class="ws-grid">
-            ${sites.length ? sites.map(siteCard).join('') : '<div class="empty"><span>🌐</span>No websites configured.</div>'}
+            ${sites.length ? sites.map(siteCard).join('') : '<small class="mu">No websites configured.</small>'}
           </div>
         </div>
       </div>
 
-      <!-- Middle column -->
-      <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="col-stack">
         <div class="card">
           <div class="hd">
-            <h2><span class="ico">⚡</span> Automation Overview</h2>
-            <a class="btn alt" href="control.html">View All →</a>
+            <h2>⚡ Automation Overview</h2>
+            <a class="btn g" href="control.html">View All →</a>
           </div>
-          <div class="kpi">
+          <div class="kpi-box">
             <div><b>${recent.length}</b><span>Total Jobs</span></div>
             <div><b class="ok">${success}</b><span>Success</span></div>
             <div><b class="err">${failed}</b><span>Failed</span></div>
             <div><b class="warn">${Math.max(0, recent.length - success - failed)}</b><span>Other</span></div>
           </div>
         </div>
-
         <div class="card">
           <div class="hd">
-            <h2><span class="ico">📋</span> Recent Activity</h2>
-            <a class="btn alt" href="logs.html">View All</a>
+            <h2>📋 Recent Activity</h2>
+            <a class="btn g" href="logs.html">View All</a>
           </div>
-          <div class="logs">
-            ${recent.slice(0, 8).map(row).join('') || '<div class="empty"><span>📭</span>No recent activity</div>'}
+          <div class="logs" style="max-height:260px">
+            ${recent.slice(0, 8).map(row).join('') || '<small class="mu">No recent activity</small>'}
           </div>
         </div>
-
         <div class="card">
-          <div class="hd">
-            <h2><span class="ico">🚀</span> Quick Actions</h2>
-          </div>
+          <div class="hd"><h2>🚀 Quick Actions</h2></div>
           <div class="qa">
             <a href="control.html">⚡ Run Automation <span>→</span></a>
             <a href="youtube.html">▶ Manage Channels <span>→</span></a>
             <a href="trending.html">🔥 Trending Topics <span>→</span></a>
             <a href="sites.html">🌐 Manage Websites <span>→</span></a>
-            <a href="logs.html">📨 Telegram Messages <span>→</span></a>
+            <a href="logs.html">📨 Telegram & Logs <span>→</span></a>
           </div>
         </div>
       </div>
 
-      <!-- Right column -->
-      <div class="col-right">
+      <div class="col-stack">
         <div class="card">
           <div class="hd">
-            <h2><span class="ico">🔥</span> Trending Topics</h2>
-            <a class="btn alt" href="trending.html">Full →</a>
+            <h2>🔥 Trending Topics</h2>
+            <a class="btn g" href="trending.html">Full →</a>
           </div>
-          <div id="dashTrending"><div class="empty"><span>⏳</span>Loading trends…</div></div>
+          <div id="dashTrending"><small class="mu">Loading trends…</small></div>
         </div>
-
         <div class="card">
           <div class="hd">
-            <h2><span class="ico">💬</span> Telegram</h2>
-            <a class="btn alt" href="logs.html">Open →</a>
+            <h2>💬 Telegram</h2>
+            <a class="btn g" href="logs.html">Open →</a>
           </div>
-          <div>
-            ${(d.telegram || d.messages || []).slice(0, 5).map(m => `
-              <div class="li">
-                <span class="dot">✉</span>
-                <div><b>${esc((m.text || m.message || '').slice(0, 60))}</b><small>${agoText(m.t || m.time || m.date)}</small></div>
-              </div>
-            `).join('') || '<div class="empty"><span>💬</span>No messages yet</div>'}
-          </div>
+          ${(d.telegram || d.messages || []).slice(0, 5).map(m => `
+            <div class="li">
+              <span class="dot">✉</span>
+              <div><b>${esc((m.text || m.message || '').slice(0, 55))}</b><small>${agoText(m.t || m.time || m.date)}</small></div>
+            </div>
+          `).join('') || '<small class="mu">No messages yet</small>'}
         </div>
       </div>
     </div>
 
-    <div class="okbox ${failed > 3 ? 'bad' : ''}">
+    <div class="ok-box ${failed > 3 ? 'bad' : ''}">
       ${failed > 3
         ? `⚠ ${failed} jobs failed recently — check Activity Logs`
         : `✓ System healthy · ${success} successful jobs · Data from ${d.live_state === 'live' ? 'Cloudflare Live' : 'GitHub cache'}`
@@ -782,7 +358,6 @@ boot('index.html', 'YouTube • GitHub • Telegram • All Projects', d => {
   `;
 });
 
-// Run Sync via Cloudflare Worker
 window.runDashboardSync = async function () {
   const btn = document.getElementById('runSyncBtn');
   if (!btn) return;
@@ -790,8 +365,7 @@ window.runDashboardSync = async function () {
   btn.textContent = '⏳ Syncing…';
   try {
     const r = await fetch('https://bg-automation-live.garhwalbhavesh2002.workers.dev/api/sync', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' }
+      method: 'POST', headers: { 'Content-Type': 'application/json' }
     });
     if (!r.ok) throw new Error('HTTP ' + r.status);
     btn.textContent = '✓ Synced!';
@@ -800,10 +374,7 @@ window.runDashboardSync = async function () {
     btn.textContent = '⚠ Failed';
     console.warn('Sync failed:', e.message || e);
   } finally {
-    setTimeout(() => {
-      btn.disabled = false;
-      btn.textContent = '▶ Run Sync';
-    }, 3000);
+    setTimeout(() => { btn.disabled = false; btn.textContent = '▶ Run Sync'; }, 3000);
   }
 };
 
@@ -839,13 +410,11 @@ setInterval(() => {
     const seen = new Set();
     const top = rows.filter(t => t && t.title).filter(t => {
       const k = String(t.title).trim().toLowerCase();
-      if (seen.has(k)) return false;
-      seen.add(k);
-      return true;
+      if (seen.has(k)) return false; seen.add(k); return true;
     }).sort((a, b) => new Date(b.updated_at || 0) - new Date(a.updated_at || 0)).slice(0, 8);
 
     box.innerHTML = top.length
-      ? '<small style="color:var(--muted);font-size:11px;display:block;margin-bottom:8px">Latest · ' +
+      ? '<small class="mu" style="display:block;margin-bottom:8px">Latest · ' +
         esc(top[0].updated_at ? new Date(top[0].updated_at).toLocaleString('hi-IN') : '—') + '</small>' +
         top.map((t, i) => {
           const title = esc(t.title);
@@ -858,9 +427,9 @@ setInterval(() => {
             <span class="trend-score">Score ${score}</span>
           </a>`;
         }).join('')
-      : '<div class="empty"><span>🔥</span>No trending data yet</div>';
+      : '<small class="mu">No trending data yet</small>';
   } catch (e) {
-    box.innerHTML = '<div class="empty"><span>📡</span>Trending unavailable. <a href="trending.html" style="color:var(--blue)">Open page →</a></div>';
+    box.innerHTML = '<small class="mu">Trending unavailable. <a href="trending.html" style="color:var(--cyan)">Open page →</a></small>';
   }
 })();
 </script>
