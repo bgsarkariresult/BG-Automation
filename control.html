@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
+  <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#3b5bff">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/BG-Automation/sw.js', { scope: '/BG-Automation/' });
+  }
+</script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Actions Control</title>
