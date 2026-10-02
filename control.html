@@ -61,6 +61,10 @@ boot('control.html', 'GitHub Actions Control Center', d => {
       <small id="rerunMsg" style="display:block;margin-top:6px"></small>
     </div>
 
+    <div class="card" id="liveLogPanel" hidden>
+      <div class="hd"><h2>💻 Live Logs <small id="liveLogTitle"></small></h2><button class="btn g" onclick="closeLiveLogs()">✕ बंद करें</button></div>
+      <div id="liveLogBody"><small>प्रोजेक्ट चुनें।</small></div>
+    </div>
     <div class="card">
       <h2>🌐 Websites <small>(वेबसाइट)</small></h2>
       <div class="sites">
@@ -107,7 +111,7 @@ function renderProjectCard(b) {
   return `<div class="site">
     <div class="row"><div><b>${esc(b.name)}</b><br><small>${b.runs.filter(okRun).length} safal • ${b.runs.filter(r => r.s === 'failure').length} fail (pichhle ${b.runs.length} run)</small></div>${chip(b.status)}</div>
     <input class="lk" id="lk${i}" placeholder="Link dalo (article / product URL) — optional">
-    <div class="r"><a class="btn g" href="${esc((b.runs&&b.runs[0]&&b.runs[0].u)||b.url||b.html_url||('https://github.com/'+b.repo+'/actions'))}" target="_blank" rel="noopener">Live Logs</a><button class="btn" id="btn${i}" onclick="runBot(${i})" ${!b.workflow ? 'disabled title="Iske paas workflow nahi"' : ''}>▶ Run</button><button class="btn g" onclick="tg(${i})">Status</button></div>
+    <div class="r"><button class="btn g" onclick="showLiveLogs(${i})">Logs</button><button class="btn" id="btn${i}" onclick="runBot(${i})" ${!b.workflow ? 'disabled title="Iske paas workflow nahi"' : ''}>▶ Run</button><button class="btn g" onclick="tg(${i})">Status</button></div>
     <small class="hn" id="hn${i}"></small><div class="rs" id="rs${i}" hidden>${b.runs.slice(0,5).map(r=>`<div class="li"><span class="dot s-${esc(r.s)}">${st(r.s)}</span><span>${esc(r.n)}<br><small>${esc(r.s)} • ${ago(r.t)}</small></span><a class="t" href="${esc(r.u)}" target="_blank" rel="noopener">Log</a></div>`).join('')||'<small>Koi run nahi.</small>'}</div>
   </div>`;
 }
@@ -116,6 +120,16 @@ function addProject(type) {
   alert('Naya '+name+' जोड़ने के लिए data/dashboard.json में इसका project दर्ज करें।');
 }
 
+let liveLogTimer=null;
+function closeLiveLogs(){const p=document.getElementById("liveLogPanel");if(p)p.hidden=true;if(liveLogTimer){clearInterval(liveLogTimer);liveLogTimer=null;}}
+function showLiveLogs(i){
+ const b=window.D.bots[i], panel=document.getElementById("liveLogPanel"); if(!b||!panel)return;
+ panel.hidden=false;document.getElementById("liveLogTitle").textContent="— "+b.name;
+ const draw=()=>{const current=(window.D.bots.find(x=>x.repo===b.repo)||b);const runs=current.runs||[];
+ document.getElementById("liveLogBody").innerHTML=`<div class="li"><b>वर्तमान स्थिति</b>${chip(current.status||"unknown")}</div><small>यह पैनल हर 15 सेकंड में Dashboard के नवीनतम रन डेटा से अपडेट होता है।</small>`+
+ (runs.length?runs.slice(0,10).map(r=>`<div class="li"><span><b>#${esc(r.number||r.id||"—")} · ${esc(r.n||"Workflow run")}</b><br><small>${esc(r.s||"unknown")} · ${at(r.t)} · ${Math.ceil((+r.d||0)/60)} मिनट</small></span><a class="btn g" href="${esc(r.u||("#"))}" target="_blank" rel="noopener">पूरा लॉग ↗</a></div>`).join(""):"<small>अभी कोई रन लॉग उपलब्ध नहीं है।</small>");};
+ draw();if(liveLogTimer)clearInterval(liveLogTimer);liveLogTimer=setInterval(async()=>{try{const r=await fetch(RAW+"?t="+Date.now(),{cache:"no-store"});if(r.ok){const fresh=await r.json();const x=(fresh.bots||[]).find(x=>x.repo===b.repo);if(x){window.D.bots=window.D.bots.map(y=>y.repo===b.repo?{...y,...x}:y);draw();}}}catch(_){}},15000);
+}
 function tg(i) {
   const e = document.getElementById('rs' + i);
   e.hidden = !e.hidden;
