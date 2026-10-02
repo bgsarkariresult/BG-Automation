@@ -52,7 +52,11 @@ function boot(key,title,render){
     const stamp=d.live_state==='live'?(d.live_updated||d.updated):d.updated;const age=stamp?Math.max(0,Math.floor((Date.now()-new Date(stamp).getTime())/60000)):Infinity;
     const channelOk=(d.channels||[]).every(c=>!c.error||/YAHAN/.test(c.id));
     const fresh=age<=7;
-    $('#pill').textContent=d.live_state==='live'?'● Cloudflare Live · '+age+' min':!channelOk?'⚠ Channel ID/API check':fresh?'● Cached data · '+age+' min':'⚠ Data delayed · '+(Number.isFinite(age)?age+' min':'unknown');
-    $('#pill').classList.toggle('bad',!fresh||!channelOk);
-    $('#sysS').textContent=(d.live_state==='live'?'Cloudflare Live: ':'Dashboard sync: ')+at(stamp);render(d)}catch(e){$('#pill').textContent='⚠ Sync Dashboard chalao';$('#pill').classList.add('bad')}finally{if(btn){btn.disabled=false;btn.textContent='↻ Refresh'}}}
+    const pill=$('#pill');
+    if(pill){
+      pill.textContent=d.live_state==='live'?'● Cloudflare Live · '+age+' min':!channelOk?'⚠ Channel ID/API check':fresh?'● Cached data · '+age+' min':'⚠ Data delayed · '+(Number.isFinite(age)?age+' min':'unknown');
+      pill.classList.toggle('bad',!fresh||!channelOk);
+    }
+    const sys=$('#sysS');if(sys)sys.textContent=(d.live_state==='live'?'Cloudflare Live: ':'Dashboard sync: ')+at(stamp);
+    render(d)}catch(e){$('#pill').textContent='⚠ Sync Dashboard chalao';$('#pill').classList.add('bad')}finally{if(btn){btn.disabled=false;btn.textContent='↻ Refresh'}}}
   window.refreshDashboard=()=>go(true);go();setInterval(()=>{if(!document.hidden)go(false)},15000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)go(true)})}
