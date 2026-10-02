@@ -13,13 +13,13 @@ function stats(d,from,to){const o={ok:0,bad:0,vid:0,min:0,cost:0};
     if(okRun(r)){o.ok++;o.cost+=+b.cost||0;if(b.kind==='video'&&r.d>=120)o.vid++}
     if(r.s==='failure')o.bad++;o.min+=Math.ceil(r.d/60)}));return o}
 const NAV=[
-  ['index.html','🏠','Dashboard'],
-  ['control.html','⚡','Actions Control'],
-  ['youtube.html','▶️','YouTube Studio'],
-  ['sites.html','📰','Website & Articles'],
-  ['trending.html','🔥','Trending Topics'],
-  ['reports.html','💰','Kharcha & Report'],
-  ['logs.html','💻','Logs & Telegram']
+  ['index.html','⌂','Dashboard'],
+  ['youtube.html','▶','YouTube Channels'],
+  ['sites.html','🌐','Websites'],
+  ['control.html','⚙','Actions Control'],
+  ['logs.html','📋','Live Logs · Telegram'],
+  ['trending.html','🔥','Trending'],
+  ['reports.html','💰','Reports']
 ];
 const RAW='https://raw.githubusercontent.com/bgsarkariresult/BG-Automation/main/data/dashboard.json';
 const LIVE='https://bg-automation-live.garhwalbhavesh2002.workers.dev/api/status';
