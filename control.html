@@ -257,7 +257,7 @@ async function runBot(i) {
     if (data.ok) {
       hn.innerHTML = '✅ <b>Start ho gaya!</b> Status 30–60 sec baad refresh hoga.';
     } else if (data.status === 401 || data.status === 403) {
-      hn.textContent = '❌ Worker / PAT permission error (GH_TOKEN ya PIN check karo)';
+      hn.textContent = '❌ GitHub/Worker error (' + data.status + '): ' + (data.error || data.message || 'Permission denied').toString().slice(0, 220);
     } else if (data.status === 404) {
       hn.textContent = '❌ Workflow ya repo nahi mila: ' + b.workflow;
     } else if (data.status === 422) {
