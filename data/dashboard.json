@@ -1,6 +1,6 @@
 {
-  "updated": "2026-10-03T20:11:27Z",
-  "checked_at": "2026-10-03T20:11:27Z",
+  "updated": "2026-10-03T23:06:12Z",
+  "checked_at": "2026-10-03T23:06:12Z",
   "refresh_interval_seconds": 300,
   "source": "GitHub Actions API",
   "channels": [
@@ -21,19 +21,19 @@
           "title": "🔥 सिर्फ ₹5,026 में 120W की तबाही! Bencley FRIDOBLE Double Tower - खरीदने से पहले सच जान लो!",
           "id": "g-OyngDGJV0",
           "date": "2026-10-02",
-          "views": "3"
+          "views": "4"
         },
         {
           "title": "🔥 ultiads TJ Review: मत खरीदो जब तक ये कड़वा सच ना जान लो!",
           "id": "kw7k6kLJzxM",
           "date": "2026-10-01",
-          "views": "9"
+          "views": "10"
         },
         {
           "title": "🔥 सिर्फ ₹2,699 में 12GB RAM? OPPO Reno16c 5G खरीदने से पहले ये सच जान लो!",
           "id": "OkEhZvu0QG8",
           "date": "2026-09-30",
-          "views": "3"
+          "views": "5"
         },
         {
           "title": "🔥 TCL T6D 43-inch QLED TV Review: ₹24,990 खर्च करने से पहले इस कड़वे सच को जान लो!",
@@ -76,6 +76,20 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 37157485366,
+          "number": 92,
+          "s": "success",
+          "t": "2026-10-03T22:09:50Z",
+          "started": "2026-10-03T22:09:38Z",
+          "created": "2026-10-03T22:09:38Z",
+          "d": 12,
+          "e": "schedule",
+          "n": "SG News18 - Auto Video Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37157485366"
+        },
         {
           "id": 37147122085,
           "number": 91,
@@ -1351,16 +1365,16 @@
           "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/36087191371"
         }
       ],
-      "time": "2026-10-03T19:13:46Z",
-      "url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37147122085",
-      "last_run_id": 37147122085,
-      "run_number": 91,
+      "time": "2026-10-03T22:09:50Z",
+      "url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37157485366",
+      "last_run_id": 37157485366,
+      "run_number": 92,
       "branch": "main",
       "event": "schedule",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37147122085",
+      "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37157485366",
       "cron": "*/5 * * * *",
-      "next": "2026-10-03T20:15:00Z"
+      "next": "2026-10-03T23:10:00Z"
     },
     {
       "name": "TechGlow India",
@@ -1372,6 +1386,20 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 37157488540,
+          "number": 59,
+          "s": "success",
+          "t": "2026-10-03T22:09:53Z",
+          "started": "2026-10-03T22:09:42Z",
+          "created": "2026-10-03T22:09:42Z",
+          "d": 11,
+          "e": "schedule",
+          "n": "TechGlow India - Tech Review Auto Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37157488540"
+        },
         {
           "id": 37147125213,
           "number": 58,
@@ -2185,16 +2213,16 @@
           "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/36110177851"
         }
       ],
-      "time": "2026-10-03T19:13:50Z",
-      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37147125213",
-      "last_run_id": 37147125213,
-      "run_number": 58,
+      "time": "2026-10-03T22:09:53Z",
+      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37157488540",
+      "last_run_id": 37157488540,
+      "run_number": 59,
       "branch": "main",
       "event": "schedule",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37147125213",
+      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37157488540",
       "cron": "*/5 * * * *",
-      "next": "2026-10-03T20:15:00Z"
+      "next": "2026-10-03T23:10:00Z"
     },
     {
       "name": "BK GrowUp",
@@ -5683,6 +5711,20 @@
       "status": "success",
       "runs": [
         {
+          "id": 37157262222,
+          "number": 65,
+          "s": "success",
+          "t": "2026-10-03T22:06:07Z",
+          "started": "2026-10-03T22:05:43Z",
+          "created": "2026-10-03T22:05:43Z",
+          "d": 24,
+          "e": "schedule",
+          "n": "BG Reels Bot - Multi-Platform Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37157262222"
+        },
+        {
           "id": 37146338220,
           "number": 64,
           "s": "success",
@@ -6579,16 +6621,16 @@
           "u": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/36124757581"
         }
       ],
-      "time": "2026-10-03T19:00:59Z",
-      "url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37146338220",
-      "last_run_id": 37146338220,
-      "run_number": 64,
+      "time": "2026-10-03T22:06:07Z",
+      "url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37157262222",
+      "last_run_id": 37157262222,
+      "run_number": 65,
       "branch": "main",
       "event": "schedule",
       "actor": "bgtechlab",
-      "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37146338220",
+      "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37157262222",
       "cron": "*/5 * * * *",
-      "next": "2026-10-03T20:15:00Z"
+      "next": "2026-10-03T23:10:00Z"
     },
     {
       "name": "Job Page Auto Publisher",
