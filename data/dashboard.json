@@ -1,6 +1,6 @@
 {
-  "updated": "2026-10-03T02:22:49Z",
-  "checked_at": "2026-10-03T02:22:49Z",
+  "updated": "2026-10-03T02:30:16Z",
+  "checked_at": "2026-10-03T02:30:16Z",
   "refresh_interval_seconds": 300,
   "source": "GitHub Actions API",
   "channels": [
@@ -14,7 +14,7 @@
       "id": "UCosaFY8El412UGzlyT6LA5Q",
       "icon": "https://yt3.ggpht.com/ytc/AIdro_l6LfiGUOovI1gGphSJuRe0J78AzT4UMRYC_hyCjtiSi8XqkNILzrxpVmBSvC9ns51YqA=s88-c-k-c0x00ffffff-no-rj",
       "subs": "1",
-      "views": "1727",
+      "views": "1778",
       "videos": "55",
       "latest": [
         {
@@ -1192,7 +1192,7 @@
       "actor": "bgsarkariresult",
       "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37087829146",
       "cron": "*/5 * * * *",
-      "next": "2026-10-03T02:25:00Z"
+      "next": "2026-10-03T02:35:00Z"
     },
     {
       "name": "TechGlow India",
@@ -1956,7 +1956,7 @@
       "actor": "bgsarkariresult",
       "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37085664514",
       "cron": "*/5 * * * *",
-      "next": "2026-10-03T02:25:00Z"
+      "next": "2026-10-03T02:35:00Z"
     },
     {
       "name": "BK GrowUp",
@@ -6188,7 +6188,7 @@
       "actor": "bgtechlab",
       "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37085038841",
       "cron": "*/5 * * * *",
-      "next": "2026-10-03T02:25:00Z"
+      "next": "2026-10-03T02:35:00Z"
     },
     {
       "name": "Job Page Auto Publisher",
