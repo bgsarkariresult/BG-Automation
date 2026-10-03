@@ -1,0 +1,106 @@
+name: BG Automation Hub
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_repo:
+        description: "Target repository (owner/repo)"
+        required: true
+        type: string
+      workflow:
+        description: "Workflow file name (for example news-bot.yml)"
+        required: true
+        type: string
+      ref:
+        description: "Target branch"
+        required: false
+        default: "main"
+        type: string
+      news_urls:
+        description: "News URL(s) — only for News Blog Auto Publisher"
+        required: false
+        type: string
+      article_url:
+        description: "Article URL — only for SG News18"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch target workflow
+        env:
+          TARGET_REPO: ${{ inputs.target_repo }}
+          WORKFLOW: ${{ inputs.workflow }}
+          REF: ${{ inputs.ref }}
+          NEWS_URLS: ${{ inputs.news_urls }}
+          ARTICLE_URL: ${{ inputs.article_url }}
+          GH_PAT_BGSARKARI: ${{ secrets.GH_PAT_BGSARKARI }}
+          GH_PAT_BGTECHLAB: ${{ secrets.GH_PAT_BGTECHLAB }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          OWNER="${TARGET_REPO%%/*}"
+
+          if [[ "$OWNER" == "bgsarkariresult" ]]; then
+            TOKEN="${GH_PAT_BGSARKARI:-}"
+          elif [[ "$OWNER" == "bgtechlab" ]]; then
+            TOKEN="${GH_PAT_BGTECHLAB:-}"
+          else
+            echo "❌ Unsupported repository owner: $OWNER"
+            exit 1
+          fi
+
+          if [[ -z "$TOKEN" ]]; then
+            echo "❌ Required GitHub secret is missing for owner: $OWNER"
+            exit 1
+          fi
+
+          declare -A INPUTS
+          if [[ -n "$NEWS_URLS" ]]; then
+            INPUTS[news_urls]="$NEWS_URLS"
+          fi
+          if [[ -n "$ARTICLE_URL" ]]; then
+            INPUTS[article_url]="$ARTICLE_URL"
+          fi
+
+          BODY="{\"ref\":\"$REF\""
+          for key in "${!INPUTS[@]}"; do
+            value="${INPUTS[$key]}"
+            escaped=$(python -c 'import json,sys; print(json.dumps(sys.argv[1]))' "$value")
+            BODY+=",\"inputs\":{\"$key\":$escaped}"
+            break
+          done
+
+          if [[ -n "$NEWS_URLS" && -n "$ARTICLE_URL" ]]; then
+            BODY="{\"ref\":\"$REF\",\"inputs\":{\"news_urls\":$(python -c 'import json,sys; print(json.dumps(sys.argv[1]))' "$NEWS_URLS"),\"article_url\":$(python -c 'import json,sys; print(json.dumps(sys.argv[1]))' "$ARTICLE_URL")}}"
+          elif [[ -n "$NEWS_URLS" ]]; then
+            BODY="{\"ref\":\"$REF\",\"inputs\":{\"news_urls\":$(python -c 'import json,sys; print(json.dumps(sys.argv[1]))' "$NEWS_URLS")}}"
+          elif [[ -n "$ARTICLE_URL" ]]; then
+            BODY="{\"ref\":\"$REF\",\"inputs\":{\"article_url\":$(python -c 'import json,sys; print(json.dumps(sys.argv[1]))' "$ARTICLE_URL")}}"
+          else
+            BODY="{\"ref\":\"$REF\"}"
+          fi
+
+          API="https://api.github.com/repos/$TARGET_REPO/actions/workflows/$WORKFLOW/dispatches"
+
+          HTTP_CODE=$(curl -sS -o response.json -w "%{http_code}" \
+            -X POST "$API" \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -H "Content-Type: application/json" \
+            -d "$BODY")
+
+          if [[ "$HTTP_CODE" != "204" ]]; then
+            echo "❌ GitHub dispatch failed (HTTP $HTTP_CODE)"
+            cat response.json
+            exit 1
+          fi
+
+          echo "✅ Workflow dispatched successfully: $TARGET_REPO / $WORKFLOW"
