@@ -24,16 +24,34 @@
 const WORKER_URL = 'https://bg-runf.garhwalbhavesh2002.workers.dev/';
 
 /* Har bot ke workflow input ka naam */
+const WORKFLOW_MAP = {
+  'bgsarkariresult/SG-News18': 'news-bot.yml',
+  'bgsarkariresult/TechGlow-India': 'news_automation.yml',
+  'bgsarkariresult/Bk-growup-': 'run-job-bot.yml',
+  'bgtechlab/BG-Reels-Bot': 'reels-bot.yml',
+  'bgtechlab/Trending-Topic-Finder': 'daily-auto-run.yml',
+  'bgtechlab/History-Facts': 'history-facts-bot.yml',
+  'bgtechlab/Job-Page-Auto-Publisher': 'job-page-publisher.yml',
+  'bgtechlab/amazon_to_blogger': 'amazon_to_blogger.yml',
+  'bgtechlab/News-Blog-Auto-Publisher': 'news-blog-publisher.yml'
+};
+
+/* Workflow ke required input ka naam. PAT kabhi browser mein nahi aata. */
 const INPUT_MAP = {
   'bgsarkariresult/SG-News18': 'article_url',
   'bgsarkariresult/TechGlow-India': 'article_url',
   'bgsarkariresult/Bk-growup-': 'post_url',
   'bgtechlab/BG-Reels-Bot': 'product_url',
   'bgtechlab/Trending-Topic-Finder': null,
+  'bgtechlab/History-Facts': null,
   'bgtechlab/Job-Page-Auto-Publisher': 'job_url',
   'bgtechlab/amazon_to_blogger': 'urls',
   'bgtechlab/News-Blog-Auto-Publisher': 'news_urls'
 };
+
+function workflowFor(b) {
+  return b.workflow || WORKFLOW_MAP[b.repo] || '';
+}
 
 boot('control.html', 'GitHub Actions Control Center', d => {
   const run = d.bots.filter(b => ['in_progress', 'queued'].includes(b.status));
@@ -91,7 +109,8 @@ boot('control.html', 'GitHub Actions Control Center', d => {
               'bgtechlab/Job-Page-Auto-Publisher':'job-page-publisher.yml',
               'bgtechlab/amazon_to_blogger':'amazon_to_blogger.yml',
               'bgtechlab/News-Blog-Auto-Publisher':'news-blog-publisher.yml',
-              'bgtechlab/Trending-Topic-Finder':'daily-auto-run.yml'
+              'bgtechlab/Trending-Topic-Finder':'daily-auto-run.yml',
+              'bgtechlab/History-Facts':'history-facts-bot.yml'
             };
             bot={name:w.name,repo:w.repo,workflow:workflows[w.repo],site:w.url,tag:w.tag,status:'unknown',runs:[]};
             d.bots.push(bot);
@@ -119,6 +138,8 @@ boot('control.html', 'GitHub Actions Control Center', d => {
 
 function renderProjectCard(b) {
   const i=window.D.bots.indexOf(b);
+  const wf=workflowFor(b);
+  if (!b.workflow && wf) b.workflow=wf;
   return `<div class="site">
     <div class="row"><div><b>${esc(b.name)}</b><br><small>${b.runs.filter(okRun).length} safal • ${b.runs.filter(r => r.s === 'failure').length} fail (pichhle ${b.runs.length} run)</small></div>${chip(b.status)}</div>
     <input class="lk" id="lk${i}" placeholder="Link dalo (article / product URL) — optional">
@@ -229,46 +250,66 @@ async function runSync() {
 /* Bot run via Worker */
 async function runBot(i) {
   const b = window.D.bots[i];
-  const link = (document.getElementById('lk' + i).value || '').trim();
+  const linkEl = document.getElementById('lk' + i);
+  const link = (linkEl?.value || '').trim();
   const hn = document.getElementById('hn' + i);
   const btn = document.getElementById('btn' + i);
+  const workflow = workflowFor(b);
 
-  if (!b.workflow) {
-    hn.textContent = '❌ Is project ke paas workflow file nahi hai';
+  if (!workflow) {
+    hn.textContent = '❌ Is project ka workflow configured nahi hai.';
     return;
   }
 
   const inputName = INPUT_MAP[b.repo] || null;
-  const payload = {
-    repo: b.repo,
-    workflow: b.workflow,
-    ref: 'main'
-  };
+  const payload = { repo: b.repo, workflow, ref: 'main' };
+
   if (inputName && link) {
     payload.inputs = { [inputName]: link };
   }
 
   btn.disabled = true;
-  hn.textContent = '⏳ Workflow start ho raha hai...';
+  const oldText = btn.textContent;
+  btn.textContent = '⏳ Starting…';
+  hn.textContent = '⏳ Cloudflare Worker → GitHub Actions…';
 
   try {
+    /* Browser se GitHub/PAT ko direct call nahi kiya ja raha.
+       Sirf Worker ko request ja rahi hai; Worker GH_TOKEN/GH_TOKENOK use karta hai. */
     const data = await callWorker(payload);
 
     if (data.ok) {
-      hn.innerHTML = '✅ <b>Start ho gaya!</b> Status 30–60 sec baad refresh hoga.';
-    } else if (data.status === 401 || data.status === 403) {
-      hn.textContent = '❌ GitHub/Worker error (' + data.status + '): ' + (data.error || data.message || 'Permission denied').toString().slice(0, 220);
+      btn.textContent = '✅ Started';
+      hn.innerHTML = '✅ <b>GitHub Actions शुरू हो गया!</b> Worker + Master PAT से run भेजा गया।';
+
+      /* Live API ko turant aur phir kuch seconds baad refresh karo. */
+      if (typeof window.refreshDashboard === 'function') {
+        setTimeout(() => window.refreshDashboard(), 1500);
+        setTimeout(() => window.refreshDashboard(), 5000);
+      }
+      setTimeout(() => { btn.textContent = oldText; btn.disabled = false; }, 2500);
+      return;
+    }
+
+    if (data.status === 401 || data.status === 403) {
+      hn.textContent = '❌ Worker/GitHub permission error (' + data.status + '): ' +
+        (data.error || data.message || 'Permission denied').toString().slice(0, 260);
     } else if (data.status === 404) {
-      hn.textContent = '❌ Workflow ya repo nahi mila: ' + b.workflow;
+      hn.textContent = '❌ Repo/workflow नहीं मिला: ' + b.repo + ' / ' + workflow;
     } else if (data.status === 422) {
-      hn.textContent = '❌ Input missing / galat (422). Link daalo agar required hai. ' + (data.error || '').slice(0, 80);
+      hn.textContent = '❌ GitHub ने request reject की (422). ' +
+        (data.error || 'Required input या workflow configuration check करें.').toString().slice(0, 180);
     } else {
-      hn.textContent = '❌ Error ' + (data.status || '') + ': ' + (data.error || 'unknown').toString().slice(0, 120);
+      hn.textContent = '❌ Worker error ' + (data.status || '') + ': ' +
+        (data.error || data.message || 'unknown').toString().slice(0, 180);
     }
   } catch (e) {
-    hn.textContent = '❌ Network error: ' + e.message + ' (sirf bgsarkariresult.github.io se chalega)';
+    hn.textContent = '❌ Worker network error: ' + e.message;
   } finally {
-    btn.disabled = false;
+    if (btn.disabled) {
+      btn.disabled = false;
+      btn.textContent = oldText;
+    }
   }
 }
 
@@ -276,7 +317,8 @@ async function runBot(i) {
 async function rerunBot(i) {
   const b = window.D.bots[i];
   const msg = document.getElementById('rerunMsg');
-  if (!b.workflow) {
+  const workflow = workflowFor(b);
+  if (!workflow) {
     if (msg) msg.textContent = '❌ Workflow nahi mila';
     return;
   }
@@ -285,7 +327,7 @@ async function rerunBot(i) {
   try {
     const data = await callWorker({
       repo: b.repo,
-      workflow: b.workflow,
+      workflow,
       ref: 'main'
     });
     if (data.ok) {
