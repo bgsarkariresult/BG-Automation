@@ -33,7 +33,7 @@ function boot(key,title,render){
     // Prefer the Cloudflare live Actions API for run status; retain dashboard.json for channels/sites.
     let liveState='fallback';
     try{
-      const lr=await fetch(LIVE+'?t='+Date.now(),{cache:'no-store'});
+      const lr=await fetch(LIVE+'?refresh=1&t='+Date.now(),{cache:'no-store'});
       if(lr.ok){
         const live=await lr.json();
         if(live&&live.ok&&Array.isArray(live.bots)&&live.bots.length){
