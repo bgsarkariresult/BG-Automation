@@ -32,7 +32,7 @@ jobs:
   dispatch:
     runs-on: ubuntu-latest
     steps:
-      - name: Dispatch target workflow
+      - name: Validate and dispatch target workflow
         env:
           TARGET_REPO: ${{ inputs.target_repo }}
           WORKFLOW: ${{ inputs.workflow }}
@@ -45,57 +45,74 @@ jobs:
         run: |
           set -euo pipefail
 
+          echo "🔎 Target repo: $TARGET_REPO"
+          echo "🔎 Workflow: $WORKFLOW"
+          echo "🔎 Ref: $REF"
+
+          if [[ "$TARGET_REPO" != */* ]]; then
+            echo "❌ Target repository must be in owner/repo format."
+            exit 1
+          fi
+
           OWNER="${TARGET_REPO%%/*}"
 
-          if [[ "$OWNER" == "bgsarkariresult" ]]; then
-            TOKEN="${GH_PAT_BGSARKARI:-}"
-          elif [[ "$OWNER" == "bgtechlab" ]]; then
-            TOKEN="${GH_PAT_BGTECHLAB:-}"
-          else
-            echo "❌ Unsupported repository owner: $OWNER"
-            exit 1
-          fi
+          case "$OWNER" in
+            bgsarkariresult)
+              TOKEN="${GH_PAT_BGSARKARI:-}"
+              ;;
+            bgtechlab)
+              TOKEN="${GH_PAT_BGTECHLAB:-}"
+              ;;
+            *)
+              echo "❌ Unsupported repository owner: $OWNER"
+              exit 1
+              ;;
+          esac
 
           if [[ -z "$TOKEN" ]]; then
-            echo "❌ Required GitHub secret is missing for owner: $OWNER"
+            echo "❌ GitHub PAT secret is missing for owner: $OWNER"
             exit 1
           fi
 
-          declare -A INPUTS
-          if [[ -n "$NEWS_URLS" ]]; then
-            INPUTS[news_urls]="$NEWS_URLS"
-          fi
-          if [[ -n "$ARTICLE_URL" ]]; then
-            INPUTS[article_url]="$ARTICLE_URL"
-          fi
+          WORKFLOW_API="https://api.github.com/repos/$TARGET_REPO/actions/workflows/$WORKFLOW"
+          DISPATCH_API="$WORKFLOW_API/dispatches"
 
-          BODY="{\"ref\":\"$REF\""
-          for key in "${!INPUTS[@]}"; do
-            value="${INPUTS[$key]}"
-            escaped=$(python -c 'import json,sys; print(json.dumps(sys.argv[1]))' "$value")
-            BODY+=",\"inputs\":{\"$key\":$escaped}"
-            break
-          done
+          echo "📡 Checking target workflow..."
 
-          if [[ -n "$NEWS_URLS" && -n "$ARTICLE_URL" ]]; then
-            BODY="{\"ref\":\"$REF\",\"inputs\":{\"news_urls\":$(python -c 'import json,sys; print(json.dumps(sys.argv[1]))' "$NEWS_URLS"),\"article_url\":$(python -c 'import json,sys; print(json.dumps(sys.argv[1]))' "$ARTICLE_URL")}}"
-          elif [[ -n "$NEWS_URLS" ]]; then
-            BODY="{\"ref\":\"$REF\",\"inputs\":{\"news_urls\":$(python -c 'import json,sys; print(json.dumps(sys.argv[1]))' "$NEWS_URLS")}}"
-          elif [[ -n "$ARTICLE_URL" ]]; then
-            BODY="{\"ref\":\"$REF\",\"inputs\":{\"article_url\":$(python -c 'import json,sys; print(json.dumps(sys.argv[1]))' "$ARTICLE_URL")}}"
-          else
-            BODY="{\"ref\":\"$REF\"}"
+          CHECK_CODE=$(curl -sS -o workflow-check.json -w "%{http_code}"             -H "Accept: application/vnd.github+json"             -H "Authorization: Bearer $TOKEN"             -H "X-GitHub-Api-Version: 2022-11-28"             "$WORKFLOW_API")
+
+          if [[ "$CHECK_CODE" != "200" ]]; then
+            echo "❌ Workflow verification failed (HTTP $CHECK_CODE)"
+            cat workflow-check.json
+            exit 1
           fi
 
-          API="https://api.github.com/repos/$TARGET_REPO/actions/workflows/$WORKFLOW/dispatches"
+          echo "✅ Target workflow found."
 
-          HTTP_CODE=$(curl -sS -o response.json -w "%{http_code}" \
-            -X POST "$API" \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer $TOKEN" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            -H "Content-Type: application/json" \
-            -d "$BODY")
+          python - <<'PY' > payload.json
+          import json, os
+
+          payload = {"ref": os.environ["REF"]}
+          inputs = {}
+
+          news_urls = os.environ.get("NEWS_URLS", "").strip()
+          article_url = os.environ.get("ARTICLE_URL", "").strip()
+
+          if news_urls:
+              inputs["news_urls"] = news_urls
+          if article_url:
+              inputs["article_url"] = article_url
+
+          if inputs:
+              payload["inputs"] = inputs
+
+          print(json.dumps(payload))
+          PY
+
+          echo "📦 Dispatch payload:"
+          cat payload.json
+
+          HTTP_CODE=$(curl -sS -o response.json -w "%{http_code}"             -X POST "$DISPATCH_API"             -H "Accept: application/vnd.github+json"             -H "Authorization: Bearer $TOKEN"             -H "X-GitHub-Api-Version: 2022-11-28"             -H "Content-Type: application/json"             --data-binary @payload.json)
 
           if [[ "$HTTP_CODE" != "204" ]]; then
             echo "❌ GitHub dispatch failed (HTTP $HTTP_CODE)"
@@ -103,4 +120,7 @@ jobs:
             exit 1
           fi
 
-          echo "✅ Workflow dispatched successfully: $TARGET_REPO / $WORKFLOW"
+          echo "✅ Workflow dispatched successfully!"
+          echo "📦 Repository: $TARGET_REPO"
+          echo "⚙️ Workflow: $WORKFLOW"
+          echo "🌿 Ref: $REF"
