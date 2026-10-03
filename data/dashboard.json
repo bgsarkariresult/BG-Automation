@@ -1,6 +1,6 @@
 {
-  "updated": "2026-10-03T13:37:13Z",
-  "checked_at": "2026-10-03T13:37:13Z",
+  "updated": "2026-10-03T17:36:34Z",
+  "checked_at": "2026-10-03T17:36:34Z",
   "refresh_interval_seconds": 300,
   "source": "GitHub Actions API",
   "channels": [
@@ -14,7 +14,7 @@
       "id": "UCosaFY8El412UGzlyT6LA5Q",
       "icon": "https://yt3.ggpht.com/ytc/AIdro_l6LfiGUOovI1gGphSJuRe0J78AzT4UMRYC_hyCjtiSi8XqkNILzrxpVmBSvC9ns51YqA=s88-c-k-c0x00ffffff-no-rj",
       "subs": "1",
-      "views": "1778",
+      "views": "1794",
       "videos": "55",
       "latest": [
         {
@@ -39,7 +39,7 @@
           "title": "🔥 TCL T6D 43-inch QLED TV Review: ₹24,990 खर्च करने से पहले इस कड़वे सच को जान लो!",
           "id": "Uskw1kDAKZA",
           "date": "2026-09-29",
-          "views": "12"
+          "views": "13"
         },
         {
           "title": "🔥 Apple iPhone 17 (512 GB Storag Review 2026: खरीदने से पहले ये वीडियो ज़रूर देखो!",
@@ -76,6 +76,20 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 37135826295,
+          "number": 90,
+          "s": "success",
+          "t": "2026-10-03T16:10:00Z",
+          "started": "2026-10-03T16:09:46Z",
+          "created": "2026-10-03T16:09:46Z",
+          "d": 14,
+          "e": "schedule",
+          "n": "SG News18 - Auto Video Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37135826295"
+        },
         {
           "id": 37126379234,
           "number": 89,
@@ -1323,16 +1337,16 @@
           "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/36087191371"
         }
       ],
-      "time": "2026-10-03T13:36:16Z",
-      "url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37126379234",
-      "last_run_id": 37126379234,
-      "run_number": 89,
+      "time": "2026-10-03T16:10:00Z",
+      "url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37135826295",
+      "last_run_id": 37135826295,
+      "run_number": 90,
       "branch": "main",
-      "event": "workflow_dispatch",
+      "event": "schedule",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37126379234",
+      "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37135826295",
       "cron": "*/5 * * * *",
-      "next": "2026-10-03T13:40:00Z"
+      "next": "2026-10-03T17:40:00Z"
     },
     {
       "name": "TechGlow India",
@@ -1344,6 +1358,20 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 37135852622,
+          "number": 57,
+          "s": "success",
+          "t": "2026-10-03T16:10:19Z",
+          "started": "2026-10-03T16:10:09Z",
+          "created": "2026-10-03T16:10:09Z",
+          "d": 10,
+          "e": "schedule",
+          "n": "TechGlow India - Tech Review Auto Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37135852622"
+        },
         {
           "id": 37121555834,
           "number": 56,
@@ -2129,16 +2157,16 @@
           "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/36110177851"
         }
       ],
-      "time": "2026-10-03T12:02:08Z",
-      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37121555834",
-      "last_run_id": 37121555834,
-      "run_number": 56,
+      "time": "2026-10-03T16:10:19Z",
+      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37135852622",
+      "last_run_id": 37135852622,
+      "run_number": 57,
       "branch": "main",
       "event": "schedule",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37121555834",
+      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37135852622",
       "cron": "*/5 * * * *",
-      "next": "2026-10-03T13:40:00Z"
+      "next": "2026-10-03T17:40:00Z"
     },
     {
       "name": "BK GrowUp",
@@ -5627,6 +5655,20 @@
       "status": "success",
       "runs": [
         {
+          "id": 37134988248,
+          "number": 63,
+          "s": "success",
+          "t": "2026-10-03T15:56:16Z",
+          "started": "2026-10-03T15:55:56Z",
+          "created": "2026-10-03T15:55:56Z",
+          "d": 20,
+          "e": "schedule",
+          "n": "BG Reels Bot - Multi-Platform Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37134988248"
+        },
+        {
           "id": 37121294126,
           "number": 62,
           "s": "success",
@@ -6495,16 +6537,16 @@
           "u": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/36124757581"
         }
       ],
-      "time": "2026-10-03T11:57:39Z",
-      "url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37121294126",
-      "last_run_id": 37121294126,
-      "run_number": 62,
+      "time": "2026-10-03T15:56:16Z",
+      "url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37134988248",
+      "last_run_id": 37134988248,
+      "run_number": 63,
       "branch": "main",
       "event": "schedule",
       "actor": "bgtechlab",
-      "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37121294126",
+      "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37134988248",
       "cron": "*/5 * * * *",
-      "next": "2026-10-03T13:40:00Z"
+      "next": "2026-10-03T17:40:00Z"
     },
     {
       "name": "Job Page Auto Publisher",
@@ -6881,6 +6923,20 @@
       "status": "success",
       "runs": [
         {
+          "id": 37129413227,
+          "number": 24,
+          "s": "success",
+          "t": "2026-10-03T14:24:43Z",
+          "started": "2026-10-03T14:23:20Z",
+          "created": "2026-10-03T14:23:20Z",
+          "d": 83,
+          "e": "workflow_dispatch",
+          "n": "News Blog Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/37129413227"
+        },
+        {
           "id": 37125980753,
           "number": 23,
           "s": "success",
@@ -7203,14 +7259,14 @@
           "u": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/36950055921"
         }
       ],
-      "time": "2026-10-03T13:23:44Z",
-      "url": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/37125980753",
-      "last_run_id": 37125980753,
-      "run_number": 23,
+      "time": "2026-10-03T14:24:43Z",
+      "url": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/37129413227",
+      "last_run_id": 37129413227,
+      "run_number": 24,
       "branch": "main",
       "event": "workflow_dispatch",
       "actor": "bgtechlab",
-      "html_url": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/37125980753",
+      "html_url": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/37129413227",
       "failed": {
         "job": "publish",
         "step": "News article banao aur site repo me publish karo",
@@ -7321,6 +7377,11 @@
       "url": "https://bgnewswab.github.io/sgnewswab/index.html",
       "articles": [
         {
+          "t": "भारत बनाम वेस्टइंडीज: केएल राहुल ने किस मामले में धोनी की बराबरी ",
+          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=147",
+          "d": "2026-10-03"
+        },
+        {
           "t": "IND vs PAK: भारत ने पाकिस्तान को हराकर जीता एशियन गेम्स गोल्ड",
           "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=146",
           "d": "2026-10-03"
@@ -7364,15 +7425,10 @@
           "t": "ICC के नए टेस्ट नियम: दिन में पिंक बॉल से घटेगा ओवरों का नुकसान",
           "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=136",
           "d": "2026-10-02"
-        },
-        {
-          "t": "IND W vs JPN W: 5 ओवरों का कमाल, टीम इंडिया रिकॉर्ड से मालामाल; ह",
-          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=99",
-          "d": ""
         }
       ],
       "days": {
-        "2026-10-03": 6,
+        "2026-10-03": 7,
         "2026-10-02": 3
       },
       "total": 100
