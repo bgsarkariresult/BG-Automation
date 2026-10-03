@@ -26,15 +26,10 @@ export default {
     return new Response(JSON.stringify({ok:false,error:"Not found"}),{status:404,headers:{...ch,"Content-Type":"application/json"}});
   if(origin && origin!==allowed) return new Response("Forbidden",{status:403,headers:ch});
   if(!env.GH_TOKEN) return new Response(JSON.stringify({ok:false,error:"GH_TOKEN secret is not configured"}),{status:503,headers:{...ch,"Content-Type":"application/json"}});
-  const forceRefresh = url.searchParams.get("refresh")==="1" || url.searchParams.get("live")==="1";
-  const cache = caches.default;
-  const cacheUrl = new URL("/api/status", url.origin);
-  cacheUrl.searchParams.set("v", forceRefresh ? String(Date.now()) : "stable");
-  const cacheKey = new Request(cacheUrl.toString(), {method:"GET"});
-  if(!forceRefresh){
-    const cached=await cache.match(cacheKey);
-    if(cached) return new Response(cached.body,{status:cached.status,headers:{...Object.fromEntries(cached.headers),...ch,"X-Live-Cache":"HIT"}});
-  }
+  const cache= caches.default;
+  const cacheKey=new Request(new URL("/api/status",url.origin).toString(),{method:"GET"});
+  const cached=await cache.match(cacheKey);
+  if(cached) return new Response(cached.body,{status:cached.status,headers:{...Object.fromEntries(cached.headers),...ch,"X-Live-Cache":"HIT"}});
   try {
    const h={...headers,"Authorization":"Bearer "+env.GH_TOKEN};
    const cfgRes=await fetch(CONFIG_URL,{headers:{"Accept":"application/vnd.github+json"}});
@@ -65,7 +60,7 @@ export default {
     return row;
    }));
    const body=JSON.stringify({ok:true,source:"GitHub Actions REST API",updated:new Date().toISOString(),bots});
-   const response=new Response(body,{headers:{...ch,"Content-Type":"application/json; charset=utf-8","Cache-Control":forceRefresh ? "no-store" : "public, max-age=15","X-Live-Cache":"MISS"}});
+   const response=new Response(body,{headers:{...ch,"Content-Type":"application/json; charset=utf-8","Cache-Control":"public, max-age=15","X-Live-Cache":"MISS"}});
    ctx.waitUntil(cache.put(cacheKey,response.clone()));
    return response;
   } catch(e) {
