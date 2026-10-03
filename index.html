@@ -77,7 +77,7 @@ async function loadData() {
     if (r && r.ok) d = await r.json();
   } catch (e) { console.warn('dashboard.json:', e); }
   try {
-    const lr = await fetch(LIVE + '?refresh=1&t=' + Date.now(), { cache: 'no-store' });
+    const lr = await fetch(LIVE + '?t=' + Date.now(), { cache: 'no-store' });
     if (lr.ok) {
       const live = await lr.json();
       if (live && live.ok && Array.isArray(live.bots) && live.bots.length) {
