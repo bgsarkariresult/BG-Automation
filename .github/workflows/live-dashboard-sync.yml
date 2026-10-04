@@ -1,0 +1,48 @@
+name: Live Dashboard Sync
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bg-dashboard-sync
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Sync live dashboard data
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python scripts/live_dashboard_sync.py
+
+      - name: Commit dashboard data
+        run: |
+          git config user.name "BG Automation Bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- data/dashboard.json; then
+            echo "No dashboard changes."
+            exit 0
+          fi
+          git add data/dashboard.json
+          git commit -m "live dashboard sync"
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            echo "Push conflict; retrying..."
+            sleep 3
+          done
+          echo "Could not push dashboard update after retries."
+          exit 1
