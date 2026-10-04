@@ -1,6 +1,6 @@
 {
-  "updated": "2026-10-03T23:06:12Z",
-  "checked_at": "2026-10-03T23:06:12Z",
+  "updated": "2026-10-04T02:33:53Z",
+  "checked_at": "2026-10-04T02:33:53Z",
   "refresh_interval_seconds": 300,
   "source": "GitHub Actions API",
   "channels": [
@@ -14,7 +14,7 @@
       "id": "UCosaFY8El412UGzlyT6LA5Q",
       "icon": "https://yt3.ggpht.com/ytc/AIdro_l6LfiGUOovI1gGphSJuRe0J78AzT4UMRYC_hyCjtiSi8XqkNILzrxpVmBSvC9ns51YqA=s88-c-k-c0x00ffffff-no-rj",
       "subs": "1",
-      "views": "1794",
+      "views": "1820",
       "videos": "55",
       "latest": [
         {
@@ -76,6 +76,48 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 37171035501,
+          "number": 95,
+          "s": "success",
+          "t": "2026-10-04T02:32:37Z",
+          "started": "2026-10-04T02:25:59Z",
+          "created": "2026-10-04T02:25:59Z",
+          "d": 398,
+          "e": "workflow_dispatch",
+          "n": "SG News18 - Auto Video Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37171035501"
+        },
+        {
+          "id": 37170569064,
+          "number": 94,
+          "s": "success",
+          "t": "2026-10-04T02:25:11Z",
+          "started": "2026-10-04T02:16:51Z",
+          "created": "2026-10-04T02:16:51Z",
+          "d": 500,
+          "e": "workflow_dispatch",
+          "n": "SG News18 - Auto Video Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37170569064"
+        },
+        {
+          "id": 37165490539,
+          "number": 93,
+          "s": "success",
+          "t": "2026-10-04T00:37:14Z",
+          "started": "2026-10-04T00:37:01Z",
+          "created": "2026-10-04T00:37:01Z",
+          "d": 13,
+          "e": "schedule",
+          "n": "SG News18 - Auto Video Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37165490539"
+        },
         {
           "id": 37157485366,
           "number": 92,
@@ -1365,16 +1407,16 @@
           "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/36087191371"
         }
       ],
-      "time": "2026-10-03T22:09:50Z",
-      "url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37157485366",
-      "last_run_id": 37157485366,
-      "run_number": 92,
+      "time": "2026-10-04T02:32:37Z",
+      "url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37171035501",
+      "last_run_id": 37171035501,
+      "run_number": 95,
       "branch": "main",
-      "event": "schedule",
+      "event": "workflow_dispatch",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37157485366",
+      "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37171035501",
       "cron": "*/5 * * * *",
-      "next": "2026-10-03T23:10:00Z"
+      "next": "2026-10-04T02:35:00Z"
     },
     {
       "name": "TechGlow India",
@@ -1386,6 +1428,20 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 37165506535,
+          "number": 60,
+          "s": "success",
+          "t": "2026-10-04T00:37:31Z",
+          "started": "2026-10-04T00:37:20Z",
+          "created": "2026-10-04T00:37:20Z",
+          "d": 11,
+          "e": "schedule",
+          "n": "TechGlow India - Tech Review Auto Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37165506535"
+        },
         {
           "id": 37157488540,
           "number": 59,
@@ -2213,16 +2269,16 @@
           "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/36110177851"
         }
       ],
-      "time": "2026-10-03T22:09:53Z",
-      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37157488540",
-      "last_run_id": 37157488540,
-      "run_number": 59,
+      "time": "2026-10-04T00:37:31Z",
+      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37165506535",
+      "last_run_id": 37165506535,
+      "run_number": 60,
       "branch": "main",
       "event": "schedule",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37157488540",
+      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37165506535",
       "cron": "*/5 * * * *",
-      "next": "2026-10-03T23:10:00Z"
+      "next": "2026-10-04T02:35:00Z"
     },
     {
       "name": "BK GrowUp",
@@ -5698,7 +5754,7 @@
         "run_id": 37098554174
       },
       "cron": "10 0 * * *",
-      "next": "2026-10-04T00:10:00Z"
+      "next": "2026-10-05T00:10:00Z"
     },
     {
       "name": "BG Reels Bot",
@@ -5710,6 +5766,20 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 37165310730,
+          "number": 66,
+          "s": "success",
+          "t": "2026-10-04T00:33:48Z",
+          "started": "2026-10-04T00:33:25Z",
+          "created": "2026-10-04T00:33:25Z",
+          "d": 23,
+          "e": "schedule",
+          "n": "BG Reels Bot - Multi-Platform Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37165310730"
+        },
         {
           "id": 37157262222,
           "number": 65,
@@ -6621,16 +6691,16 @@
           "u": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/36124757581"
         }
       ],
-      "time": "2026-10-03T22:06:07Z",
-      "url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37157262222",
-      "last_run_id": 37157262222,
-      "run_number": 65,
+      "time": "2026-10-04T00:33:48Z",
+      "url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37165310730",
+      "last_run_id": 37165310730,
+      "run_number": 66,
       "branch": "main",
       "event": "schedule",
       "actor": "bgtechlab",
-      "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37157262222",
+      "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37165310730",
       "cron": "*/5 * * * *",
-      "next": "2026-10-03T23:10:00Z"
+      "next": "2026-10-04T02:35:00Z"
     },
     {
       "name": "Job Page Auto Publisher",
@@ -7007,6 +7077,20 @@
       "status": "success",
       "runs": [
         {
+          "id": 37167372666,
+          "number": 25,
+          "s": "success",
+          "t": "2026-10-04T01:14:54Z",
+          "started": "2026-10-04T01:13:52Z",
+          "created": "2026-10-04T01:13:52Z",
+          "d": 62,
+          "e": "workflow_dispatch",
+          "n": "News Blog Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/37167372666"
+        },
+        {
           "id": 37129413227,
           "number": 24,
           "s": "success",
@@ -7343,14 +7427,14 @@
           "u": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/36950055921"
         }
       ],
-      "time": "2026-10-03T14:24:43Z",
-      "url": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/37129413227",
-      "last_run_id": 37129413227,
-      "run_number": 24,
+      "time": "2026-10-04T01:14:54Z",
+      "url": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/37167372666",
+      "last_run_id": 37167372666,
+      "run_number": 25,
       "branch": "main",
       "event": "workflow_dispatch",
       "actor": "bgtechlab",
-      "html_url": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/37129413227",
+      "html_url": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/37167372666",
       "failed": {
         "job": "publish",
         "step": "News article banao aur site repo me publish karo",
@@ -7461,6 +7545,11 @@
       "url": "https://bgnewswab.github.io/sgnewswab/index.html",
       "articles": [
         {
+          "t": "IND vs WI 3rd ODI: वेस्टइंडीज ने भारत को 5 विकेट से हराया",
+          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=148",
+          "d": "2026-10-04"
+        },
+        {
           "t": "भारत बनाम वेस्टइंडीज: केएल राहुल ने किस मामले में धोनी की बराबरी ",
           "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=147",
           "d": "2026-10-03"
@@ -7504,14 +7593,10 @@
           "t": "भारत और पाकिस्‍तान 10 अक्‍टूबर को भिड़गें, यहां देखें टीम इंडिया ",
           "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=137",
           "d": "2026-10-02"
-        },
-        {
-          "t": "ICC के नए टेस्ट नियम: दिन में पिंक बॉल से घटेगा ओवरों का नुकसान",
-          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=136",
-          "d": "2026-10-02"
         }
       ],
       "days": {
+        "2026-10-04": 1,
         "2026-10-03": 7,
         "2026-10-02": 3
       },
