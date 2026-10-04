@@ -1,6 +1,10 @@
 name: Live Dashboard Sync
 
 on:
+  push:
+    paths:
+      - ".github/workflows/live-dashboard-sync.yml"
+      - "scripts/live_dashboard_sync.py"
   schedule:
     - cron: "*/5 * * * *"
   workflow_dispatch:
