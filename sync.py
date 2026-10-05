@@ -17,11 +17,22 @@ P = lambda s: dt.datetime.strptime(s[:19], "%Y-%m-%dT%H:%M:%S")
 
 # --- Telegram messages (notify.py -> repository_dispatch) ---
 mp = "data/messages.json"
-msgs = json.load(open(mp, encoding="utf-8")) if os.path.exists(mp) else []
+try:
+    with open(mp, encoding="utf-8") as f:
+        msgs = json.load(f)
+    if not isinstance(msgs, list):
+        msgs = []
+except (FileNotFoundError, json.JSONDecodeError, TypeError, ValueError):
+    msgs = []
+
 text = os.environ.get("MSG_TEXT", "").strip()
 if text:
     msgs = ([{"t": now, "text": text[:1000]}] + msgs)[:50]
-    json.dump(msgs, open(mp, "w", encoding="utf-8"), ensure_ascii=False)
+
+# Keep Telegram messages in their own persistent file so other dashboard
+# sync jobs cannot accidentally erase them.
+with open(mp, "w", encoding="utf-8") as f:
+    json.dump(msgs[:50], f, ensure_ascii=False, indent=2)
 
 # --- YouTube channels ---
 key = os.environ.get("YT_API_KEY", "")
