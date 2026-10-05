@@ -55,21 +55,14 @@ function checkWorkNotifications(runs) {
   localStorage.setItem('bg_notify_runs', JSON.stringify(next));
   notificationInitialized = true;
 }
-async function enableNotifications() {
-  if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) { alert('इस browser में push notifications उपलब्ध नहीं हैं।'); return; }
-  const permission = await Notification.requestPermission();
-  if (permission !== 'granted') { alert('Notifications की permission नहीं मिली।'); return; }
-  try {
-    const reg = await navigator.serviceWorker.register('/BG-Automation/sw.js', { scope: '/BG-Automation/' });
-    const pk = await fetch('https://bg-automation-live.garhwalbhavesh2002.workers.dev/api/push/public-key?t=' + Date.now(), { cache: 'no-store' }).then(r => r.json());
-    const b = pk.publicKey.replace(/-/g,'+').replace(/_/g,'/');
-    const pad = b + '='.repeat((4 - b.length % 4) % 4), raw = atob(pad), key = Uint8Array.from(raw, c => c.charCodeAt(0));
-    let sub = await reg.pushManager.getSubscription();
-    if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key.buffer });
-    await fetch('https://bg-automation-live.garhwalbhavesh2002.workers.dev/api/push/subscribe', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(sub.toJSON()) });
-    localStorage.setItem('bg_push_enabled','1');
-    alert('🔔 Background notifications चालू हो गईं। अब BG Automation बंद होने पर भी notifications आएंगी।');
-  } catch (err) { console.error(err); alert('Push setup में समस्या आई। कृपया फिर try करें।'); }
+function enableNotifications() {
+  if (!('Notification' in window)) { alert('इस ब्राउज़र में notifications उपलब्ध नहीं हैं।'); return; }
+  if (Notification.permission === 'granted') { localStorage.setItem('bg_notify_enabled', '1'); alert('Notifications पहले से चालू हैं।'); return; }
+  if (Notification.permission === 'denied') { alert('Browser settings में इस साइट की notifications Allow करें।'); return; }
+  Notification.requestPermission().then(function (permission) {
+    if (permission === 'granted') localStorage.setItem('bg_notify_enabled', '1');
+    alert(permission === 'granted' ? 'Notifications चालू हो गईं। अब सभी automation status changes की सूचना मिलेगी।' : 'Notifications की अनुमति नहीं मिली।');
+  });
 }
 
 function showError(msg) {
