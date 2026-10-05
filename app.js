@@ -24,20 +24,6 @@ const NAV=[
 const RAW='https://raw.githubusercontent.com/bgsarkariresult/BG-Automation/main/data/dashboard.json';
 const LIVE='https://bg-automation-live.garhwalbhavesh2002.workers.dev/api/status';
 let bgNotifyLast={};
-async function bgEnablePush(){
-  if(!('serviceWorker' in navigator)||!('PushManager' in window)||!('Notification' in window)) return alert('इस browser में push notifications उपलब्ध नहीं हैं।');
-  const permission=await Notification.requestPermission();
-  if(permission!=='granted') return;
-  const reg=await navigator.serviceWorker.register('/BG-Automation/sw.js',{scope:'/BG-Automation/'});
-  const pk=await fetch('https://bg-automation-live.garhwalbhavesh2002.workers.dev/api/push/public-key',{cache:'no-store'}).then(r=>r.json());
-  const b=pk.publicKey.replace(/-/g,'+').replace(/_/g,'/');
-  const pad=b+'='.repeat((4-b.length%4)%4),raw=atob(pad),key=Uint8Array.from(raw,c=>c.charCodeAt(0));
-  let sub=await reg.pushManager.getSubscription();
-  if(!sub) sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:key.buffer});
-  await fetch('https://bg-automation-live.garhwalbhavesh2002.workers.dev/api/push/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(sub.toJSON())});
-  localStorage.setItem('bg_push_enabled','1');
-  alert('🔔 Background notifications चालू हो गईं। अब BG Automation बंद होने पर भी notifications आएंगी।');
-}
 function bgNotifyEnable(){
   if(!('Notification' in window)) return alert('इस browser में notifications उपलब्ध नहीं हैं।');
   if(Notification.permission==='denied') return alert('Browser settings में BG-Automation notifications Allow करें।');
@@ -70,7 +56,7 @@ function bgNotifyResetIfNeeded(){
 }
 
 function boot(key,title,render){
-  document.body.innerHTML=`<div class="top"><button class="burger" onclick="document.querySelector('nav').classList.toggle('open')">☰</button><div class="logo">🚀 BG Automation<br><small>${title}</small></div><div class="pill" id="pill">…</div><button class="icon-btn" title="Notifications" onclick="bgEnablePush()">🔔</button></div>
+  document.body.innerHTML=`<div class="top"><button class="burger" onclick="document.querySelector('nav').classList.toggle('open')">☰</button><div class="logo">🚀 BG Automation<br><small>${title}</small></div><div class="pill" id="pill">…</div><button class="icon-btn" title="Notifications" onclick="bgNotifyEnable()">🔔</button></div>
   <div class="app"><nav onclick="this.classList.remove('open')">${NAV.map(n=>`<a class="${n[0]==key?'on':''}" href="${n[0]}">${n[1]} ${n[2]}</a>`).join('')}
   <a href="https://github.com/bgsarkariresult/BG-Automation/settings/secrets/actions" target="_blank" rel="noopener">⚙️ Settings (Secrets)</a>
   <div class="sys"><b>● System Online</b><br><small id="sysS"></small></div></nav><main id="main"></main></div>`;
