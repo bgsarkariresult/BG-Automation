@@ -34,32 +34,34 @@ function timeHHMM(t) {
   return new Date(t).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 }
 let notificationInitialized = false;
-const notificationStates = new Map();
 function checkWorkNotifications(runs) {
-  const current = new Map();
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const state = JSON.parse(localStorage.getItem('bg_notify_runs') || '{}');
+  const next = {};
   runs.forEach(function (x) {
     const id = String(x.bot.repo || x.bot.id || x.name) + ':' + String(x.r.id || x.r.run_id || x.r.url || x.r.t || x.r.n || 'run');
     const status = String(x.r.s || 'unknown');
-    current.set(id, { status: status, name: x.name, title: x.r.n || 'Automation job' });
-    if (notificationInitialized) {
-      const previous = notificationStates.get(id);
-      if ((!previous || previous.status !== status) && 'Notification' in window && Notification.permission === 'granted') {
-        const label = status === 'success' ? 'सफल' : status === 'failure' ? 'असफल' : status === 'in_progress' ? 'चल रहा है' : status;
-        const n = new Notification('BG Automation: ' + label, { body: x.name + ' · ' + (x.r.n || 'Automation job'), tag: id });
-        n.onclick = function () { window.focus(); window.location.href = 'logs.html'; };
-      }
+    next[id] = status;
+    const previous = state[id];
+    if (previous && previous !== status) {
+      const label = status === 'success' ? 'सफल' : status === 'failure' ? 'असफल' : status === 'cancelled' ? 'रद्द' : 'स्थिति बदली';
+      const icon = status === 'success' ? '✅' : status === 'failure' ? '❌' : status === 'cancelled' ? '🚫' : '🔄';
+      const n = new Notification(icon + ' BG Automation · ' + label, { body: x.name + ' · ' + (x.r.n || 'Automation job'), tag: 'bg-' + id, renotify: true });
+      n.onclick = function () { window.focus(); window.location.href = 'logs.html'; };
+    } else if (!previous && status === 'in_progress' && notificationInitialized) {
+      new Notification('🔄 BG Automation · काम शुरू', { body: x.name + ' · ' + (x.r.n || 'Automation job'), tag: 'bg-' + id });
     }
   });
-  notificationStates.clear();
-  current.forEach(function (v, k) { notificationStates.set(k, v); });
+  localStorage.setItem('bg_notify_runs', JSON.stringify(next));
   notificationInitialized = true;
 }
 function enableNotifications() {
   if (!('Notification' in window)) { alert('इस ब्राउज़र में notifications उपलब्ध नहीं हैं।'); return; }
-  if (Notification.permission === 'granted') { alert('Notifications पहले से चालू हैं।'); return; }
+  if (Notification.permission === 'granted') { localStorage.setItem('bg_notify_enabled', '1'); alert('Notifications पहले से चालू हैं।'); return; }
   if (Notification.permission === 'denied') { alert('Browser settings में इस साइट की notifications Allow करें।'); return; }
   Notification.requestPermission().then(function (permission) {
-    alert(permission === 'granted' ? 'Notifications चालू हो गईं।' : 'Notifications की अनुमति नहीं मिली।');
+    if (permission === 'granted') localStorage.setItem('bg_notify_enabled', '1');
+    alert(permission === 'granted' ? 'Notifications चालू हो गईं। अब सभी automation status changes की सूचना मिलेगी।' : 'Notifications की अनुमति नहीं मिली।');
   });
 }
 
