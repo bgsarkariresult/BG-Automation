@@ -6,6 +6,7 @@ from urllib.parse import urljoin
 import xml.etree.ElementTree as ET
 
 FILE="data/dashboard.json"
+MESSAGE_FILE="data/messages.json"
 TOKEN=os.environ.get("GITHUB_TOKEN","")
 HEAD={"User-Agent":"BG-Automation-Live-Dashboard/1.0","Accept":"*/*"}
 if TOKEN: HEAD["Authorization"]="Bearer "+TOKEN
@@ -105,6 +106,15 @@ for n,u,p in SITES:
   print(n,x.get("total"),x.get("today"),x.get("week"))
  except Exception as e: print("site",n,e)
 data["sites"]=list(old.values())
+
+# Telegram messages are canonical in data/messages.json. Re-hydrate them
+# on every live sync so scheduled refreshes never wipe the message list.
+try:
+ with open(MESSAGE_FILE,encoding="utf-8") as f: messages=json.load(f)
+ if not isinstance(messages,list): messages=[]
+except (FileNotFoundError,json.JSONDecodeError,TypeError,ValueError):
+ messages=[]
+data["messages"]=messages[:50]
 by={str(b.get("repo","")).lower():b for b in data.get("bots",[])}
 for repo in REPOS:
  r=runs(repo)
