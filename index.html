@@ -69,13 +69,18 @@ function showError(msg) {
   console.error(msg);
 }
 
-async function loadData() {
+async function loadLocalData() {
   let d = {};
   try {
-    let r = await fetch(RAW + '?t=' + Date.now(), { cache: 'no-store' }).catch(() => null);
-    if (!r || !r.ok) r = await fetch('data/dashboard.json?t=' + Date.now(), { cache: 'no-store' }).catch(() => null);
+    // Same-origin JSON is normally faster than waiting on GitHub's raw CDN.
+    let r = await fetch('data/dashboard.json?t=' + Date.now(), { cache: 'no-store' }).catch(() => null);
+    if (!r || !r.ok) r = await fetch(RAW + '?t=' + Date.now(), { cache: 'no-store' }).catch(() => null);
     if (r && r.ok) d = await r.json();
   } catch (e) { console.warn('dashboard.json:', e); }
+  return d;
+}
+
+async function loadLiveData(d) {
   try {
     const lr = await fetch(LIVE + '?t=' + Date.now(), { cache: 'no-store' });
     if (lr.ok) {
@@ -95,6 +100,14 @@ async function loadData() {
       }
     }
   } catch (e) { console.warn('live API:', e); }
+  return d;
+}
+
+async function loadDataFast() {
+  const d = await loadLocalData();
+  // Render the cached/local dashboard immediately; live data is a background refresh.
+  render(d);
+  loadLiveData(d).then(function (fresh) { render(fresh); }).catch(function () {});
   return d;
 }
 
@@ -260,12 +273,12 @@ async function loadTrends() {
   }
 }
 
-loadData().then(render).catch(function (e) {
+loadDataFast().catch(function (e) {
   showError(e && e.message ? e.message : 'Load failed');
   render({});
 });
 setInterval(function () {
-  if (!document.hidden) loadData().then(render).catch(function () {});
+  if (!document.hidden) loadDataFast().catch(function () {});
 }, 30000);
 </script>
 </body>
