@@ -105,12 +105,40 @@ async function loadLiveData(d) {
   return d;
 }
 
+let lastDashboardSignature = '';
+
+function dashboardSignature(d) {
+  // Ignore timestamps that change on every poll. Re-render only when visible data/status changes.
+  const x = {
+    channels: d.channels || [],
+    websites: d.websites || d.sites || [],
+    bots: (d.bots || []).map(b => ({
+      repo: b.repo, name: b.name, status: b.status, workflow: b.workflow,
+      runs: (b.runs || []).slice(0, 30).map(r => ({
+        id: r.id || r.run_id || r.number || r.u,
+        s: r.s, n: r.n, t: r.t, u: r.u, d: r.d
+      }))
+    })),
+    telegram: d.telegram || d.messages || []
+  };
+  return JSON.stringify(x);
+}
+
 async function loadDataFast() {
   const d = await loadLocalData();
-  // Render the cached/local dashboard immediately; live data is a background refresh.
-  render(d);
-  loadLiveData(d).then(function (fresh) { render(fresh); }).catch(function () {});
-  return d;
+  const fresh = await loadLiveData(d).catch(function () { return d; });
+  const signature = dashboardSignature(fresh);
+
+  if (!lastDashboardSignature || signature !== lastDashboardSignature) {
+    lastDashboardSignature = signature;
+    render(fresh);
+  } else if (typeof checkWorkNotifications === 'function') {
+    // Keep notification state alive without rebuilding the dashboard DOM.
+    const bots = fresh.bots || [];
+    const runs = bots.flatMap(b => (b.runs || []).map(r => ({ name: b.name || b.id || 'Bot', r, bot: b })));
+    checkWorkNotifications(runs);
+  }
+  return fresh;
 }
 
 function stateMeta(s) {
