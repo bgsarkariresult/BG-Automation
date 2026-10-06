@@ -3,6 +3,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const fmt=n=>{n=+n||0;return n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(1)+'K':String(Math.round(n))};
 const ago=t=>{if(!t)return'—';const m=Math.max(0,(Date.now()-new Date(t))/6e4);return m<1?'abhi':m<60?Math.round(m)+' min pehle':m<1440?Math.round(m/60)+' ghante pehle':Math.round(m/1440)+' din pehle'};
 const at=t=>t?new Date(t).toLocaleString('hi-IN',{dateStyle:'short',timeStyle:'short'}):'—';
+const liveAgo=t=>{if(!t)return'—';const s=Math.max(0,Math.floor((Date.now()-new Date(t).getTime())/1000));return s<60?s+' sec':Math.floor(s/60)+' min'};
 const st=s=>({success:'✔',failure:'✖',cancelled:'✖',in_progress:'⏳',queued:'⏳'}[s]||'•');
 const chip=s=>`<span class="chip ${s==='success'?'':(s==='in_progress'||s==='queued')?'w':'e'}">${esc(s)}</span>`;
 const dayOf=t=>new Date(t).toLocaleDateString('en-CA');
@@ -96,14 +97,14 @@ function boot(key,title,render){
       }
     }catch(_){}
     d.live_state=liveState;window.LU=d.updated;window.D=d;bgNotifyResetIfNeeded();bgNotifyCheck(d);
-    const stamp=d.live_state==='live'?(d.live_updated||d.updated):d.updated;const age=stamp?Math.max(0,Math.floor((Date.now()-new Date(stamp).getTime())/60000)):Infinity;
+    const stamp=d.live_state==='live'?(d.live_updated||d.updated):d.updated;const age=stamp?Math.max(0,Math.floor((Date.now()-new Date(stamp).getTime())/60000)):Infinity;const liveAge=stamp?liveAgo(stamp):'—';
     const channelOk=(d.channels||[]).every(c=>!c.error||/YAHAN/.test(c.id));
     const fresh=age<=7;
     const pill=$('#pill');
     if(pill){
-      pill.textContent=d.live_state==='live'?'● Cloudflare Live · '+age+' min':d.live_state==='partial'?'● Live + cached · '+age+' min':!channelOk?'⚠ Channel ID/API check':fresh?'● Cached data · '+age+' min':'⚠ Data delayed · '+(Number.isFinite(age)?age+' min':'unknown');
+      pill.textContent=d.live_state==='live'?'● LIVE · '+liveAge+' ago':d.live_state==='partial'?'● LIVE + cached · '+liveAge+' ago':!channelOk?'⚠ Channel ID/API check':fresh?'● Cached data · '+age+' min':'⚠ Data delayed · '+(Number.isFinite(age)?age+' min':'unknown');
       pill.classList.toggle('bad',!fresh||!channelOk);
     }
     const sys=$('#sysS');if(sys)sys.textContent=(d.live_state==='live'?'Cloudflare Live: ':'Dashboard sync: ')+at(stamp);
     render(d)}catch(e){$('#pill').textContent='⚠ Sync Dashboard chalao';$('#pill').classList.add('bad')}finally{if(btn){btn.disabled=false;btn.textContent='↻ Refresh'}}}
-  window.refreshDashboard=()=>go(true);go();setInterval(()=>{if(!document.hidden)go(false)},15000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)go(true)})}
+  window.refreshDashboard=()=>go(true);go();setInterval(()=>{if(!document.hidden)go(false)},5000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)go(true)})}
