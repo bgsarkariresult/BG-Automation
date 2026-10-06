@@ -88,13 +88,33 @@ def sync_site(name,url,pattern):
   "week":sum(v for k,v in days.items() if week.isoformat()<=k<=TODAY.isoformat())}
 
 def runs(repo):
- try:data=json.loads(get(f"https://api.github.com/repos/{repo}/actions/runs?per_page=20","application/vnd.github+json"))
- except Exception as e: print("runs",repo,e);return None
+ try:
+  data=json.loads(get(f"https://api.github.com/repos/{repo}/actions/runs?per_page=20","application/vnd.github+json"))
+  jobs_data=json.loads(get(f"https://api.github.com/repos/{repo}/actions/jobs?per_page=100","application/vnd.github+json"))
+ except Exception as e:
+  print("runs",repo,e);return None
+ job_states={}
+ for j in jobs_data.get("jobs",[]):
+  rid=j.get("run_id")
+  if rid is None: continue
+  job_states.setdefault(rid,[]).append(j.get("conclusion") or j.get("status"))
  out=[]
  for x in data.get("workflow_runs",[]):
+  rid=x.get("id")
+  workflow_state=x.get("conclusion") or x.get("status")
+  states=job_states.get(rid,[])
+  # GitHub can mark a workflow green even when the automation step itself
+  # is reported at job level. Treat any failed/timed-out/action-required job
+  # as a real automation failure for the dashboard.
+  if any(s in ("failure","timed_out","action_required") for s in states):
+   effective="failure"
+  elif any(s=="cancelled" for s in states):
+   effective="cancelled"
+  else:
+   effective=workflow_state
   t=x.get("updated_at") or x.get("created_at"); start=x.get("run_started_at") or x.get("created_at")
   a,b=dt(t),dt(start)
-  out.append({"id":x.get("id"),"number":x.get("run_number"),"s":x.get("conclusion") or x.get("status"),"t":t,"started":start,"created":x.get("created_at"),"d":int((a-b).total_seconds()) if a and b else 0,"e":x.get("event"),"n":x.get("name"),"branch":x.get("head_branch"),"actor":(x.get("actor") or {}).get("login"),"u":x.get("html_url")})
+  out.append({"id":rid,"number":x.get("run_number"),"s":effective,"workflow_s":workflow_state,"job_states":states,"t":t,"started":start,"created":x.get("created_at"),"d":int((a-b).total_seconds()) if a and b else 0,"e":x.get("event"),"n":x.get("name"),"branch":x.get("head_branch"),"actor":(x.get("actor") or {}).get("login"),"u":x.get("html_url")})
  return out
 
 with open(FILE,encoding="utf-8") as f:data=json.load(f)
