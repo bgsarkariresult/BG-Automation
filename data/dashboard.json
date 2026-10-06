@@ -1,8 +1,8 @@
 {
-  "updated": "2026-10-06T19:01:28Z",
-  "checked_at": "2026-10-06T19:01:28Z",
+  "updated": "2026-10-06T20:14:40Z",
+  "checked_at": "2026-10-06T20:14:40Z",
   "refresh_interval_seconds": 300,
-  "source": "Live Dashboard Sync · GitHub Actions API + public site sitemaps",
+  "source": "GitHub Actions API",
   "channels": [
     {
       "name": "SG News",
@@ -27,25 +27,25 @@
           "title": "🔥 Apple iPhone 17 Pro Review 2026: खरीदने से पहले ये कड़वा सच जान लो!",
           "id": "a27mNLKtsrg",
           "date": "2026-10-05",
-          "views": "2"
+          "views": "3"
         },
         {
           "title": "🔥 POCO X8 Power 5G खरीदने से पहले 100 बार सोच लेना! सच्चाई जान हैरान रह जाओगे",
           "id": "dKW1Uk7O3II",
           "date": "2026-10-04",
-          "views": "45"
+          "views": "50"
         },
         {
           "title": "🔥 सिर्फ ₹5,026 में 120W की तबाही! Bencley FRIDOBLE Double Tower - खरीदने से पहले सच जान लो!",
           "id": "g-OyngDGJV0",
           "date": "2026-10-02",
-          "views": "23"
+          "views": "26"
         },
         {
           "title": "🔥 ultiads TJ Review: मत खरीदो जब तक ये कड़वा सच ना जान लो!",
           "id": "kw7k6kLJzxM",
           "date": "2026-10-01",
-          "views": "18"
+          "views": "20"
         }
       ]
     },
@@ -1486,7 +1486,7 @@
       "actor": "bgsarkariresult",
       "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37499721621",
       "cron": "*/5 * * * *",
-      "next": "2026-10-06T18:30:00Z"
+      "next": "2026-10-06T20:15:00Z"
     },
     {
       "name": "TechGlow India",
@@ -2572,7 +2572,7 @@
       "actor": "bgsarkariresult",
       "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37497582976",
       "cron": "*/5 * * * *",
-      "next": "2026-10-06T18:30:00Z"
+      "next": "2026-10-06T20:15:00Z"
     },
     {
       "name": "BK GrowUp",
@@ -7400,7 +7400,7 @@
       "actor": "bgtechlab",
       "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37492317636",
       "cron": "*/5 * * * *",
-      "next": "2026-10-06T18:30:00Z"
+      "next": "2026-10-06T20:15:00Z"
     },
     {
       "name": "Job Page Auto Publisher",
@@ -8681,52 +8681,52 @@
       "url": "https://bgsarkariresult.github.io/bgsarkariresult/",
       "articles": [
         {
-          "t": "RRB Ministerial & Isolated Category Result 2026 Out - Download Zone-Wise Result & Cut Off | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "rrb ministerial isolated category result 2026 out download zone wise result cut off.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rrb-ministerial-isolated-category-result-2026-out-download-zone-wise-result-cut-off.html",
           "d": "2026-10-06"
         },
         {
-          "t": "C-DAC Recruitment 2026 – 844 Contractual Vacancies Across 11 Centres | JIT October 2026 Cycle (Advt. No. CORP/JIT/03/2026) | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "c dac recruitment 2026 844 contractual vacancies across 11 centres jit october 2026 cycle advt no corpjit032026.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/c-dac-recruitment-2026-844-contractual-vacancies-across-11-centres-jit-october-2026-cycle-advt-no-corpjit032026.html",
           "d": "2026-10-06"
         },
         {
-          "t": "UPSSSC Forest Guard Result 2026 Out - Check Mains Result & Merit List PDF | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "upsssc forest guard result 2026 out check mains result merit list pdf.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/upsssc-forest-guard-result-2026-out-check-mains-result-merit-list-pdf.html",
           "d": "2026-10-05"
         },
         {
-          "t": "RRB NTPC Graduate Level Recruitment 2026 | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "rrb ntpc graduate level recruitment 2026.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rrb-ntpc-graduate-level-recruitment-2026.html",
           "d": "2026-10-04"
         },
         {
-          "t": "Indian Army TGC-145 Recruitment 2026 Notification Out – Apply Online for 30 Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "indian army tgc 145 recruitment 2026 notification out apply online for 30 posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/indian-army-tgc-145-recruitment-2026-notification-out-apply-online-for-30-posts.html",
           "d": "2026-10-04"
         },
         {
-          "t": "CRPF Constable (Sports Quota) Recruitment 2026 - Apply Online Form for 521 Head Constable & Constable Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "crpf constable sports quota recruitment 2026 apply online form for 521 head constable constable posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/crpf-constable-sports-quota-recruitment-2026-apply-online-form-for-521-head-constable-constable-posts.html",
           "d": "2026-10-04"
         },
         {
-          "t": "RRB Technician Admit Card 2026 Released - Download Grade I & III Hall Ticket at indianrailways.gov.in | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "rrb technician admit card 2026 released download grade i iii hall ticket at indianrailwaysgovin.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rrb-technician-admit-card-2026-released-download-grade-i-iii-hall-ticket-at-indianrailwaysgovin.html",
           "d": "2026-10-03"
         },
         {
-          "t": "RPSC APO Result 2026 Out - Check Assistant Prosecution Officer Result PDF | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "rpsc apo result 2026 out check assistant prosecution officer result pdf.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rpsc-apo-result-2026-out-check-assistant-prosecution-officer-result-pdf.html",
           "d": "2026-10-03"
         },
         {
-          "t": "JKSSB Junior Health Inspector & Technician Admit Card 2026 Out - Download Hall Ticket at jkssb.nic.in | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "jkssb junior health inspector technician admit card 2026 out download hall ticket at jkssbnicin.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/jkssb-junior-health-inspector-technician-admit-card-2026-out-download-hall-ticket-at-jkssbnicin.html",
           "d": "2026-10-03"
         },
         {
-          "t": "IFFCO AGT Recruitment 2026 Notification Out - Apply Online for Agriculture Graduate Trainee Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "iffco agt recruitment 2026 notification out apply online for agriculture graduate trainee posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/iffco-agt-recruitment-2026-notification-out-apply-online-for-agriculture-graduate-trainee-posts.html",
           "d": "2026-10-03"
         }
@@ -8759,6 +8759,7 @@
         "2026-09-10": 2,
         "2026-09-09": 1,
         "2026-09-08": 2,
+        "2026-09-07": 6,
         "2026-09-06": 2,
         "2026-09-05": 1,
         "2026-09-04": 1,
@@ -8770,9 +8771,7 @@
         "2026-08-27": 2,
         "2026-08-26": 7
       },
-      "total": 61,
-      "today": 0,
-      "week": 17
+      "total": 67
     },
     {
       "name": "SG News18",
