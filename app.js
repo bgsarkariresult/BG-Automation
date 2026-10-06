@@ -25,6 +25,13 @@ const NAV=[
 const RAW='https://raw.githubusercontent.com/bgsarkariresult/BG-Automation/main/data/dashboard.json';
 const LIVE='https://bg-automation-live.garhwalbhavesh2002.workers.dev/api/status';
 let bgNotifyLast={};
+let lastBootSignature='';
+function bootSignature(d){
+  return JSON.stringify((d.bots||[]).map(b=>({
+    repo:b.repo,name:b.name,status:b.status,workflow:b.workflow,
+    runs:(b.runs||[]).slice(0,30).map(r=>({id:r.id||r.number||r.u||r.t,s:r.s,n:r.n,t:r.t,u:r.u,d:r.d}))
+  })));
+}
 function bgNotifyEnable(){
   if(!('Notification' in window)) return alert('इस browser में notifications उपलब्ध नहीं हैं।');
   if(Notification.permission==='denied') return alert('Browser settings में BG-Automation notifications Allow करें।');
@@ -96,7 +103,11 @@ function boot(key,title,render){
         }
       }
     }catch(_){}
-    d.live_state=liveState;window.LU=d.updated;window.D=d;bgNotifyResetIfNeeded();bgNotifyCheck(d);
+    d.live_state=liveState;window.LU=d.updated;window.D=d;bgNotifyResetIfNeeded();
+    const sig=bootSignature(d);
+    const shouldRender=sig!==lastBootSignature;
+    if(shouldRender){lastBootSignature=sig;bgNotifyCheck(d);render(d);}
+    else{bgNotifyCheck(d);}
     const stamp=d.live_state==='live'?(d.live_updated||d.updated):d.updated;const age=stamp?Math.max(0,Math.floor((Date.now()-new Date(stamp).getTime())/60000)):Infinity;const liveAge=stamp?liveAgo(stamp):'—';
     const channelOk=(d.channels||[]).every(c=>!c.error||/YAHAN/.test(c.id));
     const fresh=age<=7;
@@ -106,5 +117,5 @@ function boot(key,title,render){
       pill.classList.toggle('bad',!fresh||!channelOk);
     }
     const sys=$('#sysS');if(sys)sys.textContent=(d.live_state==='live'?'Cloudflare Live: ':'Dashboard sync: ')+at(stamp);
-    render(d)}catch(e){$('#pill').textContent='⚠ Sync Dashboard chalao';$('#pill').classList.add('bad')}finally{if(btn){btn.disabled=false;btn.textContent='↻ Refresh'}}}
+    }catch(e){$('#pill').textContent='⚠ Sync Dashboard chalao';$('#pill').classList.add('bad')}finally{if(btn){btn.disabled=false;btn.textContent='↻ Refresh'}}}
   window.refreshDashboard=()=>go(true);go();setInterval(()=>{if(!document.hidden)go(false)},5000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)go(true)})}
