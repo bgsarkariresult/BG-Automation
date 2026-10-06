@@ -97,15 +97,27 @@ def runs(repo):
  for j in jobs_data.get("jobs",[]):
   rid=j.get("run_id")
   if rid is None: continue
-  job_states.setdefault(rid,[]).append(j.get("conclusion") or j.get("status"))
+  job_states.setdefault(rid,[]).append(j)
  out=[]
  for x in data.get("workflow_runs",[]):
   rid=x.get("id")
-  workflow_state=x.get("conclusion") or x.get("status")
-  states=job_states.get(rid,[])
-  # GitHub can mark a workflow green even when the automation step itself
-  # is reported at job level. Treat any failed/timed-out/action-required job
-  # as a real automation failure for the dashboard.
+  workflow_state=x.get("conclusion") or x.get("status") or "unknown"
+  jobs=job_states.get(rid,[])
+  states=[j.get("conclusion") or j.get("status") for j in jobs]
+  failed_job=None; failed_step=None; failure_reason=None
+  for j in jobs:
+   jc=j.get("conclusion") or j.get("status")
+   if jc in ("failure","timed_out","action_required","cancelled"):
+    if failed_job is None:
+     failed_job=j.get("name") or "Job"
+     failure_reason=jc
+    for st in (j.get("steps") or []):
+     sc=st.get("conclusion") or st.get("status")
+     if sc in ("failure","timed_out","action_required","cancelled"):
+      failed_step=st.get("name") or None
+      failure_reason=sc
+      break
+    if failed_step: break
   if any(s in ("failure","timed_out","action_required") for s in states):
    effective="failure"
   elif any(s=="cancelled" for s in states):
@@ -114,7 +126,7 @@ def runs(repo):
    effective=workflow_state
   t=x.get("updated_at") or x.get("created_at"); start=x.get("run_started_at") or x.get("created_at")
   a,b=dt(t),dt(start)
-  out.append({"id":rid,"number":x.get("run_number"),"s":effective,"workflow_s":workflow_state,"job_states":states,"t":t,"started":start,"created":x.get("created_at"),"d":int((a-b).total_seconds()) if a and b else 0,"e":x.get("event"),"n":x.get("name"),"branch":x.get("head_branch"),"actor":(x.get("actor") or {}).get("login"),"u":x.get("html_url")})
+  out.append({"id":rid,"number":x.get("run_number"),"s":effective,"workflow_s":workflow_state,"job_states":states,"failed_job":failed_job,"failed_step":failed_step,"failure_reason":failure_reason,"attempt":x.get("run_attempt",1),"t":t,"started":start,"created":x.get("created_at"),"d":int((a-b).total_seconds()) if a and b else 0,"e":x.get("event"),"n":x.get("name"),"branch":x.get("head_branch"),"actor":(x.get("actor") or {}).get("login"),"u":x.get("html_url")})
  return out
 
 with open(FILE,encoding="utf-8") as f:data=json.load(f)
@@ -144,7 +156,9 @@ for repo in REPOS:
  b["runs"]=r
  if r:
   z=r[0];b.update(status=z["s"],time=z["t"],url=z["u"],last_run_id=z["id"],run_number=z["number"],branch=z["branch"],event=z["e"],actor=z["actor"])
-  if z["s"]!="failure":b.pop("failed",None)
+  if z["s"]=="failure":
+   b["failed"]={"step":z.get("failed_step"),"job":z.get("failed_job"),"reason":z.get("failure_reason")}
+  else:b.pop("failed",None)
 data["updated"]=datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00","Z")
 data["checked_at"]=data["updated"];data["refresh_interval_seconds"]=300
 data["source"]="Live Dashboard Sync · GitHub Actions API + public site sitemaps"
