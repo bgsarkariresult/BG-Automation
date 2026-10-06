@@ -30,7 +30,7 @@ jobs:
 
       - name: Sync live dashboard data
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN || github.token }}
         run: python scripts/live_dashboard_sync.py
 
       - name: Commit dashboard data
