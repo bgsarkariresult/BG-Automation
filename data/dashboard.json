@@ -1,8 +1,8 @@
 {
-  "updated": "2026-10-06T22:58:04Z",
-  "checked_at": "2026-10-06T22:58:04Z",
+  "updated": "2026-10-06T23:52:48Z",
+  "checked_at": "2026-10-06T23:52:48Z",
   "refresh_interval_seconds": 300,
-  "source": "Live Dashboard Sync · GitHub Actions API + public site sitemaps",
+  "source": "GitHub Actions API",
   "channels": [
     {
       "name": "SG News",
@@ -39,7 +39,7 @@
           "title": "🔥 सिर्फ ₹5,026 में 120W की तबाही! Bencley FRIDOBLE Double Tower - खरीदने से पहले सच जान लो!",
           "id": "g-OyngDGJV0",
           "date": "2026-10-02",
-          "views": "26"
+          "views": "27"
         },
         {
           "title": "🔥 ultiads TJ Review: मत खरीदो जब तक ये कड़वा सच ना जान लो!",
@@ -76,6 +76,20 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 37532283414,
+          "number": 137,
+          "s": "success",
+          "t": "2026-10-06T21:13:25Z",
+          "started": "2026-10-06T21:13:08Z",
+          "created": "2026-10-06T21:13:08Z",
+          "d": 17,
+          "e": "schedule",
+          "n": "SG News18 - Auto Video Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37532283414"
+        },
         {
           "id": 37499721621,
           "number": 136,
@@ -1461,32 +1475,18 @@
           "branch": "main",
           "actor": "bgsarkariresult",
           "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/36447245592"
-        },
-        {
-          "id": 36439470258,
-          "number": 37,
-          "s": "success",
-          "t": "2026-09-28T15:02:56Z",
-          "started": "2026-09-28T14:54:09Z",
-          "created": "2026-09-28T14:54:09Z",
-          "d": 527,
-          "e": "workflow_dispatch",
-          "n": "SG News18 - Auto Video Bot",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/36439470258"
         }
       ],
-      "time": "2026-10-06T17:06:40Z",
-      "url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37499721621",
-      "last_run_id": 37499721621,
-      "run_number": 136,
+      "time": "2026-10-06T21:13:25Z",
+      "url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37532283414",
+      "last_run_id": 37532283414,
+      "run_number": 137,
       "branch": "main",
-      "event": "workflow_dispatch",
+      "event": "schedule",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37499721621",
+      "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37532283414",
       "cron": "*/5 * * * *",
-      "next": "2026-10-06T20:15:00Z"
+      "next": "2026-10-06T23:55:00Z"
     },
     {
       "name": "TechGlow India",
@@ -1498,6 +1498,20 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 37532505062,
+          "number": 77,
+          "s": "success",
+          "t": "2026-10-06T21:15:13Z",
+          "started": "2026-10-06T21:14:54Z",
+          "created": "2026-10-06T21:14:54Z",
+          "d": 19,
+          "e": "schedule",
+          "n": "TechGlow India - Tech Review Auto Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37532505062"
+        },
         {
           "id": 37497582976,
           "number": 76,
@@ -2563,16 +2577,16 @@
           "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/36110177851"
         }
       ],
-      "time": "2026-10-06T16:40:55Z",
-      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37497582976",
-      "last_run_id": 37497582976,
-      "run_number": 76,
+      "time": "2026-10-06T21:15:13Z",
+      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37532505062",
+      "last_run_id": 37532505062,
+      "run_number": 77,
       "branch": "main",
       "event": "schedule",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37497582976",
+      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37532505062",
       "cron": "*/5 * * * *",
-      "next": "2026-10-06T20:15:00Z"
+      "next": "2026-10-06T23:55:00Z"
     },
     {
       "name": "BK GrowUp",
@@ -6257,6 +6271,20 @@
       "status": "success",
       "runs": [
         {
+          "id": 37529987536,
+          "number": 82,
+          "s": "success",
+          "t": "2026-10-06T20:54:52Z",
+          "started": "2026-10-06T20:54:30Z",
+          "created": "2026-10-06T20:54:30Z",
+          "d": 22,
+          "e": "schedule",
+          "n": "BG Reels Bot - Multi-Platform Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37529987536"
+        },
+        {
           "id": 37492317636,
           "number": 81,
           "s": "success",
@@ -7391,16 +7419,16 @@
           "u": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/36124757581"
         }
       ],
-      "time": "2026-10-06T16:01:22Z",
-      "url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37492317636",
-      "last_run_id": 37492317636,
-      "run_number": 81,
+      "time": "2026-10-06T20:54:52Z",
+      "url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37529987536",
+      "last_run_id": 37529987536,
+      "run_number": 82,
       "branch": "main",
       "event": "schedule",
       "actor": "bgtechlab",
-      "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37492317636",
+      "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37529987536",
       "cron": "*/5 * * * *",
-      "next": "2026-10-06T20:15:00Z"
+      "next": "2026-10-06T23:55:00Z"
     },
     {
       "name": "Job Page Auto Publisher",
@@ -8681,52 +8709,52 @@
       "url": "https://bgsarkariresult.github.io/bgsarkariresult/",
       "articles": [
         {
-          "t": "RRB Ministerial & Isolated Category Result 2026 Out - Download Zone-Wise Result & Cut Off | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "rrb ministerial isolated category result 2026 out download zone wise result cut off.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rrb-ministerial-isolated-category-result-2026-out-download-zone-wise-result-cut-off.html",
           "d": "2026-10-06"
         },
         {
-          "t": "C-DAC Recruitment 2026 – 844 Contractual Vacancies Across 11 Centres | JIT October 2026 Cycle (Advt. No. CORP/JIT/03/2026) | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "c dac recruitment 2026 844 contractual vacancies across 11 centres jit october 2026 cycle advt no corpjit032026.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/c-dac-recruitment-2026-844-contractual-vacancies-across-11-centres-jit-october-2026-cycle-advt-no-corpjit032026.html",
           "d": "2026-10-06"
         },
         {
-          "t": "UPSSSC Forest Guard Result 2026 Out - Check Mains Result & Merit List PDF | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "upsssc forest guard result 2026 out check mains result merit list pdf.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/upsssc-forest-guard-result-2026-out-check-mains-result-merit-list-pdf.html",
           "d": "2026-10-05"
         },
         {
-          "t": "RRB NTPC Graduate Level Recruitment 2026 | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "rrb ntpc graduate level recruitment 2026.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rrb-ntpc-graduate-level-recruitment-2026.html",
           "d": "2026-10-04"
         },
         {
-          "t": "Indian Army TGC-145 Recruitment 2026 Notification Out – Apply Online for 30 Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "indian army tgc 145 recruitment 2026 notification out apply online for 30 posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/indian-army-tgc-145-recruitment-2026-notification-out-apply-online-for-30-posts.html",
           "d": "2026-10-04"
         },
         {
-          "t": "CRPF Constable (Sports Quota) Recruitment 2026 - Apply Online Form for 521 Head Constable & Constable Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "crpf constable sports quota recruitment 2026 apply online form for 521 head constable constable posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/crpf-constable-sports-quota-recruitment-2026-apply-online-form-for-521-head-constable-constable-posts.html",
           "d": "2026-10-04"
         },
         {
-          "t": "RRB Technician Admit Card 2026 Released - Download Grade I & III Hall Ticket at indianrailways.gov.in | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "rrb technician admit card 2026 released download grade i iii hall ticket at indianrailwaysgovin.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rrb-technician-admit-card-2026-released-download-grade-i-iii-hall-ticket-at-indianrailwaysgovin.html",
           "d": "2026-10-03"
         },
         {
-          "t": "RPSC APO Result 2026 Out - Check Assistant Prosecution Officer Result PDF | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "rpsc apo result 2026 out check assistant prosecution officer result pdf.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rpsc-apo-result-2026-out-check-assistant-prosecution-officer-result-pdf.html",
           "d": "2026-10-03"
         },
         {
-          "t": "JKSSB Junior Health Inspector & Technician Admit Card 2026 Out - Download Hall Ticket at jkssb.nic.in | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "jkssb junior health inspector technician admit card 2026 out download hall ticket at jkssbnicin.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/jkssb-junior-health-inspector-technician-admit-card-2026-out-download-hall-ticket-at-jkssbnicin.html",
           "d": "2026-10-03"
         },
         {
-          "t": "IFFCO AGT Recruitment 2026 Notification Out - Apply Online for Agriculture Graduate Trainee Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "iffco agt recruitment 2026 notification out apply online for agriculture graduate trainee posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/iffco-agt-recruitment-2026-notification-out-apply-online-for-agriculture-graduate-trainee-posts.html",
           "d": "2026-10-03"
         }
@@ -8759,6 +8787,7 @@
         "2026-09-10": 2,
         "2026-09-09": 1,
         "2026-09-08": 2,
+        "2026-09-07": 6,
         "2026-09-06": 2,
         "2026-09-05": 1,
         "2026-09-04": 1,
@@ -8770,9 +8799,7 @@
         "2026-08-27": 2,
         "2026-08-26": 7
       },
-      "total": 61,
-      "today": 0,
-      "week": 17
+      "total": 67
     },
     {
       "name": "SG News18",
