@@ -113,6 +113,29 @@ async function loadDataFast() {
   return d;
 }
 
+function stateMeta(s) {
+  s = String(s || 'unknown');
+  const map = {
+    success:{i:'✓',l:'Success',c:'success'},
+    failure:{i:'✕',l:'Failed',c:'failure'},
+    in_progress:{i:'⏳',l:'Running',c:'running'},
+    queued:{i:'…',l:'Queued',c:'running'},
+    waiting:{i:'⏸',l:'Waiting',c:'paused'},
+    pending:{i:'⏸',l:'Waiting',c:'paused'},
+    cancelled:{i:'🚫',l:'Cancelled',c:'paused'},
+    skipped:{i:'⏭',l:'Skipped',c:'paused'},
+    timed_out:{i:'⏱',l:'Timed Out',c:'failure'},
+    action_required:{i:'⚠',l:'Action Required',c:'paused'},
+    unknown:{i:'?',l:'Unknown',c:'paused'}
+  };
+  return map[s] || {i:'•',l:s.replace(/_/g,' '),c:'paused'};
+}
+function runDetail(r) {
+  if (r && r.failed_step) return 'Step: ' + r.failed_step;
+  if (r && r.failed_job) return 'Job: ' + r.failed_job;
+  if (r && r.workflow_s && r.workflow_s !== r.s) return 'Workflow: ' + r.workflow_s.replace(/_/g,' ');
+  return '';
+}
 function render(d) {
   try {
     d = d || {};
@@ -122,10 +145,19 @@ function render(d) {
     const msgs = d.telegram || d.messages || [];
     const runs = bots.flatMap(b => (b.runs || []).map(r => ({ name: b.name || b.id || 'Bot', r, bot: b })))
       .sort((a, b) => new Date(b.r.t) - new Date(a.r.t));
-    const recent = runs.filter(x => (+x.r.d || 0) >= 30 || x.r.s === 'failure' || x.r.s === 'success');
-    const success = recent.filter(x => x.r.s === 'success').length;
-    const failed = recent.filter(x => x.r.s === 'failure').length;
+    const recent = runs.slice(0, 30);
+    const counts = recent.reduce((a,x) => { const s=String(x.r.s||'unknown'); a[s]=(a[s]||0)+1; return a; }, {});
+    const success = counts.success || 0;
+    const failed = counts.failure || 0;
+    const running = counts.in_progress || 0;
+    const queued = counts.queued || 0;
+    const waiting = (counts.waiting || 0) + (counts.pending || 0);
+    const cancelled = counts.cancelled || 0;
+    const timedOut = counts.timed_out || 0;
+    const actionRequired = counts.action_required || 0;
+    const skipped = counts.skipped || 0;
     const totalRuns = recent.length || runs.length;
+    const attention = failed + timedOut + actionRequired;
     checkWorkNotifications(runs);
 
     const chRows = channels.map((c, i) => {
@@ -152,21 +184,21 @@ function render(d) {
     }).join('') || '<small class="mu">No websites</small>';
 
     const actRows = recent.slice(0, 7).map(x => {
-      const iconsMap = { success: '✓', failure: '✕', in_progress: '⏳', queued: '…' };
-      const ic = iconsMap[x.r.s] || '•';
-      const badge = x.r.s === 'success' ? 'success' : x.r.s === 'failure' ? 'failure' : (x.r.s === 'in_progress' || x.r.s === 'queued') ? 'running' : 'paused';
-      const label = x.r.s === 'success' ? 'Success' : x.r.s === 'failure' ? 'Failed' : x.r.s === 'in_progress' ? 'Running' : (x.r.s || 'Unknown');
-      return '<div class="act-row"><div class="act-ico">' + ic + '</div>' +
-        '<div class="act-info"><b>' + esc(x.name) + '</b><small>' + esc(x.r.n || x.r.s || 'Workflow') + ' · ' + Math.ceil((+x.r.d || 0) / 60) + ' min</small></div>' +
-        '<div class="act-right"><span class="time">' + agoText(x.r.t) + '</span><span class="badge-s ' + badge + '">' + label + '</span></div></div>';
+      const m = stateMeta(x.r.s);
+      const detail = runDetail(x.r);
+      return '<div class="act-row"><div class="act-ico">' + m.i + '</div>' +
+        '<div class="act-info"><b>' + esc(x.name) + '</b><small>' + esc(x.r.n || x.r.s || 'Workflow') + (detail ? ' · ' + esc(detail) : '') + '</small></div>' +
+        '<div class="act-right"><span class="time">' + agoText(x.r.t) + '</span><span class="badge-s ' + m.c + '">' + m.l + '</span></div></div>';
     }).join('') || '<small class="mu">No recent activity</small>';
 
     const logLines = runs.slice(0, 6).map(x => {
-      const tag = x.r.s === 'success' ? 'success' : x.r.s === 'failure' ? 'error' : 'info';
+      const m = stateMeta(x.r.s);
+      const detail = runDetail(x.r);
+      const tag = m.c === 'failure' ? 'error' : m.c === 'success' ? 'success' : 'info';
       const msg = x.r.s === 'success' ? esc(x.name) + ' completed successfully'
-        : x.r.s === 'failure' ? esc(x.name) + ' failed'
-        : esc(x.name) + ' — ' + esc(x.r.s || 'running');
-      return '<div class="log-line"><span class="log-time">' + timeHHMM(x.r.t) + '</span><span class="log-tag ' + tag + '">[' + tag.toUpperCase() + ']</span><span class="log-msg">' + msg + '</span></div>';
+        : x.r.s === 'failure' ? esc(x.name) + ' failed' + (detail ? ' · ' + esc(detail) : '')
+        : esc(x.name) + ' — ' + esc(m.l) + (detail ? ' · ' + esc(detail) : '');
+      return '<div class="log-line"><span class="log-time">' + timeHHMM(x.r.t) + '</span><span class="log-tag ' + tag + '">[' + m.l.toUpperCase() + ']</span><span class="log-msg">' + msg + '</span></div>';
     }).join('') || '<div class="log-line"><span class="log-msg">Waiting for activity…</span></div>';
 
     const tgRows = msgs.slice(0, 5).map(m => {
@@ -204,7 +236,7 @@ function render(d) {
         '<main>' +
           '<div class="kpi-row">' +
             '<div class="kpi red"><div class="kpi-top"><div class="kpi-icon">▶</div><span style="opacity:.4;font-size:18px">📊</span></div><label>Total Channels</label><div class="num">' + channels.length + '</div><div class="sub"><span>YouTube Automation</span><span class="up">↑ Active</span></div></div>' +
-            '<div class="kpi purple"><div class="kpi-top"><div class="kpi-icon">⚙</div><span style="opacity:.4;font-size:18px">📈</span></div><label>Total Runs</label><div class="num">' + totalRuns + '</div><div class="sub"><span>Automation Jobs</span><span class="up">↑ ' + success + ' ok</span></div></div>' +
+            '<div class="kpi purple"><div class="kpi-top"><div class="kpi-icon">⚙</div><span style="opacity:.4;font-size:18px">📈</span></div><label>Total Runs</label><div class="num">' + totalRuns + '</div><div class="sub"><span>Automation Jobs</span><span class="up">✓ ' + success + ' · ✕ ' + failed + ' · ⏳ ' + running + '</span></div></div>' +
             '<div class="kpi blue"><div class="kpi-top"><div class="kpi-icon">✈</div><span style="opacity:.4;font-size:18px">📉</span></div><label><a href="https://t.me/bglarenup" target="_blank" rel="noopener" style="color:inherit;text-decoration:none" title="Open Telegram channel">Telegram Messages ↗</a></label><div class="num">' + (msgs.length || '—') + '</div><div class="sub"><span>Last 7 days</span><span class="up">↑ Live</span></div></div>' +
           '</div>' +
           '<div class="dash-grid">' +
@@ -214,6 +246,12 @@ function render(d) {
             '</div>' +
             '<div class="col">' +
               '<div class="card"><div class="hd"><h2>⚙ Automation Overview</h2><a href="control.html">View Details →</a></div>' +
+                '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">' +
+                  '<span class="badge-s running">⏳ ' + running + ' Running</span><span class="badge-s running">… ' + queued + ' Queued</span>' +
+                  '<span class="badge-s failure">✕ ' + failed + ' Failed</span>' +
+                  (attention ? '<span class="badge-s paused">⚠ ' + attention + ' Attention</span>' : '<span class="badge-s success">✓ No attention needed</span>') +
+                '</div>' +
+                (attention ? '<div style="font-size:.78rem;padding:8px 10px;border-radius:10px;background:rgba(239,68,68,.08);margin-bottom:10px">⚠️ Failed: ' + failed + ' · Timed Out: ' + timedOut + ' · Action Required: ' + actionRequired + '</div>' : '') +
                 '<div class="auto-grid">' +
                   '<div class="auto-item"><div class="ai" style="background:rgba(239,68,68,.12)">▶</div><b>YouTube</b><small>' + channels.length + ' Channels</small><div class="bar r"><i></i></div><div class="bar-pct">100%</div></div>' +
                   '<div class="auto-item"><div class="ai" style="background:rgba(139,92,246,.12)">🌐</div><b>Websites</b><small>' + (sites.length || bots.filter(function(b){return b.site}).length) + ' Projects</small><div class="bar p"><i></i></div><div class="bar-pct">100%</div></div>' +
@@ -221,7 +259,16 @@ function render(d) {
                   '<div class="auto-item"><div class="ai" style="background:rgba(245,158,11,.12)">🐙</div><b>GitHub</b><small>' + bots.length + ' Repo' + (bots.length !== 1 ? 's' : '') + '</small><div class="bar a"><i></i></div><div class="bar-pct">' + (failed ? Math.max(0, 100 - failed * 10) : 100) + '%</div></div>' +
                 '</div>' +
               '</div>' +
-              '<div class="card"><div class="hd"><h2>🕐 Recent Activity</h2><a href="logs.html">View All →</a></div>' + actRows + '</div>' +
+              '<div class="card"><div class="hd"><h2>🕐 Recent Activity</h2><a href="logs.html">View All →</a></div>' +
+                '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">' +
+                  '<span class="badge-s success">✓ ' + success + ' Success</span><span class="badge-s failure">✕ ' + failed + ' Failed</span>' +
+                  '<span class="badge-s running">⏳ ' + running + ' Running</span><span class="badge-s running">… ' + queued + ' Queued</span>' +
+                  (waiting ? '<span class="badge-s paused">⏸ ' + waiting + ' Waiting</span>' : '') +
+                  (cancelled ? '<span class="badge-s paused">🚫 ' + cancelled + ' Cancelled</span>' : '') +
+                  (timedOut ? '<span class="badge-s failure">⏱ ' + timedOut + ' Timed Out</span>' : '') +
+                  (actionRequired ? '<span class="badge-s paused">⚠ ' + actionRequired + ' Action Required</span>' : '') +
+                  (skipped ? '<span class="badge-s paused">⏭ ' + skipped + ' Skipped</span>' : '') +
+                '</div>' + actRows + '</div>' +
             '</div>' +
             '<div class="col">' +
               '<div class="card"><div class="hd"><h2>🔥 Trending Topics</h2><a href="trending.html">View All →</a></div><div id="trendBox"><small class="mu">Loading…</small></div></div>' +
