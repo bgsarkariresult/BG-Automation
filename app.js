@@ -70,13 +70,28 @@ function boot(key,title,render){
         const live=await lr.json();
         if(live&&live.ok&&Array.isArray(live.bots)&&live.bots.length){
           const byRepo=new Map(live.bots.map(b=>[String(b.repo||'').toLowerCase(),b]));
+          /* Never let a Live API permission/token error erase good cached run data.
+             The Worker may return a bot with status=api_error and runs=[] when GitHub
+             rejects that repo. Keep dashboard.json for that bot and only merge a
+             live bot when it has real run data (or a meaningful non-error status). */
+          let liveApiErrors=0;
           d.bots=(d.bots||[]).map(b=>{
             const fresh=byRepo.get(String(b.repo||'').toLowerCase());
-            return fresh?{...b,...fresh,runs:Array.isArray(fresh.runs)?fresh.runs:b.runs}:b;
+            if(!fresh) return b;
+            if(fresh.status==='api_error' || (Array.isArray(fresh.runs)&&fresh.runs.length===0 && !['in_progress','queued','unknown'].includes(fresh.status))){
+              liveApiErrors++;
+              return {...b, live_api_error:fresh.api_error||'Live API could not read this repository'};
+            }
+            return {...b,...fresh,runs:Array.isArray(fresh.runs)?fresh.runs:b.runs};
           });
-          for(const b of live.bots)if(!(d.bots||[]).some(x=>String(x.repo||'').toLowerCase()===String(b.repo||'').toLowerCase()))d.bots.push(b);
+          /* Add genuinely new live projects, but never add api_error-only placeholders. */
+          for(const b of live.bots){
+            const exists=(d.bots||[]).some(x=>String(x.repo||'').toLowerCase()===String(b.repo||'').toLowerCase());
+            if(!exists && b.status!=='api_error') d.bots.push(b);
+          }
+          d.live_api_errors=liveApiErrors;
           d.live_updated=live.updated||live.checked_at||live.timestamp||new Date().toISOString();
-          liveState='live';
+          liveState=liveApiErrors ? 'partial' : 'live';
         }
       }
     }catch(_){}
@@ -86,7 +101,7 @@ function boot(key,title,render){
     const fresh=age<=7;
     const pill=$('#pill');
     if(pill){
-      pill.textContent=d.live_state==='live'?'● Cloudflare Live · '+age+' min':!channelOk?'⚠ Channel ID/API check':fresh?'● Cached data · '+age+' min':'⚠ Data delayed · '+(Number.isFinite(age)?age+' min':'unknown');
+      pill.textContent=d.live_state==='live'?'● Cloudflare Live · '+age+' min':d.live_state==='partial'?'● Live + cached · '+age+' min':!channelOk?'⚠ Channel ID/API check':fresh?'● Cached data · '+age+' min':'⚠ Data delayed · '+(Number.isFinite(age)?age+' min':'unknown');
       pill.classList.toggle('bad',!fresh||!channelOk);
     }
     const sys=$('#sysS');if(sys)sys.textContent=(d.live_state==='live'?'Cloudflare Live: ':'Dashboard sync: ')+at(stamp);
