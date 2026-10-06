@@ -1,6 +1,6 @@
 {
-  "updated": "2026-10-06T01:33:08Z",
-  "checked_at": "2026-10-06T01:33:08Z",
+  "updated": "2026-10-06T01:52:50Z",
+  "checked_at": "2026-10-06T01:52:50Z",
   "refresh_interval_seconds": 300,
   "source": "GitHub Actions API",
   "channels": [
@@ -1486,7 +1486,7 @@
       "actor": "bgsarkariresult",
       "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37386720682",
       "cron": "*/5 * * * *",
-      "next": "2026-10-06T01:35:00Z"
+      "next": "2026-10-06T01:55:00Z"
     },
     {
       "name": "TechGlow India",
@@ -2502,7 +2502,7 @@
       "actor": "bgsarkariresult",
       "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37386803347",
       "cron": "*/5 * * * *",
-      "next": "2026-10-06T01:35:00Z"
+      "next": "2026-10-06T01:55:00Z"
     },
     {
       "name": "BK GrowUp",
@@ -7148,7 +7148,7 @@
       "actor": "bgtechlab",
       "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37383096690",
       "cron": "*/5 * * * *",
-      "next": "2026-10-06T01:35:00Z"
+      "next": "2026-10-06T01:55:00Z"
     },
     {
       "name": "Job Page Auto Publisher",
@@ -7710,8 +7710,64 @@
       "tag": "Website",
       "cost": "",
       "kind": "video",
-      "status": "success",
+      "status": "in_progress",
       "runs": [
+        {
+          "id": 37401359013,
+          "number": 37,
+          "s": "in_progress",
+          "t": "2026-10-06T01:52:35Z",
+          "started": "2026-10-06T01:52:31Z",
+          "created": "2026-10-06T01:52:31Z",
+          "d": 4,
+          "e": "workflow_dispatch",
+          "n": "News Blog Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/37401359013"
+        },
+        {
+          "id": 37400478721,
+          "number": 36,
+          "s": "success",
+          "t": "2026-10-06T01:43:05Z",
+          "started": "2026-10-06T01:41:59Z",
+          "created": "2026-10-06T01:41:59Z",
+          "d": 66,
+          "e": "workflow_dispatch",
+          "n": "News Blog Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/37400478721"
+        },
+        {
+          "id": 37400325030,
+          "number": 35,
+          "s": "success",
+          "t": "2026-10-06T01:41:14Z",
+          "started": "2026-10-06T01:40:09Z",
+          "created": "2026-10-06T01:40:09Z",
+          "d": 65,
+          "e": "workflow_dispatch",
+          "n": "News Blog Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/37400325030"
+        },
+        {
+          "id": 37400286928,
+          "number": 34,
+          "s": "success",
+          "t": "2026-10-06T01:41:06Z",
+          "started": "2026-10-06T01:39:44Z",
+          "created": "2026-10-06T01:39:44Z",
+          "d": 82,
+          "e": "workflow_dispatch",
+          "n": "News Blog Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/37400286928"
+        },
         {
           "id": 37271287282,
           "number": 33,
@@ -8175,14 +8231,14 @@
           "u": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/36950055921"
         }
       ],
-      "time": "2026-10-05T06:13:15Z",
-      "url": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/37271287282",
-      "last_run_id": 37271287282,
-      "run_number": 33,
+      "time": "2026-10-06T01:52:35Z",
+      "url": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/37401359013",
+      "last_run_id": 37401359013,
+      "run_number": 37,
       "branch": "main",
       "event": "workflow_dispatch",
       "actor": "bgtechlab",
-      "html_url": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/37271287282"
+      "html_url": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/37401359013"
     }
   ],
   "sites": [
@@ -8287,6 +8343,16 @@
       "url": "https://bgnewswab.github.io/sgnewswab/index.html",
       "articles": [
         {
+          "t": "IND vs WI: वैभव सूर्यवंशी के खेलने पर मोर्केल ने दिया बड़ा संकेत",
+          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=155",
+          "d": "2026-10-06"
+        },
+        {
+          "t": "IND A vs AUS A: वनडे सीरीज में गायकवाड़ की बढ़ी चुनौती, पांड्या बाहर",
+          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=154",
+          "d": "2026-10-06"
+        },
+        {
           "t": "भारत-पाकिस्तान मुकाबला: एशियन गेम्स में व्यूअरशिप रिकॉर्ड टूटा",
           "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=153",
           "d": "2026-10-04"
@@ -8325,19 +8391,10 @@
           "t": "IND vs PAK: भारत ने पाकिस्तान को हराकर जीता एशियन गेम्स गोल्ड",
           "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=146",
           "d": "2026-10-03"
-        },
-        {
-          "t": "भारत ने सिर्फ गोल्ड नहीं जीता: PAK को आइना भी दिखाया; पहले कोहली ",
-          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=145",
-          "d": "2026-10-03"
-        },
-        {
-          "t": "IND vs PAK: सैम अय्यूब ने वैभव सूर्यवंशी को किया आउट, Video",
-          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=144",
-          "d": "2026-10-03"
         }
       ],
       "days": {
+        "2026-10-06": 2,
         "2026-10-04": 6,
         "2026-10-03": 7,
         "2026-10-02": 3
