@@ -1,8 +1,8 @@
 {
-  "updated": "2026-10-07T20:49:24Z",
-  "checked_at": "2026-10-07T20:49:24Z",
+  "updated": "2026-10-07T22:17:01Z",
+  "checked_at": "2026-10-07T22:17:01Z",
   "refresh_interval_seconds": 300,
-  "source": "Live Dashboard Sync · GitHub Actions API + public site sitemaps",
+  "source": "GitHub Actions API",
   "channels": [
     {
       "name": "SG News",
@@ -14,26 +14,26 @@
       "id": "UCosaFY8El412UGzlyT6LA5Q",
       "icon": "https://yt3.ggpht.com/ytc/AIdro_l6LfiGUOovI1gGphSJuRe0J78AzT4UMRYC_hyCjtiSi8XqkNILzrxpVmBSvC9ns51YqA=s88-c-k-c0x00ffffff-no-rj",
       "subs": "1",
-      "views": "2091",
+      "views": "2158",
       "videos": "58",
       "latest": [
         {
           "title": "🔥 TAVIX DHOOM 120W Tower Speaker Review: खरीदने से पहले ये खतरनाक सच जान लो!",
           "id": "DCikOQMzs_Y",
           "date": "2026-10-06",
-          "views": "4"
+          "views": "7"
         },
         {
           "title": "🔥 Apple iPhone 17 Pro Review 2026: खरीदने से पहले ये कड़वा सच जान लो!",
           "id": "a27mNLKtsrg",
           "date": "2026-10-05",
-          "views": "3"
+          "views": "4"
         },
         {
           "title": "🔥 POCO X8 Power 5G खरीदने से पहले 100 बार सोच लेना! सच्चाई जान हैरान रह जाओगे",
           "id": "dKW1Uk7O3II",
           "date": "2026-10-04",
-          "views": "54"
+          "views": "55"
         },
         {
           "title": "🔥 सिर्फ ₹5,026 में 120W की तबाही! Bencley FRIDOBLE Double Tower - खरीदने से पहले सच जान लो!",
@@ -76,6 +76,20 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 37676051299,
+          "number": 146,
+          "s": "success",
+          "t": "2026-10-07T19:38:58Z",
+          "started": "2026-10-07T19:38:46Z",
+          "created": "2026-10-07T19:38:46Z",
+          "d": 12,
+          "e": "schedule",
+          "n": "SG News18 - Auto Video Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37676051299"
+        },
         {
           "id": 37631889507,
           "number": 145,
@@ -1461,32 +1475,18 @@
           "branch": "main",
           "actor": "bgsarkariresult",
           "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/36642887598"
-        },
-        {
-          "id": 36618046180,
-          "number": 46,
-          "s": "success",
-          "t": "2026-09-29T19:16:32Z",
-          "started": "2026-09-29T19:16:17Z",
-          "created": "2026-09-29T19:16:17Z",
-          "d": 15,
-          "e": "schedule",
-          "n": "SG News18 - Auto Video Bot",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/36618046180"
         }
       ],
-      "time": "2026-10-07T13:51:59Z",
-      "url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37631889507",
-      "last_run_id": 37631889507,
-      "run_number": 145,
+      "time": "2026-10-07T19:38:58Z",
+      "url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37676051299",
+      "last_run_id": 37676051299,
+      "run_number": 146,
       "branch": "main",
       "event": "schedule",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37631889507",
+      "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37676051299",
       "cron": "*/5 * * * *",
-      "next": "2026-10-07T17:45:00Z"
+      "next": "2026-10-07T22:20:00Z"
     },
     {
       "name": "TechGlow India",
@@ -1498,6 +1498,20 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 37676295084,
+          "number": 81,
+          "s": "success",
+          "t": "2026-10-07T19:40:56Z",
+          "started": "2026-10-07T19:40:42Z",
+          "created": "2026-10-07T19:40:42Z",
+          "d": 14,
+          "e": "schedule",
+          "n": "TechGlow India - Tech Review Auto Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37676295084"
+        },
         {
           "id": 37632081889,
           "number": 80,
@@ -2619,16 +2633,16 @@
           "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/36110177851"
         }
       ],
-      "time": "2026-10-07T13:53:21Z",
-      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37632081889",
-      "last_run_id": 37632081889,
-      "run_number": 80,
+      "time": "2026-10-07T19:40:56Z",
+      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37676295084",
+      "last_run_id": 37676295084,
+      "run_number": 81,
       "branch": "main",
       "event": "schedule",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37632081889",
+      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37676295084",
       "cron": "*/5 * * * *",
-      "next": "2026-10-07T17:45:00Z"
+      "next": "2026-10-07T22:20:00Z"
     },
     {
       "name": "BK GrowUp",
@@ -6397,6 +6411,20 @@
       "status": "success",
       "runs": [
         {
+          "id": 37674386859,
+          "number": 86,
+          "s": "success",
+          "t": "2026-10-07T19:25:58Z",
+          "started": "2026-10-07T19:25:34Z",
+          "created": "2026-10-07T19:25:34Z",
+          "d": 24,
+          "e": "schedule",
+          "n": "BG Reels Bot - Multi-Platform Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37674386859"
+        },
+        {
           "id": 37628142369,
           "number": 85,
           "s": "success",
@@ -7587,16 +7615,16 @@
           "u": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/36124757581"
         }
       ],
-      "time": "2026-10-07T13:24:09Z",
-      "url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37628142369",
-      "last_run_id": 37628142369,
-      "run_number": 85,
+      "time": "2026-10-07T19:25:58Z",
+      "url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37674386859",
+      "last_run_id": 37674386859,
+      "run_number": 86,
       "branch": "main",
       "event": "schedule",
       "actor": "bgtechlab",
-      "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37628142369",
+      "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37674386859",
       "cron": "*/5 * * * *",
-      "next": "2026-10-07T17:45:00Z"
+      "next": "2026-10-07T22:20:00Z"
     },
     {
       "name": "Job Page Auto Publisher",
@@ -9037,52 +9065,52 @@
       "url": "https://bgsarkariresult.github.io/bgsarkariresult/",
       "articles": [
         {
-          "t": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/ind-vs-wi-शरयस-अययर-न-वसटइडज-क-खलफ-शतक-लगकर-लगई-रकरडस-क-झड-रहत-शरम-क-लसट-म-मर-एटर.html",
-          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/ind-vs-wi-शरयस-अययर-न-वसटइडज-क-खलफ-शतक-लगकर-लगई-रकरडस-क-झड-रहत-शरम-क-लसट-म-मर-एटर.html",
-          "d": "2026-10-07"
-        },
-        {
-          "t": "MPESB Van Rakshak Jail Prahari PET Admit Card 2026 Released - Download Hall Ticket, PET Dates | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "mpesb van rakshak jail prahari pet admit card 2026 released download hall ticket pet dates.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/mpesb-van-rakshak-jail-prahari-pet-admit-card-2026-released-download-hall-ticket-pet-dates.html",
           "d": "2026-10-07"
         },
         {
-          "t": "ITBP Sports Quota Recruitment 2026 Notification Out - Apply Online for 126 Constable GD Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "itbp sports quota recruitment 2026 notification out apply online for 126 constable gd posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/itbp-sports-quota-recruitment-2026-notification-out-apply-online-for-126-constable-gd-posts.html",
           "d": "2026-10-07"
         },
         {
-          "t": "Gauhati High Court Admit Card 2026 Out - Download MTS & Driver Hall Ticket at ghconline.gov.in | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "ind vs wi शरयस अययर न वसटइडज क खलफ शतक लगकर लगई रकरडस क झड रहत शरम क लसट म मर एटर.html",
+          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/ind-vs-wi-शरयस-अययर-न-वसटइडज-क-खलफ-शतक-लगकर-लगई-रकरडस-क-झड-रहत-शरम-क-लसट-म-मर-एटर.html",
+          "d": "2026-10-07"
+        },
+        {
+          "t": "gauhati high court admit card 2026 out download mts driver hall ticket at ghconlinegovin.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/gauhati-high-court-admit-card-2026-out-download-mts-driver-hall-ticket-at-ghconlinegovin.html",
           "d": "2026-10-07"
         },
         {
-          "t": "Delhi High Court Higher Judicial Service HJS Mains Admit Card 2026 Out - Exam on 10-11 October | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "delhi high court higher judicial service hjs mains admit card 2026 out exam on 10 11 october.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/delhi-high-court-higher-judicial-service-hjs-mains-admit-card-2026-out-exam-on-10-11-october.html",
           "d": "2026-10-07"
         },
         {
-          "t": "RRB Ministerial & Isolated Category Result 2026 Out - Download Zone-Wise Result & Cut Off | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "rrb ministerial isolated category result 2026 out download zone wise result cut off.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rrb-ministerial-isolated-category-result-2026-out-download-zone-wise-result-cut-off.html",
           "d": "2026-10-06"
         },
         {
-          "t": "C-DAC Recruitment 2026 – 844 Contractual Vacancies Across 11 Centres | JIT October 2026 Cycle (Advt. No. CORP/JIT/03/2026) | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "c dac recruitment 2026 844 contractual vacancies across 11 centres jit october 2026 cycle advt no corpjit032026.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/c-dac-recruitment-2026-844-contractual-vacancies-across-11-centres-jit-october-2026-cycle-advt-no-corpjit032026.html",
           "d": "2026-10-06"
         },
         {
-          "t": "UPSSSC Forest Guard Result 2026 Out - Check Mains Result & Merit List PDF | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "upsssc forest guard result 2026 out check mains result merit list pdf.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/upsssc-forest-guard-result-2026-out-check-mains-result-merit-list-pdf.html",
           "d": "2026-10-05"
         },
         {
-          "t": "RRB NTPC Graduate Level Recruitment 2026 | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "rrb ntpc graduate level recruitment 2026.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rrb-ntpc-graduate-level-recruitment-2026.html",
           "d": "2026-10-04"
         },
         {
-          "t": "Indian Army TGC-145 Recruitment 2026 Notification Out – Apply Online for 30 Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "indian army tgc 145 recruitment 2026 notification out apply online for 30 posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/indian-army-tgc-145-recruitment-2026-notification-out-apply-online-for-30-posts.html",
           "d": "2026-10-04"
         }
@@ -9116,6 +9144,7 @@
         "2026-09-10": 2,
         "2026-09-09": 1,
         "2026-09-08": 2,
+        "2026-09-07": 6,
         "2026-09-06": 2,
         "2026-09-05": 1,
         "2026-09-04": 1,
@@ -9127,9 +9156,7 @@
         "2026-08-27": 2,
         "2026-08-26": 7
       },
-      "total": 66,
-      "today": 0,
-      "week": 19
+      "total": 72
     },
     {
       "name": "SG News18",
