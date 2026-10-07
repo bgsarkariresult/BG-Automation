@@ -1,8 +1,8 @@
 {
-  "updated": "2026-10-07T15:46:31Z",
-  "checked_at": "2026-10-07T15:46:31Z",
+  "updated": "2026-10-07T17:41:21Z",
+  "checked_at": "2026-10-07T17:41:21Z",
   "refresh_interval_seconds": 300,
-  "source": "Live Dashboard Sync · GitHub Actions API + public site sitemaps",
+  "source": "GitHub Actions API",
   "channels": [
     {
       "name": "SG News",
@@ -33,13 +33,13 @@
           "title": "🔥 POCO X8 Power 5G खरीदने से पहले 100 बार सोच लेना! सच्चाई जान हैरान रह जाओगे",
           "id": "dKW1Uk7O3II",
           "date": "2026-10-04",
-          "views": "52"
+          "views": "54"
         },
         {
           "title": "🔥 सिर्फ ₹5,026 में 120W की तबाही! Bencley FRIDOBLE Double Tower - खरीदने से पहले सच जान लो!",
           "id": "g-OyngDGJV0",
           "date": "2026-10-02",
-          "views": "31"
+          "views": "32"
         },
         {
           "title": "🔥 ultiads TJ Review: मत खरीदो जब तक ये कड़वा सच ना जान लो!",
@@ -76,6 +76,20 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 37631889507,
+          "number": 145,
+          "s": "success",
+          "t": "2026-10-07T13:51:59Z",
+          "started": "2026-10-07T13:51:45Z",
+          "created": "2026-10-07T13:51:45Z",
+          "d": 14,
+          "e": "schedule",
+          "n": "SG News18 - Auto Video Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37631889507"
+        },
         {
           "id": 37600502557,
           "number": 144,
@@ -1461,32 +1475,18 @@
           "branch": "main",
           "actor": "bgsarkariresult",
           "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/36618046180"
-        },
-        {
-          "id": 36579129464,
-          "number": 45,
-          "s": "success",
-          "t": "2026-09-29T13:58:58Z",
-          "started": "2026-09-29T13:58:34Z",
-          "created": "2026-09-29T13:58:34Z",
-          "d": 24,
-          "e": "schedule",
-          "n": "SG News18 - Auto Video Bot",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/36579129464"
         }
       ],
-      "time": "2026-10-07T09:35:24Z",
-      "url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37600502557",
-      "last_run_id": 37600502557,
-      "run_number": 144,
+      "time": "2026-10-07T13:51:59Z",
+      "url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37631889507",
+      "last_run_id": 37631889507,
+      "run_number": 145,
       "branch": "main",
-      "event": "workflow_dispatch",
+      "event": "schedule",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37600502557",
+      "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37631889507",
       "cron": "*/5 * * * *",
-      "next": "2026-10-07T10:55:00Z"
+      "next": "2026-10-07T17:45:00Z"
     },
     {
       "name": "TechGlow India",
@@ -1498,6 +1498,20 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 37632081889,
+          "number": 80,
+          "s": "success",
+          "t": "2026-10-07T13:53:21Z",
+          "started": "2026-10-07T13:53:07Z",
+          "created": "2026-10-07T13:53:07Z",
+          "d": 14,
+          "e": "schedule",
+          "n": "TechGlow India - Tech Review Auto Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37632081889"
+        },
         {
           "id": 37582328752,
           "number": 79,
@@ -2605,16 +2619,16 @@
           "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/36110177851"
         }
       ],
-      "time": "2026-10-07T06:35:30Z",
-      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37582328752",
-      "last_run_id": 37582328752,
-      "run_number": 79,
+      "time": "2026-10-07T13:53:21Z",
+      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37632081889",
+      "last_run_id": 37632081889,
+      "run_number": 80,
       "branch": "main",
       "event": "schedule",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37582328752",
+      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37632081889",
       "cron": "*/5 * * * *",
-      "next": "2026-10-07T10:55:00Z"
+      "next": "2026-10-07T17:45:00Z"
     },
     {
       "name": "BK GrowUp",
@@ -2626,6 +2640,34 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 37630273840,
+          "number": 31,
+          "s": "success",
+          "t": "2026-10-07T13:53:13Z",
+          "started": "2026-10-07T13:39:42Z",
+          "created": "2026-10-07T13:39:42Z",
+          "d": 811,
+          "e": "workflow_dispatch",
+          "n": "Run Job Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/Bk-growup-/actions/runs/37630273840"
+        },
+        {
+          "id": 37625057362,
+          "number": 30,
+          "s": "success",
+          "t": "2026-10-07T13:17:55Z",
+          "started": "2026-10-07T12:59:42Z",
+          "created": "2026-10-07T12:59:42Z",
+          "d": 1093,
+          "e": "workflow_dispatch",
+          "n": "Run Job Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/Bk-growup-/actions/runs/37625057362"
+        },
         {
           "id": 37563220519,
           "number": 29,
@@ -3033,14 +3075,14 @@
           "u": "https://github.com/bgsarkariresult/Bk-growup-/actions/runs/36102751141"
         }
       ],
-      "time": "2026-10-07T02:52:18Z",
-      "url": "https://github.com/bgsarkariresult/Bk-growup-/actions/runs/37563220519",
-      "last_run_id": 37563220519,
-      "run_number": 29,
+      "time": "2026-10-07T13:53:13Z",
+      "url": "https://github.com/bgsarkariresult/Bk-growup-/actions/runs/37630273840",
+      "last_run_id": 37630273840,
+      "run_number": 31,
       "branch": "main",
       "event": "workflow_dispatch",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/Bk-growup-/actions/runs/37563220519"
+      "html_url": "https://github.com/bgsarkariresult/Bk-growup-/actions/runs/37630273840"
     },
     {
       "name": "BG Sarkari Result",
@@ -3052,6 +3094,90 @@
       "kind": "other",
       "status": "success",
       "runs": [
+        {
+          "id": 37628483029,
+          "number": 234,
+          "s": "success",
+          "t": "2026-10-07T13:27:31Z",
+          "started": "2026-10-07T13:26:22Z",
+          "created": "2026-10-07T13:26:22Z",
+          "d": 69,
+          "e": "push",
+          "n": "Update sitemap for https://bgsarkariresult.github.io/bgsarkariresult/…",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/37628483029"
+        },
+        {
+          "id": 37628478630,
+          "number": 233,
+          "s": "cancelled",
+          "t": "2026-10-07T13:26:23Z",
+          "started": "2026-10-07T13:26:20Z",
+          "created": "2026-10-07T13:26:20Z",
+          "d": 3,
+          "e": "push",
+          "n": "Update jobs.json for mpesb-van-rakshak-jail-prahari-pet-admit-card-20…",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/37628478630"
+        },
+        {
+          "id": 37628474791,
+          "number": 232,
+          "s": "success",
+          "t": "2026-10-07T13:26:35Z",
+          "started": "2026-10-07T13:26:18Z",
+          "created": "2026-10-07T13:26:18Z",
+          "d": 17,
+          "e": "push",
+          "n": "Add/Update page: mpesb-van-rakshak-jail-prahari-pet-admit-card-2026-r…",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/37628474791"
+        },
+        {
+          "id": 37624915319,
+          "number": 231,
+          "s": "success",
+          "t": "2026-10-07T13:00:06Z",
+          "started": "2026-10-07T12:58:33Z",
+          "created": "2026-10-07T12:58:33Z",
+          "d": 93,
+          "e": "push",
+          "n": "Update sitemap for https://bgsarkariresult.github.io/bgsarkariresult/…",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/37624915319"
+        },
+        {
+          "id": 37624913217,
+          "number": 230,
+          "s": "cancelled",
+          "t": "2026-10-07T12:58:35Z",
+          "started": "2026-10-07T12:58:32Z",
+          "created": "2026-10-07T12:58:32Z",
+          "d": 3,
+          "e": "push",
+          "n": "Update jobs.json for itbp-sports-quota-recruitment-2026-notification-…",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/37624913217"
+        },
+        {
+          "id": 37624907590,
+          "number": 229,
+          "s": "success",
+          "t": "2026-10-07T12:59:46Z",
+          "started": "2026-10-07T12:58:29Z",
+          "created": "2026-10-07T12:58:29Z",
+          "d": 77,
+          "e": "push",
+          "n": "Add/Update page: itbp-sports-quota-recruitment-2026-notification-out-…",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/37624907590"
+        },
         {
           "id": 37561658797,
           "number": 228,
@@ -4367,100 +4493,16 @@
           "branch": "main",
           "actor": "bgsarkariresult",
           "u": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/35993251990"
-        },
-        {
-          "id": 35993247794,
-          "number": 134,
-          "s": "success",
-          "t": "2026-09-24T11:29:08Z",
-          "started": "2026-09-24T11:28:47Z",
-          "created": "2026-09-24T11:28:47Z",
-          "d": 21,
-          "e": "push",
-          "n": "Add/Update page: rrb-ntpc-ug-recruitment-notification-2026-cen-072026…",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/35993247794"
-        },
-        {
-          "id": 35814764802,
-          "number": 133,
-          "s": "success",
-          "t": "2026-09-23T03:33:29Z",
-          "started": "2026-09-23T03:32:59Z",
-          "created": "2026-09-23T03:32:59Z",
-          "d": 30,
-          "e": "push",
-          "n": "Update sitemap for https://bgsarkariresult.github.io/bgsarkariresult/…",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/35814764802"
-        },
-        {
-          "id": 35814761568,
-          "number": 132,
-          "s": "cancelled",
-          "t": "2026-09-23T03:33:00Z",
-          "started": "2026-09-23T03:32:56Z",
-          "created": "2026-09-23T03:32:56Z",
-          "d": 4,
-          "e": "push",
-          "n": "Update jobs.json for indian-army-tgc-145-recruitment-2026-notificatio…",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/35814761568"
-        },
-        {
-          "id": 35814758671,
-          "number": 131,
-          "s": "success",
-          "t": "2026-09-23T03:33:10Z",
-          "started": "2026-09-23T03:32:53Z",
-          "created": "2026-09-23T03:32:53Z",
-          "d": 17,
-          "e": "push",
-          "n": "Add/Update page: indian-army-tgc-145-recruitment-2026-notification-ou…",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/35814758671"
-        },
-        {
-          "id": 35687584346,
-          "number": 130,
-          "s": "success",
-          "t": "2026-09-22T04:37:57Z",
-          "started": "2026-09-22T04:37:29Z",
-          "created": "2026-09-22T04:37:29Z",
-          "d": 28,
-          "e": "push",
-          "n": "Update sitemap for https://bgsarkariresult.github.io/bgsarkariresult/…",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/35687584346"
-        },
-        {
-          "id": 35687581278,
-          "number": 129,
-          "s": "cancelled",
-          "t": "2026-09-22T04:37:30Z",
-          "started": "2026-09-22T04:37:26Z",
-          "created": "2026-09-22T04:37:26Z",
-          "d": 4,
-          "e": "push",
-          "n": "Update jobs.json for rrb-ntpc-graduate-recruitment-062026-notificatio…",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/35687581278"
         }
       ],
-      "time": "2026-10-07T02:22:49Z",
-      "url": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/37561658797",
-      "last_run_id": 37561658797,
-      "run_number": 228,
+      "time": "2026-10-07T13:27:31Z",
+      "url": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/37628483029",
+      "last_run_id": 37628483029,
+      "run_number": 234,
       "branch": "main",
       "event": "push",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/37561658797"
+      "html_url": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/37628483029"
     },
     {
       "name": "YouTube Live Bot",
@@ -6355,6 +6397,20 @@
       "status": "success",
       "runs": [
         {
+          "id": 37628142369,
+          "number": 85,
+          "s": "success",
+          "t": "2026-10-07T13:24:09Z",
+          "started": "2026-10-07T13:23:46Z",
+          "created": "2026-10-07T13:23:46Z",
+          "d": 23,
+          "e": "schedule",
+          "n": "BG Reels Bot - Multi-Platform Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37628142369"
+        },
+        {
           "id": 37580160077,
           "number": 84,
           "s": "success",
@@ -7531,16 +7587,16 @@
           "u": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/36124757581"
         }
       ],
-      "time": "2026-10-07T06:11:40Z",
-      "url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37580160077",
-      "last_run_id": 37580160077,
-      "run_number": 84,
+      "time": "2026-10-07T13:24:09Z",
+      "url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37628142369",
+      "last_run_id": 37628142369,
+      "run_number": 85,
       "branch": "main",
       "event": "schedule",
       "actor": "bgtechlab",
-      "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37580160077",
+      "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37628142369",
       "cron": "*/5 * * * *",
-      "next": "2026-10-07T10:55:00Z"
+      "next": "2026-10-07T17:45:00Z"
     },
     {
       "name": "Job Page Auto Publisher",
@@ -7552,6 +7608,34 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 37628367555,
+          "number": 26,
+          "s": "success",
+          "t": "2026-10-07T13:26:23Z",
+          "started": "2026-10-07T13:25:29Z",
+          "created": "2026-10-07T13:25:29Z",
+          "d": 54,
+          "e": "workflow_dispatch",
+          "n": "Job Page Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/Job-Page-Auto-Publisher/actions/runs/37628367555"
+        },
+        {
+          "id": 37624827597,
+          "number": 25,
+          "s": "success",
+          "t": "2026-10-07T12:58:35Z",
+          "started": "2026-10-07T12:57:50Z",
+          "created": "2026-10-07T12:57:50Z",
+          "d": 45,
+          "e": "workflow_dispatch",
+          "n": "Job Page Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/Job-Page-Auto-Publisher/actions/runs/37624827597"
+        },
         {
           "id": 37561598398,
           "number": 24,
@@ -7889,14 +7973,14 @@
           "u": "https://github.com/bgtechlab/Job-Page-Auto-Publisher/actions/runs/36857102194"
         }
       ],
-      "time": "2026-10-07T02:22:22Z",
-      "url": "https://github.com/bgtechlab/Job-Page-Auto-Publisher/actions/runs/37561598398",
-      "last_run_id": 37561598398,
-      "run_number": 24,
+      "time": "2026-10-07T13:26:23Z",
+      "url": "https://github.com/bgtechlab/Job-Page-Auto-Publisher/actions/runs/37628367555",
+      "last_run_id": 37628367555,
+      "run_number": 26,
       "branch": "main",
       "event": "workflow_dispatch",
       "actor": "bgtechlab",
-      "html_url": "https://github.com/bgtechlab/Job-Page-Auto-Publisher/actions/runs/37561598398"
+      "html_url": "https://github.com/bgtechlab/Job-Page-Auto-Publisher/actions/runs/37628367555"
     },
     {
       "name": "Amazon to Blogger",
@@ -8953,52 +9037,52 @@
       "url": "https://bgsarkariresult.github.io/bgsarkariresult/",
       "articles": [
         {
-          "t": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/ind-vs-wi-शरयस-अययर-न-वसटइडज-क-खलफ-शतक-लगकर-लगई-रकरडस-क-झड-रहत-शरम-क-लसट-म-मर-एटर.html",
-          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/ind-vs-wi-शरयस-अययर-न-वसटइडज-क-खलफ-शतक-लगकर-लगई-रकरडस-क-झड-रहत-शरम-क-लसट-म-मर-एटर.html",
-          "d": "2026-10-07"
-        },
-        {
-          "t": "MPESB Van Rakshak Jail Prahari PET Admit Card 2026 Released - Download Hall Ticket, PET Dates | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "mpesb van rakshak jail prahari pet admit card 2026 released download hall ticket pet dates.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/mpesb-van-rakshak-jail-prahari-pet-admit-card-2026-released-download-hall-ticket-pet-dates.html",
           "d": "2026-10-07"
         },
         {
-          "t": "ITBP Sports Quota Recruitment 2026 Notification Out - Apply Online for 126 Constable GD Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "itbp sports quota recruitment 2026 notification out apply online for 126 constable gd posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/itbp-sports-quota-recruitment-2026-notification-out-apply-online-for-126-constable-gd-posts.html",
           "d": "2026-10-07"
         },
         {
-          "t": "Gauhati High Court Admit Card 2026 Out - Download MTS & Driver Hall Ticket at ghconline.gov.in | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "ind vs wi शरयस अययर न वसटइडज क खलफ शतक लगकर लगई रकरडस क झड रहत शरम क लसट म मर एटर.html",
+          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/ind-vs-wi-शरयस-अययर-न-वसटइडज-क-खलफ-शतक-लगकर-लगई-रकरडस-क-झड-रहत-शरम-क-लसट-म-मर-एटर.html",
+          "d": "2026-10-07"
+        },
+        {
+          "t": "gauhati high court admit card 2026 out download mts driver hall ticket at ghconlinegovin.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/gauhati-high-court-admit-card-2026-out-download-mts-driver-hall-ticket-at-ghconlinegovin.html",
           "d": "2026-10-07"
         },
         {
-          "t": "Delhi High Court Higher Judicial Service HJS Mains Admit Card 2026 Out - Exam on 10-11 October | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "delhi high court higher judicial service hjs mains admit card 2026 out exam on 10 11 october.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/delhi-high-court-higher-judicial-service-hjs-mains-admit-card-2026-out-exam-on-10-11-october.html",
           "d": "2026-10-07"
         },
         {
-          "t": "RRB Ministerial & Isolated Category Result 2026 Out - Download Zone-Wise Result & Cut Off | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "rrb ministerial isolated category result 2026 out download zone wise result cut off.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rrb-ministerial-isolated-category-result-2026-out-download-zone-wise-result-cut-off.html",
           "d": "2026-10-06"
         },
         {
-          "t": "C-DAC Recruitment 2026 – 844 Contractual Vacancies Across 11 Centres | JIT October 2026 Cycle (Advt. No. CORP/JIT/03/2026) | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "c dac recruitment 2026 844 contractual vacancies across 11 centres jit october 2026 cycle advt no corpjit032026.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/c-dac-recruitment-2026-844-contractual-vacancies-across-11-centres-jit-october-2026-cycle-advt-no-corpjit032026.html",
           "d": "2026-10-06"
         },
         {
-          "t": "UPSSSC Forest Guard Result 2026 Out - Check Mains Result & Merit List PDF | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "upsssc forest guard result 2026 out check mains result merit list pdf.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/upsssc-forest-guard-result-2026-out-check-mains-result-merit-list-pdf.html",
           "d": "2026-10-05"
         },
         {
-          "t": "RRB NTPC Graduate Level Recruitment 2026 | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "rrb ntpc graduate level recruitment 2026.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rrb-ntpc-graduate-level-recruitment-2026.html",
           "d": "2026-10-04"
         },
         {
-          "t": "Indian Army TGC-145 Recruitment 2026 Notification Out – Apply Online for 30 Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "indian army tgc 145 recruitment 2026 notification out apply online for 30 posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/indian-army-tgc-145-recruitment-2026-notification-out-apply-online-for-30-posts.html",
           "d": "2026-10-04"
         }
@@ -9032,6 +9116,7 @@
         "2026-09-10": 2,
         "2026-09-09": 1,
         "2026-09-08": 2,
+        "2026-09-07": 6,
         "2026-09-06": 2,
         "2026-09-05": 1,
         "2026-09-04": 1,
@@ -9043,9 +9128,7 @@
         "2026-08-27": 2,
         "2026-08-26": 7
       },
-      "total": 66,
-      "today": 5,
-      "week": 22
+      "total": 72
     },
     {
       "name": "SG News18",
