@@ -77,9 +77,10 @@ function workflowFor(b) {
 }
 
 boot('control.html', 'GitHub Actions Control Center', d => {
-  const run = d.bots.filter(b => ['in_progress','queued','waiting','pending','requested'].includes(b.status));
-  const fails = d.bots.filter(b => ['failure','timed_out','action_required','startup_failure'].includes(b.status) || b.failed);
-  const stateCounts = d.bots.reduce((a,b) => { const s=String(b.status||'unknown'); a[s]=(a[s]||0)+1; return a; }, {});
+  const run = d.bots.filter(b => ['in_progress','queued','waiting','pending','requested'].includes(String((b.runs&&b.runs[0]&&b.runs[0].s)||b.status||'unknown')));
+  const fails = d.bots.filter(b => ['failure','timed_out','action_required','startup_failure','stale'].includes(String((b.runs&&b.runs[0]&&b.runs[0].s)||b.status||'unknown')) || b.failed);
+  const allRuns = d.bots.flatMap(b => Array.isArray(b.runs) ? b.runs : []);
+  const stateCounts = allRuns.reduce((a,r) => { const s=String(r.s||'unknown'); a[s]=(a[s]||0)+1; return a; }, {});
 
   $('#main').innerHTML = `
     <div class="card">
@@ -105,6 +106,9 @@ boot('control.html', 'GitHub Actions Control Center', d => {
         ${stateBadge('timed_out',stateCounts.timed_out)}
         ${stateBadge('action_required',stateCounts.action_required)}
         ${stateBadge('requested',stateCounts.requested)}
+        ${stateBadge('neutral',stateCounts.neutral)}
+        ${stateBadge('stale',stateCounts.stale)}
+        ${stateBadge('startup_failure',stateCounts.startup_failure)}
       </div>
       <small style="display:block;margin-top:8px;color:var(--mu)">0 ka matlab recent sync mein us state ka run nahi mila.</small>
     </div>
@@ -182,11 +186,12 @@ function renderProjectCard(b) {
   const i=window.D.bots.indexOf(b);
   const wf=workflowFor(b);
   if (!b.workflow && wf) b.workflow=wf;
-  const sm=stateMeta(b.status);
+  const currentState=String((Array.isArray(b.runs)&&b.runs.length&&b.runs[0].s)||b.status||'unknown');
+  const sm=stateMeta(currentState);
   const detail=failureDetail(b);
   const statusLine='<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:5px"><span class="badge-s '+sm.c+'">'+sm.i+' '+sm.l+'</span>'+(detail?'<small style="color:var(--mu)">'+esc(detail)+'</small>':'')+'</div>';
   return `<div class="site">
-    <div class="row"><div><b>${esc(b.name)}</b><br><small>${b.runs.filter(okRun).length} safal • ${b.runs.filter(r => r.s === 'failure').length} fail (pichhle ${b.runs.length} run)</small>${statusLine}</div></div>
+    <div class="row"><div><b>${esc(b.name)}</b><br><small>${b.runs.filter(okRun).length} safal • ${b.runs.filter(r => ['failure','timed_out','action_required','startup_failure','stale'].includes(r.s)).length} fail (pichhle ${b.runs.length} run)</small>${statusLine}</div></div>
     <input class="lk" id="lk${i}" placeholder="Link dalo (article / product URL) — optional">
     <div class="project-actions"><button class="btn g" type="button" onclick="showLiveLogs(${i})" aria-label=" ${esc(b.name)} ke live logs dekhein">📋 Logs</button><button class="btn run-action" type="button" id="btn${i}" onclick="runBot(${i})" ${!b.workflow ? 'disabled title="Iske paas workflow nahi"' : ''}>▶ Run</button><button class="btn g" type="button" onclick="tg(${i})" aria-controls="rs${i}" aria-expanded="false">↻ Runs</button></div>
     <small class="hn" id="hn${i}" role="status" aria-live="polite"></small><div class="rs" id="rs${i}" hidden><div class="runs-heading">पिछले 5 रन</div>${b.runs.slice(0,5).map(r=>`<div class="run-item"><span class="dot s-${esc(r.s)}">${st(r.s)}</span><span class="run-info"><b>${esc(r.n)}</b><small>${esc(r.s)} • ${ago(r.t)}</small></span><a class="btn g t" href="${esc(r.u)}" target="_blank" rel="noopener">Log ↗</a></div>`).join('')||'<small>Koi run nahi.</small>'}</div>
