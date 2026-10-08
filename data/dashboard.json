@@ -1,6 +1,6 @@
 {
-  "updated": "2026-10-08T16:04:03Z",
-  "checked_at": "2026-10-08T16:04:03Z",
+  "updated": "2026-10-08T16:44:17Z",
+  "checked_at": "2026-10-08T16:44:17Z",
   "refresh_interval_seconds": 300,
   "source": "GitHub Actions API",
   "channels": [
@@ -1486,7 +1486,7 @@
       "actor": "bgsarkariresult",
       "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37764984923",
       "cron": "*/5 * * * *",
-      "next": "2026-10-08T16:05:00Z"
+      "next": "2026-10-08T16:45:00Z"
     },
     {
       "name": "TechGlow India",
@@ -1498,6 +1498,20 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 37808239580,
+          "number": 93,
+          "s": "success",
+          "t": "2026-10-08T16:39:16Z",
+          "started": "2026-10-08T16:22:13Z",
+          "created": "2026-10-08T16:22:13Z",
+          "d": 1023,
+          "e": "workflow_dispatch",
+          "n": "TechGlow India - Tech Review Auto Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37808239580"
+        },
         {
           "id": 37803649705,
           "number": 92,
@@ -2787,16 +2801,16 @@
           "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/36110177851"
         }
       ],
-      "time": "2026-10-08T15:59:04Z",
-      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37803649705",
-      "last_run_id": 37803649705,
-      "run_number": 92,
+      "time": "2026-10-08T16:39:16Z",
+      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37808239580",
+      "last_run_id": 37808239580,
+      "run_number": 93,
       "branch": "main",
       "event": "workflow_dispatch",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37803649705",
+      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37808239580",
       "cron": "*/5 * * * *",
-      "next": "2026-10-08T16:05:00Z"
+      "next": "2026-10-08T16:45:00Z"
     },
     {
       "name": "BK GrowUp",
@@ -7904,7 +7918,7 @@
       "actor": "bgtechlab",
       "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/37765073361",
       "cron": "*/5 * * * *",
-      "next": "2026-10-08T16:05:00Z"
+      "next": "2026-10-08T16:45:00Z"
     },
     {
       "name": "Job Page Auto Publisher",
