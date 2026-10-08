@@ -13,6 +13,7 @@
 </style>
 </head>
 <body>
+<div id="app-shell">
 <div id="boot-msg">⏳ Dashboard load ho raha hai…</div>
 <script>
 /* Local helpers — no dependency on app.js globals */
@@ -26,34 +27,66 @@ const colors = ['#ef4444', '#f97316', '#2b6fff', '#8b5cf6', '#06b6d4', '#22c55e'
 
 function agoText(t) {
   if (!t) return '—';
-  const m = Math.max(0, (Date.now() - new Date(t)) / 60000);
-  return m < 1 ? 'अभी' : m < 60 ? Math.round(m) + 'm ago' : m < 1440 ? Math.round(m / 60) + 'h ago' : Math.round(m / 1440) + 'd ago';
+  const ms = Date.parse(t);
+  if (!Number.isFinite(ms)) return '—';
+  const m = Math.max(0, (Date.now() - ms) / 60000);
+  return m < 1 ? 'अभी' : m < 60 ? Math.floor(m) + 'm ago' : m < 1440 ? Math.floor(m / 60) + 'h ago' : Math.floor(m / 1440) + 'd ago';
 }
 function timeHHMM(t) {
   if (!t) return '--:--';
   return new Date(t).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 }
 let notificationInitialized = false;
-function checkWorkNotifications(runs) {
-  if (!('Notification' in window) || Notification.permission !== 'granted') return;
-  const state = JSON.parse(localStorage.getItem('bg_notify_runs') || '{}');
+async function showBgNotification(title, options) {
+  try {
+    if (!("serviceWorker" in navigator)) return false;
+    const reg = await navigator.serviceWorker.ready;
+    await reg.showNotification(title, Object.assign({
+      icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='128' height='128'><text y='90' font-size='90'>🤖</text></svg>',
+      badge: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96'><text y='70' font-size='70'>🤖</text></svg>",
+      vibrate: [120, 60, 120]
+    }, options || {}));
+    return true;
+  } catch (e) {
+    console.warn("Notification:", e);
+    return false;
+  }
+}
+let notificationInitialized = false;
+async function checkWorkNotifications(runs) {
+  if (!("Notification" in window) || Notification.permission !== "granted") return 0;
+  const state = JSON.parse(localStorage.getItem("bg_notify_runs") || "{}");
   const next = {};
-  runs.forEach(function (x) {
-    const id = String(x.bot.repo || x.bot.id || x.name) + ':' + String(x.r.id || x.r.run_id || x.r.url || x.r.t || x.r.n || 'run');
-    const status = String(x.r.s || 'unknown');
+  let changes = 0;
+  for (const x of runs) {
+    const id = String(x.bot.repo || x.bot.id || x.name) + ":" + String(x.r.id || x.r.run_id || x.r.url || x.r.t || x.r.n || "run");
+    const status = String(x.r.s || "unknown");
     next[id] = status;
     const previous = state[id];
     if (previous && previous !== status) {
-      const label = status === 'success' ? 'सफल' : status === 'failure' ? 'असफल' : status === 'cancelled' ? 'रद्द' : 'स्थिति बदली';
-      const icon = status === 'success' ? '✅' : status === 'failure' ? '❌' : status === 'cancelled' ? '🚫' : '🔄';
-      const n = new Notification(icon + ' BG Automation · ' + label, { body: x.name + ' · ' + (x.r.n || 'Automation job'), tag: 'bg-' + id, renotify: true });
-      n.onclick = function () { window.focus(); window.location.href = 'logs.html'; };
-    } else if (!previous && status === 'in_progress' && notificationInitialized) {
-      new Notification('🔄 BG Automation · काम शुरू', { body: x.name + ' · ' + (x.r.n || 'Automation job'), tag: 'bg-' + id });
+      changes++;
+      const label = status === "success" ? "सफल" : status === "failure" ? "असफल" : status === "cancelled" ? "रद्द" : "स्थिति बदली";
+      const icon = status === "success" ? "✅" : status === "failure" ? "❌" : status === "cancelled" ? "🚫" : "🔄";
+      await showBgNotification(icon + " BG Automation · " + label, {
+        body: x.name + " · " + (x.r.n || "Automation job"),
+        tag: "bg-" + id,
+        renotify: true,
+        data: { url: "logs.html" }
+      });
+    } else if (!previous && status === "in_progress" && notificationInitialized) {
+      changes++;
+      await showBgNotification("🔄 BG Automation · काम शुरू", {
+        body: x.name + " · " + (x.r.n || "Automation job"),
+        tag: "bg-" + id,
+        data: { url: "logs.html" }
+      });
     }
-  });
-  localStorage.setItem('bg_notify_runs', JSON.stringify(next));
+  }
+  localStorage.setItem("bg_notify_runs", JSON.stringify(next));
   notificationInitialized = true;
+  const badge = document.querySelector(".notify-badge");
+  if (badge) badge.textContent = changes ? String(Math.min(changes, 9)) : "";
+  return changes;
 }
 function enableNotifications() {
   if (!('Notification' in window)) { alert('इस ब्राउज़र में notifications उपलब्ध नहीं हैं।'); return; }
@@ -124,6 +157,15 @@ function dashboardSignature(d) {
   return JSON.stringify(x);
 }
 
+function toggleTheme() {
+  const dark = document.documentElement.dataset.theme !== "light";
+  document.documentElement.dataset.theme = dark ? "light" : "dark";
+  localStorage.setItem("bg_theme", dark ? "light" : "dark");
+}
+(function restoreTheme() {
+  const t = localStorage.getItem("bg_theme");
+  if (t === "light") document.documentElement.dataset.theme = "light";
+})();
 async function loadDataFast() {
   const d = await loadLocalData();
   const fresh = await loadLiveData(d).catch(function () { return d; });
@@ -179,7 +221,7 @@ function render(d) {
     const runs = bots.flatMap(b => (b.runs || []).map(r => ({ name: b.name || b.id || 'Bot', r, bot: b })))
       .sort((a, b) => new Date(b.r.t) - new Date(a.r.t));
     const recent = runs.slice(0, 30);
-    const counts = recent.reduce((a,x) => { const s=String(x.r.s||'unknown'); a[s]=(a[s]||0)+1; return a; }, {});
+    const counts = runs.reduce((a,x) => { const s=String(x.r.s||'unknown'); a[s]=(a[s]||0)+1; return a; }, {});
     const success = counts.success || 0;
     const failed = counts.failure || 0;
     const running = counts.in_progress || 0;
@@ -189,7 +231,7 @@ function render(d) {
     const timedOut = counts.timed_out || 0;
     const actionRequired = counts.action_required || 0;
     const skipped = counts.skipped || 0;
-    const totalRuns = recent.length || runs.length;
+    const totalRuns = d.total_runs ?? runs.length;
     const attention = failed + timedOut + actionRequired;
     checkWorkNotifications(runs);
 
@@ -241,14 +283,14 @@ function render(d) {
         '<span class="tg-time">' + agoText(m.t || m.time || m.date) + '</span></div>';
     }).join('') || '<small class="mu">No messages yet</small>';
 
-    document.body.innerHTML =
+    document.getElementById("app-shell").innerHTML =
       '<div class="top">' +
         '<button class="burger" onclick="document.querySelector(\'nav\').classList.toggle(\'open\')">☰</button>' +
         '<div class="logo"><div class="logo-bot">🤖</div><div>BG <span>Automation</span><small>AI + Automation | Grow Together</small></div></div>' +
         '<div class="goal-banner">✨ 🚀 आज का लक्ष्य: 100 नए लीड · 5 वेबसाइट अपडेट · 1 यूट्यूब वीडियो · ग्रोथ जारी रखें!</div>' +
         '<div class="top-right">' +
-          '<button class="icon-btn" title="Theme">☀</button>' +
-          '<button class="icon-btn" title="Enable work notifications" onclick="enableNotifications()">🔔<span class="badge">' + Math.min(msgs.length || 0, 9) + '</span></button>' +
+          '<button class="icon-btn" id="themeBtn" title="Theme" onclick="toggleTheme()">☀</button>' +
+          '<button class="icon-btn" title="Enable work notifications" onclick="enableNotifications()">🔔<span class="badge notify-badge"></span></button>' +
           '<div class="user-chip"><div class="user-av">B</div> Bhavesh ▾</div>' +
         '</div>' +
       '</div>' +
@@ -269,7 +311,7 @@ function render(d) {
         '<main>' +
           '<div class="kpi-row">' +
             '<div class="kpi red"><div class="kpi-top"><div class="kpi-icon">▶</div><span style="opacity:.4;font-size:18px">📊</span></div><label>Total Channels</label><div class="num">' + channels.length + '</div><div class="sub"><span>YouTube Automation</span><span class="up">↑ Active</span></div></div>' +
-            '<div class="kpi purple"><div class="kpi-top"><div class="kpi-icon">⚙</div><span style="opacity:.4;font-size:18px">📈</span></div><label>Total Runs</label><div class="num">' + totalRuns + '</div><div class="sub"><span>Automation Jobs</span><span class="up">✓ ' + success + ' · ✕ ' + failed + ' · ⏳ ' + running + '</span></div></div>' +
+            '<div class="kpi purple"><div class="kpi-top"><div class="kpi-icon">⚙</div><span style="opacity:.4;font-size:18px">📈</span></div><label>Total Runs (loaded)</label><div class="num">' + totalRuns + '</div><div class="sub"><span>Automation Jobs</span><span class="up">✓ ' + success + ' · ✕ ' + failed + ' · ⏳ ' + running + '</span></div></div>' +
             '<div class="kpi blue"><div class="kpi-top"><div class="kpi-icon">✈</div><span style="opacity:.4;font-size:18px">📉</span></div><label><a href="https://t.me/bglarenup" target="_blank" rel="noopener" style="color:inherit;text-decoration:none" title="Open Telegram channel">Telegram Messages ↗</a></label><div class="num">' + (msgs.length || '—') + '</div><div class="sub"><span>Last 7 days</span><span class="up">↑ Live</span></div></div>' +
           '</div>' +
           '<div class="dash-grid">' +
@@ -288,7 +330,7 @@ function render(d) {
                 '<div class="auto-grid">' +
                   '<div class="auto-item"><div class="ai" style="background:rgba(239,68,68,.12)">▶</div><b>YouTube</b><small>' + channels.length + ' Channels</small><div class="bar r"><i></i></div><div class="bar-pct">100%</div></div>' +
                   '<div class="auto-item"><div class="ai" style="background:rgba(139,92,246,.12)">🌐</div><b>Websites</b><small>' + (sites.length || bots.filter(function(b){return b.site}).length) + ' Projects</small><div class="bar p"><i></i></div><div class="bar-pct">100%</div></div>' +
-                  '<div class="auto-item"><div class="ai" style="background:rgba(34,211,238,.12)">✈</div><b>Telegram</b><small>1 Bot</small><div class="bar c"><i></i></div><div class="bar-pct">100%</div></div>' +
+                  '<div class="auto-item"><div class="ai" style="background:rgba(34,211,238,.12)">✈</div><b>Telegram</b><small>Telegram</small><div class="bar c"><i></i></div><div class="bar-pct">100%</div></div>' +
                   '<div class="auto-item"><div class="ai" style="background:rgba(245,158,11,.12)">🐙</div><b>GitHub</b><small>' + bots.length + ' Repo' + (bots.length !== 1 ? 's' : '') + '</small><div class="bar a"><i></i></div><div class="bar-pct">' + (failed ? Math.max(0, 100 - failed * 10) : 100) + '%</div></div>' +
                 '</div>' +
               '</div>' +
@@ -321,7 +363,7 @@ function render(d) {
           '<div class="footer">' +
             '<div><b style="color:var(--ac2)">BG</b> Automation · AI + Automation | Grow Together</div>' +
             '<div class="footer-links"><a href="https://github.com/bgsarkariresult/BG-Automation" target="_blank" rel="noopener">🐙 GitHub</a><a href="logs.html">✈ Telegram</a><a href="youtube.html">▶ YouTube</a><a href="sites.html">🌐 Website</a></div>' +
-            '<div class="status-ok">All Systems Operational</div>' +
+            '<div class="status-ok">' + (d.live_state === 'live' && !attention ? '● Systems Operational' : attention ? '⚠ Attention Required' : '● Dashboard Online') + '</div>' +
           '</div>' +
         '</main>' +
       '</div>';
@@ -369,7 +411,16 @@ loadDataFast().catch(function (e) {
 });
 setInterval(function () {
   if (!document.hidden) loadDataFast().catch(function () {});
-}, 5000);
+}, 45000);
+</script>
+</div>
+<script>
+/* Service worker registration for Android/PWA-safe notifications. */
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("sw.js").catch(function (e) { console.warn("SW:", e); });
+  });
+}
 </script>
 </body>
 </html>
