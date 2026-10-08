@@ -141,7 +141,7 @@
 
     $('#main').innerHTML =
       '<div class="kpi-row">' +
-        '<div class="kpi red"><label>Total Channels</label><div class="num">' + channels.length + '</div><div class="sub"><span>YouTube Automation</span><span class="up">↑ Active</span></div></div>' +
+        '<div class="kpi red"><label>🟢 Successful Today</label><div class="num">' + stats(d, TD(), TD()).ok + '</div><div class="sub"><span>Jobs Completed Today</span><span class="up">✓ Success</span></div></div>' +
         '<div class="kpi purple"><label>Total Runs</label><div class="num">' + totalRuns + '</div><div class="sub"><span>Automation Jobs</span><span class="up">✓ ' + success + ' · ✕ ' + failed + ' · ⏳ ' + running + '</span></div></div>' +
         '<div class="kpi blue"><label>🔵 Running Now</label><div class="num">' + running + '</div><div class="sub"><span>' + (running ? runs.filter(x => ["in_progress","queued"].includes(String(x.r.s||""))).slice(0,2).map(x => esc(x.b.name || x.b.repo || "Automation")).join(" · ") : "कोई काम अभी नहीं चल रहा") + '</span><span class="up">● Live</span></div></div>' +
       '</div>' +
