@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BG Automation | Dashboard</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#3b5bff">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="stylesheet" href="app.css">
 <style>
   /* Fallback so page is never pure black while loading */
@@ -234,6 +237,10 @@ function render(d) {
     const actionRequired = counts.action_required || 0;
     const skipped = counts.skipped || 0;
     const totalRuns = d.total_runs ?? runs.length;
+    const todayKey = new Date().toISOString().slice(0,10);
+    const todayRuns = runs.filter(x => String(x.r.t||'').slice(0,10) === todayKey).length;
+    const goalEl = document.getElementById('goalLive');
+    if (goalEl) goalEl.textContent = todayRuns + ' runs आज · ' + running + ' running · ' + failed + ' failed';
     const attention = failed + timedOut + actionRequired;
     checkWorkNotifications(runs);
 
@@ -289,7 +296,7 @@ function render(d) {
       '<div class="top">' +
         '<button class="burger" onclick="document.querySelector(\'nav\').classList.toggle(\'open\')">☰</button>' +
         '<div class="logo"><div class="logo-bot">🤖</div><div>BG <span>Automation</span><small>AI + Automation | Grow Together</small></div></div>' +
-        '<div class="goal-banner">✨ 🚀 आज का लक्ष्य: 100 नए लीड · 5 वेबसाइट अपडेट · 1 यूट्यूब वीडियो · ग्रोथ जारी रखें!</div>' +
+        '<div class="goal-banner">✨ 🚀 आज की लाइव स्थिति: <span id="goalLive">डेटा लोड हो रहा है…</span></div>' +
         '<div class="top-right">' +
           '<button class="icon-btn" id="themeBtn" title="Theme" onclick="toggleTheme()">☀</button>' +
           '<button class="icon-btn" title="Enable work notifications" onclick="enableNotifications()">🔔<span class="badge notify-badge"></span></button>' +
