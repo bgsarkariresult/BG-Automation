@@ -40,13 +40,13 @@ const WORKFLOW_MAP = {
 function stateMeta(s) {
   s = String(s || 'unknown');
   const map = {
-    success:{i:'✓',l:'Success',c:'success'}, failure:{i:'✕',l:'Failed',c:'failure'},
-    in_progress:{i:'⏳',l:'Running',c:'running'}, queued:{i:'…',l:'Queued',c:'running'},
-    waiting:{i:'⏸',l:'Waiting',c:'paused'}, pending:{i:'⏸',l:'Pending',c:'paused'},
-    cancelled:{i:'🚫',l:'Cancelled',c:'paused'}, skipped:{i:'⏭',l:'Skipped',c:'paused'},
-    timed_out:{i:'⏱',l:'Timed Out',c:'failure'}, action_required:{i:'⚠',l:'Action Required',c:'paused'},
+    success:{i:'🟢',l:'Success',c:'success'}, failure:{i:'🔴',l:'Failed',c:'failure'},
+    in_progress:{i:'🔵',l:'Running',c:'running'}, queued:{i:'🟡',l:'Queued',c:'running'},
+    waiting:{i:'⏸️',l:'Waiting',c:'paused'}, pending:{i:'⏸️',l:'Pending',c:'paused'},
+    cancelled:{i:'🚫',l:'Cancelled',c:'paused'}, skipped:{i:'⏭️',l:'Skipped',c:'paused'},
+    timed_out:{i:'⏱️',l:'Timed Out',c:'failure'}, action_required:{i:'⚠️',l:'Action Required',c:'paused'},
     requested:{i:'📨',l:'Requested',c:'running'}, neutral:{i:'➖',l:'Neutral',c:'paused'},
-    stale:{i:'🕰',l:'Stale',c:'failure'}, startup_failure:{i:'💥',l:'Startup Failed',c:'failure'},
+    stale:{i:'🕰️',l:'Stale',c:'failure'}, startup_failure:{i:'💥',l:'Startup Failed',c:'failure'},
     unknown:{i:'?',l:'Unknown',c:'paused'}
   };
   return map[s] || {i:'•',l:s.replace(/_/g,' '),c:'paused'};
