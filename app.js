@@ -43,10 +43,21 @@
     $('#notifyBtn')?.addEventListener('click', enableNotifications);
   }
 
-  async function getJson(url) {
-    const r = await fetch(url + (url.includes('?') ? '&' : '?') + 't=' + Date.now(), {cache:'no-store'});
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    return r.json();
+  async function getJson(url, timeoutMs = 8000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const r = await fetch(url + (url.includes('?') ? '&' : '?') + 't=' + Date.now(), {
+        cache:'no-store', credentials:'omit', signal:controller.signal
+      });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const type = r.headers.get('content-type') || '';
+      if (!type.includes('json')) throw new Error('Invalid JSON response');
+      return await r.json();
+    } catch (e) {
+      if (e && e.name === 'AbortError') throw new Error('Request timeout');
+      throw e;
+    } finally { clearTimeout(timer); }
   }
 
   async function loadData() {
@@ -56,7 +67,7 @@
 
     let liveState = 'cached';
     try {
-      const live = await getJson(LIVE);
+      const live = await getJson(LIVE, 7000);
       if (live && live.ok && Array.isArray(live.bots) && live.bots.length) {
         const map = new Map(live.bots.map((b) => [String(b.repo || '').toLowerCase(), b]));
         d.bots = (d.bots || []).map((b) => {
@@ -154,7 +165,7 @@
     const box = $('#trendBox');
     if (!box) return;
     try {
-      const data = await getJson(TREND_URL);
+      const data = await getJson(TREND_URL, 7000);
       const rows = [];
       Object.keys(data || {}).forEach((k) => {
         const g = data[k] || {};
@@ -281,7 +292,12 @@
         };
       }
     } catch(e) {
-      if(main) main.innerHTML='<div class="card"><div class="hd"><h2>⚠️ '+esc(pageTitle)+' load problem</h2><button class="btn g" onclick="location.reload()">↻ Retry</button></div><small>'+esc(e.message||e)+'</small></div>';
+      if(main) main.innerHTML='<div class="card"><div class="hd"><h2>⚠️ '+esc(pageTitle)+' load problem</h2><button class="btn g" id="pageRetry">↻ Retry</button></div><small>'+esc(e.message||e)+'</small><p><small>Live API fail होने पर cached dashboard data भी दिखाया जा सकता है।</small></p></div>';
+      $('#pageRetry')?.addEventListener('click', async () => {
+        const btn=$('#pageRetry'); if(btn){btn.disabled=true;btn.textContent='⏳ Loading…';}
+        try { const fresh=await loadData(); if(typeof pageRenderer==='function') await pageRenderer(fresh); }
+        catch(err){ if(btn){btn.disabled=false;btn.textContent='↻ Retry';} }
+      });
     }
     clearInterval(window.__bgPageTimer);
     window.__bgPageTimer=setInterval(()=>{ if(!document.hidden) window.refreshDashboard?.(); },15000);
@@ -294,7 +310,7 @@
   if (current === 'index.html') {
     shell();
     refresh();
-    setInterval(() => { if (!document.hidden) refresh(); }, 45000);
+    window.__bgIndexTimer = setInterval(() => { if (!document.hidden) refresh(); }, 45000);
     document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
   }
 })();
