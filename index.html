@@ -10,6 +10,9 @@
   body { background: #070d1f; color: #eef4ff; margin: 0; font-family: Inter, system-ui, sans-serif; }
   #boot-msg { padding: 40px 24px; text-align: center; color: #8ba3c7; }
   #boot-msg.error { color: #ef4444; }
+  :root[data-theme="light"] body { background:#eef3fb; color:#10213d; }
+  :root[data-theme="light"] .top, :root[data-theme="light"] nav, :root[data-theme="light"] .card,
+  :root[data-theme="light"] .kpi { filter: none; }
 </style>
 </head>
 <body>
@@ -36,7 +39,6 @@ function timeHHMM(t) {
   if (!t) return '--:--';
   return new Date(t).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 }
-let notificationInitialized = false;
 async function showBgNotification(title, options) {
   try {
     if (!("serviceWorker" in navigator)) return false;
@@ -328,9 +330,9 @@ function render(d) {
                 '</div>' +
                 (attention ? '<div style="font-size:.78rem;padding:8px 10px;border-radius:10px;background:rgba(239,68,68,.08);margin-bottom:10px">⚠️ Failed: ' + failed + ' · Timed Out: ' + timedOut + ' · Action Required: ' + actionRequired + '</div>' : '') +
                 '<div class="auto-grid">' +
-                  '<div class="auto-item"><div class="ai" style="background:rgba(239,68,68,.12)">▶</div><b>YouTube</b><small>' + channels.length + ' Channels</small><div class="bar r"><i></i></div><div class="bar-pct">100%</div></div>' +
-                  '<div class="auto-item"><div class="ai" style="background:rgba(139,92,246,.12)">🌐</div><b>Websites</b><small>' + (sites.length || bots.filter(function(b){return b.site}).length) + ' Projects</small><div class="bar p"><i></i></div><div class="bar-pct">100%</div></div>' +
-                  '<div class="auto-item"><div class="ai" style="background:rgba(34,211,238,.12)">✈</div><b>Telegram</b><small>Telegram</small><div class="bar c"><i></i></div><div class="bar-pct">100%</div></div>' +
+                  '<div class="auto-item"><div class="ai" style="background:rgba(239,68,68,.12)">▶</div><b>YouTube</b><small>' + channels.length + ' Channels</small><div class="bar r"><i style="width:' + (channels.length ? 100 : 0) + '%"></i></div><div class="bar-pct">' + (channels.length ? 100 : 0) + '%</div></div>' +
+                  '<div class="auto-item"><div class="ai" style="background:rgba(139,92,246,.12)">🌐</div><b>Websites</b><small>' + (sites.length || bots.filter(function(b){return b.site}).length) + ' Projects</small><div class="bar p"><i style="width:' + ((sites.length || bots.filter(function(b){return b.site}).length) ? 100 : 0) + '%"></i></div><div class="bar-pct">' + ((sites.length || bots.filter(function(b){return b.site}).length) ? 100 : 0) + '%</div></div>' +
+                  '<div class="auto-item"><div class="ai" style="background:rgba(34,211,238,.12)">✈</div><b>Telegram</b><small>' + msgs.length + ' Messages</small><div class="bar c"><i style="width:' + (msgs.length ? 100 : 0) + '%"></i></div><div class="bar-pct">' + (msgs.length ? 100 : 0) + '%</div></div>' +
                   '<div class="auto-item"><div class="ai" style="background:rgba(245,158,11,.12)">🐙</div><b>GitHub</b><small>' + bots.length + ' Repo' + (bots.length !== 1 ? 's' : '') + '</small><div class="bar a"><i></i></div><div class="bar-pct">' + (failed ? Math.max(0, 100 - failed * 10) : 100) + '%</div></div>' +
                 '</div>' +
               '</div>' +
