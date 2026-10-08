@@ -1,10 +1,10 @@
 // BG-Automation service worker: network-first, cache fallback + notifications
-const CACHE = 'bg-automation-v2-20261008';
+const CACHE = 'bg-automation-v3-20261009';
 const ASSETS = [
   '/BG-Automation/',
   '/BG-Automation/index.html',
-  '/BG-Automation/app.js?v=20261008',
-  '/BG-Automation/app.css?v=20261008',
+  '/BG-Automation/app.js?v=20261009',
+  '/BG-Automation/app.css?v=20261009',
   '/BG-Automation/control.html',
   '/BG-Automation/manifest.json'
 ];
@@ -30,10 +30,17 @@ self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
   if (url.origin !== location.origin) return;
 
+  // Navigation must always come from the network. Never let a cached index.html
+  // replace control/logs/sites/trending/reports.
+  if (e.request.mode === 'navigate') {
+    e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+    return;
+  }
+
   e.respondWith(
     fetch(e.request)
       .then((res) => {
-        if (res && res.ok) {
+        if (res && res.ok && ['script','style','manifest'].includes(e.request.destination)) {
           const copy = res.clone();
           caches.open(CACHE).then((c) => c.put(e.request, copy)).catch(() => {});
         }
