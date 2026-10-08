@@ -118,10 +118,24 @@ def runs(repo):
       failure_reason=sc
       break
     if failed_step: break
-  if any(s in ("failure","timed_out","action_required") for s in states):
+  # Keep the real GitHub Actions state visible instead of converting
+  # every non-success conclusion into generic "failure".
+  if any(s=="timed_out" for s in states):
+   effective="timed_out"
+  elif any(s=="action_required" for s in states):
+   effective="action_required"
+  elif any(s=="failure" for s in states):
    effective="failure"
   elif any(s=="cancelled" for s in states):
    effective="cancelled"
+  elif any(s=="skipped" for s in states):
+   effective="skipped"
+  elif any(s=="waiting" for s in states):
+   effective="waiting"
+  elif any(s=="pending" for s in states):
+   effective="pending"
+  elif any(s=="requested" for s in states):
+   effective="requested"
   else:
    effective=workflow_state
   t=x.get("updated_at") or x.get("created_at"); start=x.get("run_started_at") or x.get("created_at")
