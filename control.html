@@ -103,7 +103,7 @@ boot('control.html','GitHub Actions Control Center',d=>{
  ['success','failure','in_progress','queued','waiting','pending','cancelled','skipped','timed_out','action_required','requested','neutral','stale','startup_failure'].map(s=>stateBadge(s,stateCounts[s])).join('')+
  '</div><small style="display:block;margin-top:8px;color:var(--mu)">0 ka matlab recent sync mein us state ka run nahi mila.</small></div>'+
  '<div class="card"><h2>⏳ Chal rahe</h2>'+(running.map(b=>{const u=safeUrl(b.url);return '<div class="li"><span>'+esc(b.name)+'</span>'+(u!=='#'?'<a class="t" href="'+esc(u)+'" target="_blank" rel="noopener">Dekho</a>':'')+'</div>'}).join('')||'<small>Abhi koi automation nahi chal raha.</small>')+'</div>'+
- '<div class="card"><h2>❌ Asafal + Errors</h2>'+fails.map(b=>{
+ '<div class="card"><h2>❌ Asafal + Errors</h2>'+(fails.map(b=>{
    const s=slugOf(b);REG[s]=b;const f=b.failed||{},r0=(b.runs&&b.runs[0])||{},u=safeUrl(f.url||r0.u||b.url),noWf=!workflowFor(b);
    return '<div class="li"><span><b>'+esc(b.name)+'</b><br><small>Fail: '+esc(f.job||'—')+' → '+esc(f.step||'—')+' • '+ago(f.t||r0.t)+'</small></span><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn" type="button" onclick="startBot(\''+s+'\',\'rerun\')" '+(noWf||UI.busy[s]?'disabled':'')+'>'+ (UI.busy[s]?'⏳ Starting…':'▶ दोबारा चलाएँ')+'</button>'+(u!=='#'?'<a class="btn g t" href="'+esc(u)+'" target="_blank" rel="noopener">Log</a>':'')+'</div></div>'
  }).join('')||'<small>Koi asafal run nahi.</small>')+'<small id="rerunMsg" style="display:block;margin-top:6px"></small></div>'+
