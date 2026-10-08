@@ -6,25 +6,31 @@
   <title>BG Automation | Dashboard</title>
   <meta name="theme-color" content="#3b5bff">
   <meta name="description" content="BG Automation live dashboard">
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="manifest.json?v=20261008">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="app.css?v=20261008">
   <style>
     body{margin:0;background:#070d1f;color:#eef4ff;font-family:Inter,system-ui,sans-serif}
     #boot-msg{padding:40px 24px;text-align:center;color:#8ba3c7}
+    #boot-msg b{display:block;color:#eef4ff;font-size:18px;margin-bottom:8px}
+    #boot-msg button{margin-top:14px;padding:9px 15px;border:1px solid #3159a8;border-radius:8px;background:#111f3a;color:#eef4ff}
   </style>
 </head>
 <body>
   <div id="boot-msg">⏳ Dashboard load ho raha hai…</div>
-  <script src="app.js"></script>
+
+  <!-- Cache-busted script: prevents an old GitHub Pages/browser copy from blocking the dashboard. -->
+  <script src="app.js?v=20261008" defer
+    onerror="document.getElementById('boot-msg').innerHTML='<b>⚠️ Dashboard script load nahi hua</b><span>GitHub Pages ka old cache clear karke dobara load karein.</span><br><button onclick="location.reload()">↻ Retry</button>'"></script>
+
   <script>
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", function () {
-        navigator.serviceWorker.register("sw.js").catch(function (e) {
+    window.addEventListener("load", function () {
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("sw.js?v=20261008").catch(function (e) {
           console.warn("BG Automation service worker:", e);
         });
-      });
-    }
+      }
+    });
   </script>
 </body>
 </html>
