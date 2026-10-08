@@ -140,7 +140,7 @@
       '<div class="kpi-row">' +
         '<div class="kpi red"><label>Total Channels</label><div class="num">' + channels.length + '</div><div class="sub"><span>YouTube Automation</span><span class="up">↑ Active</span></div></div>' +
         '<div class="kpi purple"><label>Total Runs</label><div class="num">' + totalRuns + '</div><div class="sub"><span>Automation Jobs</span><span class="up">✓ ' + success + ' · ✕ ' + failed + ' · ⏳ ' + running + '</span></div></div>' +
-        '<div class="kpi blue"><label>Telegram Messages</label><div class="num">' + (msgs.length || '—') + '</div><div class="sub"><span>Recent messages</span><span class="up">↑ Live</span></div></div>' +
+        '<div class="kpi blue"><label>🔵 Running Now</label><div class="num">' + running + '</div><div class="sub"><span>' + (running ? runs.filter(x => ["in_progress","queued"].includes(String(x.r.s||""))).slice(0,2).map(x => esc(x.b.name || x.b.repo || "Automation")).join(" · ") : "कोई काम अभी नहीं चल रहा") + '</span><span class="up">● Live</span></div></div>' +
       '</div>' +
       '<div class="dash-grid"><div class="col">' +
         '<div class="card"><div class="hd"><h2>▶ YouTube Channels</h2><a href="youtube.html">View All →</a></div>' + chRows + '</div>' +
