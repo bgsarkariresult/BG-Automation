@@ -288,7 +288,7 @@
   }
 
   // Expose shared functions for the inline scripts in the sub-pages.
-  Object.assign(window,{boot,fmt,dayOf,TD,at,st,chip,stats,esc,ago,time});
+  Object.assign(window,{$,boot,fmt,dayOf,TD,at,st,chip,stats,esc,ago,time});
 
   const current = location.pathname.split('/').pop() || 'index.html';
   if (current === 'index.html') {
