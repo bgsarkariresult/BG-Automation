@@ -83,7 +83,7 @@ function renderList(){
   $('#main').innerHTML = `
     <div class="card">
       <div class="hd"><h2>🔥 Trending Now</h2>
-        <button class="btn g" onclick="location.reload()">↻ Refresh</button>
+        <button class="btn g" onclick="window.refreshDashboard&&window.refreshDashboard()">↻ Refresh</button>
       </div>
       <input class="search" id="sq" placeholder="🔎 Search trending topic..." value="${esc(Q)}" oninput="Q=this.value;renderList()">
       <div class="filters" id="fc">
