@@ -117,5 +117,22 @@ function boot(key,title,render){
       pill.classList.toggle('bad',!fresh||!channelOk);
     }
     const sys=$('#sysS');if(sys)sys.textContent=(d.live_state==='live'?'Cloudflare Live: ':'Dashboard sync: ')+at(stamp);
-    }catch(e){$('#pill').textContent='⚠ Sync Dashboard chalao';$('#pill').classList.add('bad')}finally{if(btn){btn.disabled=false;btn.textContent='↻ Refresh'}}}
+    }catch(e){
+      console.error('BG Automation dashboard load/render error:',e);
+      const main=document.querySelector('#main');
+      if(main && !main.innerHTML.trim()){
+        main.innerHTML=`<div class="card" style="border-color:rgba(239,68,68,.45)">
+          <div class="hd"><h2>⚠️ Dashboard load problem</h2><button class="btn g" onclick="location.reload()">↻ Reload</button></div>
+          <p style="margin-bottom:8px">Live data load nahi ho pa raha. Dashboard ko blank rehne ke bajay error/status dikhaya ja raha hai.</p>
+          <small id="loadError"></small>
+          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn" onclick="window.refreshDashboard&&window.refreshDashboard()">↻ Try again</button>
+            <a class="btn g" href="index.html">⌂ Dashboard</a>
+          </div>
+        </div>`;
+      }
+      const err=document.querySelector('#loadError'); if(err) err.textContent=String(e&&e.message||e||'Unknown error');
+      const pill=document.querySelector('#pill'); if(pill){pill.textContent='⚠ Sync error';pill.classList.add('bad')}
+      const sys=document.querySelector('#sysS'); if(sys)sys.textContent='Dashboard load error';
+    }finally{if(btn){btn.disabled=false;btn.textContent='↻ Refresh'}}}
   window.refreshDashboard=()=>go(true);go();setInterval(()=>{if(!document.hidden)go(false)},5000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)go(true)})}
