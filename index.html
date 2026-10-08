@@ -309,15 +309,7 @@ function render(d) {
                   '<span class="badge-s failure">🕰 ' + (counts.stale || 0) + ' Stale</span>' +
                   '<span class="badge-s failure">💥 ' + (counts.startup_failure || 0) + ' Startup Failed</span>' +
                 '</div>' +
-                '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px"> +
-                  '<span class="badge-s success">✓ ' + success + ' Success</span><span class="badge-s failure">✕ ' + failed + ' Failed</span>' +
-                  '<span class="badge-s running">⏳ ' + running + ' Running</span><span class="badge-s running">… ' + queued + ' Queued</span>' +
-                  (waiting ? '<span class="badge-s paused">⏸ ' + waiting + ' Waiting</span>' : '') +
-                  (cancelled ? '<span class="badge-s paused">🚫 ' + cancelled + ' Cancelled</span>' : '') +
-                  (timedOut ? '<span class="badge-s failure">⏱ ' + timedOut + ' Timed Out</span>' : '') +
-                  (actionRequired ? '<span class="badge-s paused">⚠ ' + actionRequired + ' Action Required</span>' : '') +
-                  (skipped ? '<span class="badge-s paused">⏭ ' + skipped + ' Skipped</span>' : '') +
-                '</div>' + actRows + '</div>' +
+                actRows + '</div>' +
             '</div>' +
             '<div class="col">' +
               '<div class="card"><div class="hd"><h2>🔥 Trending Topics</h2><a href="trending.html">View All →</a></div><div id="trendBox"><small class="mu">Loading…</small></div></div>' +
