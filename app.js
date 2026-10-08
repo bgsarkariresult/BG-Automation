@@ -1,6 +1,11 @@
 (() => {
   'use strict';
 
+  // Keep the notification service worker, but always update it to the current safe version.
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js?v=20261009', {scope:'./'}).catch(() => {});
+  }
+
   const RAW = 'https://raw.githubusercontent.com/bgsarkariresult/BG-Automation/main/data/dashboard.json';
   const LIVE = 'https://bg-automation-live.garhwalbhavesh2002.workers.dev/api/status';
   const TREND_URL = 'https://raw.githubusercontent.com/bgtechlab/Trending-Topic-Finder/main/history.json';
