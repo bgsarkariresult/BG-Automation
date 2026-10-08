@@ -34,7 +34,7 @@
         '<div class="top-right"><button class="icon-btn" id="notifyBtn" title="Notifications">🔔</button><div class="user-chip"><div class="user-av">B</div> Bhavesh</div></div>' +
       '</div>' +
       '<div class="app"><nav id="sideNav">' +
-        NAV.map((n) => '<a class="' + (n[0] === (location.pathname.split('/').pop() || 'index.html') ? 'on' : '') + '" href="' + n[0] + '">' + n[1] + ' ' + n[2] + '</a>').join('') +
+        NAV.map((n) => '<a class="' + (n[0] === (location.pathname.split('/').pop() || 'index.html') ? 'on' : '') + '" href="/BG-Automation/' + n[0] + '?v=20261008">' + n[1] + ' ' + n[2] + '</a>').join('') +
         '<a href="https://github.com/bgsarkariresult/BG-Automation/settings/secrets/actions" target="_blank" rel="noopener">⚙️ Settings (Secrets)</a>' +
         '<div class="sys"><b>● System Online</b><br><small id="sysS">Loading…</small></div>' +
       '</nav><main id="main"></main></div>';
