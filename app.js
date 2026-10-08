@@ -37,25 +37,35 @@ function bgNotifyEnable(){
   if(Notification.permission==='denied') return alert('Browser settings में BG-Automation notifications Allow करें।');
   Notification.requestPermission().then(p=>{ if(p==='granted') localStorage.setItem('bg_notify_enabled','1'); });
 }
-function bgNotifyCheck(d){
+async function bgNotifyCheck(d){
   if(!d||!Array.isArray(d.bots)||!('Notification' in window)||Notification.permission!=='granted') return;
-  const state=JSON.parse(localStorage.getItem('bg_notify_runs')||'{}');
-  const next={};
-  d.bots.forEach(b=>(b.runs||[]).slice(0,20).forEach(r=>{
-    const id=String(b.repo||b.name)+':'+String(r.id||r.number||r.t||r.u);
-    const status=String(r.s||'unknown'); next[id]=status;
-    const old=state[id];
-    if(old && old!==status){
-      const label=status==='success'?'सफल':status==='failure'?'असफल':status==='cancelled'?'रद्द':'स्थिति बदली';
-      const icon=status==='success'?'✅':status==='failure'?'❌':status==='cancelled'?'🚫':'🔄';
-      const n=new Notification(icon+' BG Automation · '+label,{body:(b.name||b.repo||'Automation')+' — '+(r.n||'Workflow run'),tag:'bg-'+id,renotify:true});
-      n.onclick=()=>{window.focus();location.href='logs.html'};
+  try{
+    const state=JSON.parse(localStorage.getItem('bg_notify_runs')||'{}');
+    const next={};
+    const registration=(navigator.serviceWorker&&await navigator.serviceWorker.ready.catch(()=>null))||null;
+    for(const b of d.bots){
+      for(const r of (Array.isArray(b.runs)?b.runs:[]).slice(0,20)){
+        const id=String(b.repo||b.name)+':'+String(r.id||r.number||r.t||r.u);
+        const status=String(r.s||'unknown'); next[id]=status;
+        const old=state[id];
+        if(old && old!==status){
+          const label=status==='success'?'सफल':status==='failure'?'असफल':status==='cancelled'?'रद्द':'स्थिति बदली';
+          const icon=status==='success'?'✅':status==='failure'?'❌':status==='cancelled'?'🚫':'🔄';
+          const title=icon+' BG Automation · '+label;
+          const body=(b.name||b.repo||'Automation')+' — '+(r.n||'Workflow run');
+          if(registration && typeof registration.showNotification==='function'){
+            await registration.showNotification(title,{body,tag:'bg-'+id,renotify:true,data:{url:'logs.html'}});
+          }
+        }
+        if(!old && status==='in_progress' && registration && typeof registration.showNotification==='function'){
+          await registration.showNotification('🔄 BG Automation · काम शुरू',{body:(b.name||b.repo||'Automation')+' — '+(r.n||'Workflow run'),tag:'bg-'+id});
+        }
+      }
     }
-    if(!old && status==='in_progress'){
-      new Notification('🔄 BG Automation · काम शुरू',{body:(b.name||b.repo||'Automation')+' — '+(r.n||'Workflow run'),tag:'bg-'+id});
-    }
-  }));
-  localStorage.setItem('bg_notify_runs',JSON.stringify(next));
+    localStorage.setItem('bg_notify_runs',JSON.stringify(next));
+  }catch(err){
+    console.warn('BG notification skipped:',err);
+  }
 }
 function bgNotifyResetIfNeeded(){
   if(!('Notification' in window)||Notification.permission!=='granted') return;
