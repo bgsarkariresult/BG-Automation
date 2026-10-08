@@ -1,394 +1,211 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Actions Control</title>
-
-  <!-- PWA -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#3b5bff">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/BG-Automation/sw.js', { scope: '/BG-Automation/' });
-    }
-  </script>
-
-  <link rel="stylesheet" href="app.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Actions Control</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#3b5bff">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/BG-Automation/sw.js',{scope:'/BG-Automation/'}).catch(function(){});
+}
+</script>
+<link rel="stylesheet" href="app.css">
 </head>
 <body>
 <script src="app.js"></script>
 <script>
-/* ========== CONFIG ========== */
-const WORKER_URL = 'https://bg-runf.garhwalbhavesh2002.workers.dev/';
+const WORKER_URL='https://bg-runf.garhwalbhavesh2002.workers.dev/';
+const GH_EDIT_URL='https://github.com/bgsarkariresult/BG-Automation/edit/main/data/dashboard.json';
 
-/* Har bot ke workflow input ka naam */
-const WORKFLOW_MAP = {
-  'bgsarkariresult/SG-News18': 'news-bot.yml',
-  'bgsarkariresult/TechGlow-India': 'news_automation.yml',
-  'bgsarkariresult/Bk-growup-': 'run-job-bot.yml',
-  'bgtechlab/BG-Reels-Bot': 'reels-bot.yml',
-  'bgtechlab/Trending-Topic-Finder': 'daily-auto-run.yml',
-  'bgtechlab/History-Facts': 'history-facts-bot.yml',
-  'bgtechlab/Job-Page-Auto-Publisher': 'job-page-publisher.yml',
-  'bgtechlab/amazon_to_blogger': 'amazon_to_blogger.yml',
-  'bgtechlab/News-Blog-Auto-Publisher': 'news-blog-publisher.yml'
+const BOT_CONFIG={
+ 'bgsarkariresult/sg-news18':{workflow:'news-bot.yml',input:'article_url'},
+ 'bgsarkariresult/techglow-india':{workflow:'news_automation.yml',input:'article_url'},
+ 'bgsarkariresult/bk-growup-':{workflow:'run-job-bot.yml',input:'post_url'},
+ 'bgtechlab/bg-reels-bot':{workflow:'reels-bot.yml',input:'product_url'},
+ 'bgtechlab/trending-topic-finder':{workflow:'daily-auto-run.yml',input:null},
+ 'bgtechlab/history-facts':{workflow:'history-facts-bot.yml',input:null},
+ 'bgtechlab/job-page-auto-publisher':{workflow:'job-page-publisher.yml',input:'job_url'},
+ 'bgtechlab/amazon_to_blogger':{workflow:'amazon_to_blogger.yml',input:'urls',multi:true},
+ 'bgtechlab/news-blog-auto-publisher':{workflow:'news-blog-publisher.yml',input:'news_urls',multi:true}
 };
+const YT_REPOS=[
+ 'bgsarkariresult/sg-news18','bgsarkariresult/techglow-india',
+ 'bgsarkariresult/bk-growup-','bgtechlab/bg-reels-bot','bgtechlab/history-facts'
+];
+const SITES=[
+ {name:'Job Page Auto Publisher',tag:'Website',repo:'bgtechlab/Job-Page-Auto-Publisher',url:'https://bgtechlab.github.io/Job-Page-Auto-Publisher/'},
+ {name:'Amazon to Blogger',tag:'Website',repo:'bgtechlab/amazon_to_blogger',url:'https://bgtechlab.github.io/amazon_to_blogger/'},
+ {name:'News Blog Auto Publisher',tag:'Website',repo:'bgtechlab/News-Blog-Auto-Publisher',url:'https://bgtechlab.github.io/News-Blog-Auto-Publisher/'},
+ {name:'Trending-Topic-Finder',tag:'Trending Topics',repo:'bgtechlab/Trending-Topic-Finder',url:'https://bgtechlab.github.io/Trending-Topic-Finder/'}
+];
+const HIDDEN_REPOS=['bgsarkariresult/bgsarkariresult','bgsarkariresult/youtube-live-bot','bgtechlab/bgtech'];
+const RUN_STATES=['in_progress','queued','waiting','pending','requested'];
+const FAIL_STATES=['failure','timed_out','action_required','startup_failure','stale'];
 
-/* Workflow ke required input ka naam. PAT kabhi browser mein nahi aata. */
-function stateMeta(s) {
-  s = String(s || 'unknown');
-  const map = {
-    success:{i:'🟢',l:'Success',c:'success'}, failure:{i:'🔴',l:'Failed',c:'failure'},
-    in_progress:{i:'🔵',l:'Running',c:'running'}, queued:{i:'🟡',l:'Queued',c:'running'},
-    waiting:{i:'⏸️',l:'Waiting',c:'paused'}, pending:{i:'⏸️',l:'Pending',c:'paused'},
-    cancelled:{i:'🚫',l:'Cancelled',c:'paused'}, skipped:{i:'⏭️',l:'Skipped',c:'paused'},
-    timed_out:{i:'⏱️',l:'Timed Out',c:'failure'}, action_required:{i:'⚠️',l:'Action Required',c:'paused'},
-    requested:{i:'📨',l:'Requested',c:'running'}, neutral:{i:'➖',l:'Neutral',c:'paused'},
-    stale:{i:'🕰️',l:'Stale',c:'failure'}, startup_failure:{i:'💥',l:'Startup Failed',c:'failure'},
-    unknown:{i:'?',l:'Unknown',c:'paused'}
-  };
-  return map[s] || {i:'•',l:s.replace(/_/g,' '),c:'paused'};
+const lc=s=>String(s||'').toLowerCase();
+const slugOf=b=>String(b.repo||b.name||'x').replace(/[^a-zA-Z0-9]/g,'_');
+const cfgFor=b=>BOT_CONFIG[lc(b.repo)]||{};
+const workflowFor=b=>b.workflow||cfgFor(b).workflow||'';
+const inputFor=b=>(b.input_name!==undefined?b.input_name:cfgFor(b).input)||null;
+function safeUrl(u){try{const x=new URL(String(u||''),location.href);return x.protocol==='https:'||x.protocol==='http:'?x.href:'#'}catch(_){return'#'}}
+function latestState(b){return String((Array.isArray(b.runs)&&b.runs[0]&&b.runs[0].s)||b.status||'unknown')}
+function isFail(b){const s=latestState(b);return FAIL_STATES.includes(s)||!!b.failed&&s!=='success'&&!RUN_STATES.includes(s)}
+function stateMeta(s){
+ s=String(s||'unknown');
+ const m={
+  success:{i:'🟢',l:'Success',c:'success'},failure:{i:'🔴',l:'Failed',c:'failure'},
+  in_progress:{i:'🔵',l:'Running',c:'running'},queued:{i:'🟡',l:'Queued',c:'running'},
+  waiting:{i:'⏸️',l:'Waiting',c:'paused'},pending:{i:'⏸️',l:'Pending',c:'paused'},
+  cancelled:{i:'🚫',l:'Cancelled',c:'paused'},skipped:{i:'⏭️',l:'Skipped',c:'paused'},
+  timed_out:{i:'⏱️',l:'Timed Out',c:'failure'},action_required:{i:'⚠️',l:'Action Required',c:'paused'},
+  requested:{i:'📨',l:'Requested',c:'running'},neutral:{i:'➖',l:'Neutral',c:'paused'},
+  stale:{i:'🕰️',l:'Stale',c:'failure'},startup_failure:{i:'💥',l:'Startup Failed',c:'failure'},
+  unknown:{i:'?',l:'Unknown',c:'paused'}
+ };
+ return m[s]||{i:'•',l:s.replace(/_/g,' '),c:'paused'};
 }
-function stateBadge(s, count) {
-  const m=stateMeta(s);
-  return '<span class="badge-s '+m.c+'">'+m.i+' '+(count||0)+' '+m.l+'</span>';
-}
-function failureDetail(b) {
-  if (!b || !b.failed) return '';
-  return [b.failed.job&&('Job: '+b.failed.job),b.failed.step&&('Step: '+b.failed.step),b.failed.reason&&String(b.failed.reason).replace(/_/g,' ')].filter(Boolean).join(' · ');
+function stateBadge(s,count){const m=stateMeta(s);return '<span class="badge-s '+m.c+'">'+m.i+' '+(count||0)+' '+m.l+'</span>'}
+function failureDetail(b){
+ if(!b||!b.failed)return '';
+ return [b.failed.job&&('Job: '+b.failed.job),b.failed.step&&('Step: '+b.failed.step),
+ b.failed.reason&&String(b.failed.reason).replace(/_/g,' ')].filter(Boolean).join(' · ');
 }
 
-const INPUT_MAP = {
-  'bgsarkariresult/SG-News18': 'article_url',
-  'bgsarkariresult/TechGlow-India': 'article_url',
-  'bgsarkariresult/Bk-growup-': 'post_url',
-  'bgtechlab/BG-Reels-Bot': 'product_url',
-  'bgtechlab/Trending-Topic-Finder': null,
-  'bgtechlab/History-Facts': null,
-  'bgtechlab/Job-Page-Auto-Publisher': 'job_url',
-  'bgtechlab/amazon_to_blogger': 'urls',
-  'bgtechlab/News-Blog-Auto-Publisher': 'news_urls'
-};
+const UI={open:new Set(),links:{},msgs:{},busy:{},log:{repo:null,workflow:'',timer:null,token:0,state:{}}};
+let REG={};
+function setMsg(id,v,isHtml){UI.msgs[id]={v,isHtml:!!isHtml,t:Date.now()};const e=document.getElementById(id);if(e){if(isHtml)e.innerHTML=v;else e.textContent=v}}
+function restoreMsgs(){for(const id in UI.msgs){const m=UI.msgs[id];if(Date.now()-m.t>60000){delete UI.msgs[id];continue}const e=document.getElementById(id);if(e){if(m.isHtml)e.innerHTML=m.v;else e.textContent=m.v}}}
 
-function workflowFor(b) {
-  return b.workflow || WORKFLOW_MAP[b.repo] || '';
-}
-
-boot('control.html', 'GitHub Actions Control Center', d => {
-  const run = d.bots.filter(b => ['in_progress','queued','waiting','pending','requested'].includes(String((b.runs&&b.runs[0]&&b.runs[0].s)||b.status||'unknown')));
-  const fails = d.bots.filter(b => ['failure','timed_out','action_required','startup_failure','stale'].includes(String((b.runs&&b.runs[0]&&b.runs[0].s)||b.status||'unknown')) || b.failed);
-  const allRuns = d.bots.flatMap(b => Array.isArray(b.runs) ? b.runs : []);
-  const stateCounts = allRuns.reduce((a,r) => { const s=String(r.s||'unknown'); a[s]=(a[s]||0)+1; return a; }, {});
-
-  $('#main').innerHTML = `
-    <div class="card">
-      <div class="hd">
-        <h2>🔑 Worker Proxy</h2>
-        <button class="btn g" onclick="runSync()">↻ Sync Dashboard</button>
-      </div>
-      <small id="patStatus">✔ PAT Worker par hai (browser mein nahi). Origin: bgsarkariresult.github.io</small>
-      <small id="syncMsg" style="display:block;margin-top:6px"></small>
-    </div>
-
-    <div class="card">
-      <div class="hd"><h2>📊 Automation States</h2><small>Live sync data</small></div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px">
-                ${stateBadge('success',stateCounts.success)}
-        ${stateBadge('failure',stateCounts.failure)}
-        ${stateBadge('in_progress',stateCounts.in_progress)}
-        ${stateBadge('queued',stateCounts.queued)}
-        ${stateBadge('waiting',stateCounts.waiting)}
-        ${stateBadge('pending',stateCounts.pending)}
-        ${stateBadge('cancelled',stateCounts.cancelled)}
-        ${stateBadge('skipped',stateCounts.skipped)}
-        ${stateBadge('timed_out',stateCounts.timed_out)}
-        ${stateBadge('action_required',stateCounts.action_required)}
-        ${stateBadge('requested',stateCounts.requested)}
-        ${stateBadge('neutral',stateCounts.neutral)}
-        ${stateBadge('stale',stateCounts.stale)}
-        ${stateBadge('startup_failure',stateCounts.startup_failure)}
-      </div>
-      <small style="display:block;margin-top:8px;color:var(--mu)">0 ka matlab recent sync mein us state ka run nahi mila.</small>
-    </div>
-
-    <div class="card">
-      <h2>⏳ Chal rahe</h2>
-      ${run.map(b => `<div class="li"><span>${esc(b.name)}</span>
-        <a class="t" href="${esc(b.url)}" target="_blank" rel="noopener">Dekho</a></div>`).join('')
-        || '<small>Abhi koi automation nahi chal raha.</small>'}
-    </div>
-
-    <div class="card">
-      <h2>❌ Asafal + Errors</h2>
-      ${fails.map(b => {
-        const idx = d.bots.indexOf(b);
-        return `<div class="li">
-          <span><b>${esc(b.name)}</b><br>
-          <small>Fail: ${esc(b.failed.job)} → ${esc(b.failed.step)} • ${ago(b.failed.t)}</small></span>
-          <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <button class="btn" onclick="rerunBot(${idx})">▶ Re-run</button>
-            <a class="btn g t" href="${esc(b.failed.url)}" target="_blank" rel="noopener">Log</a>
-          </div>
-        </div>`;
-      }).join('') || '<small>Koi asafal run nahi.</small>'}
-      <small id="rerunMsg" style="display:block;margin-top:6px"></small>
-    </div>
-
-    <div class="card" id="liveLogPanel" hidden>
-      <div class="hd"><h2>💻 Live Logs <small id="liveLogTitle"></small></h2><button class="btn g" onclick="closeLiveLogs()">✕ बंद करें</button></div>
-      <div id="liveLogBody"><small>प्रोजेक्ट चुनें।</small></div>
-    </div>
-    <div class="card">
-      <h2>🌐 Websites <small>(वेबसाइट)</small></h2>
-      <div class="sites">
-        ${[
-          {name:'Job Page Auto Publisher',tag:'Website',repo:'bgtechlab/Job-Page-Auto-Publisher',url:'https://bgtechlab.github.io/Job-Page-Auto-Publisher/'},
-          {name:'Amazon to Blogger',tag:'Website',repo:'bgtechlab/amazon_to_blogger',url:'https://bgtechlab.github.io/amazon_to_blogger/'},
-          {name:'News Blog Auto Publisher',tag:'Website',repo:'bgtechlab/News-Blog-Auto-Publisher',url:'https://bgtechlab.github.io/News-Blog-Auto-Publisher/'},
-          {name:'Trending-Topic-Finder',tag:'Trending Topics',repo:'bgtechlab/Trending-Topic-Finder',url:'https://bgtechlab.github.io/Trending-Topic-Finder/'}
-        ].map(w => {
-          let bot=d.bots.find(x=>x.repo===w.repo);
-          if (!bot) {
-            const workflows={
-              'bgtechlab/Job-Page-Auto-Publisher':'job-page-publisher.yml',
-              'bgtechlab/amazon_to_blogger':'amazon_to_blogger.yml',
-              'bgtechlab/News-Blog-Auto-Publisher':'news-blog-publisher.yml',
-              'bgtechlab/Trending-Topic-Finder':'daily-auto-run.yml',
-              'bgtechlab/History-Facts':'history-facts-bot.yml'
-            };
-            bot={name:w.name,repo:w.repo,workflow:workflows[w.repo],site:w.url,tag:w.tag,status:'unknown',runs:[]};
-            d.bots.push(bot);
-          }
-          if (!bot.site) bot.site=w.url;
-          return renderProjectCard(bot);
-        }).join('')}
-      </div>
-      <button class="btn g" onclick="addProject('website')">＋ Add Website</button>
-    </div>
-    <div class="card">
-      <h2>▶ YouTube Channels <small>(यूट्यूब चैनल)</small></h2>
-      <div class="sites">
-        ${d.bots.filter(b => ['bgsarkariresult/Bk-growup-','bgtechlab/BG-Reels-Bot','bgsarkariresult/SG-News18','bgsarkariresult/TechGlow-India'].includes(b.repo)).map(b => renderProjectCard(b)).join('')}
-      </div>
-      <button class="btn g" onclick="addProject('youtube')">＋ Add YouTube Channel</button>
-    </div>
-    <div class="card">
-      <h2>🧰 Other Automations</h2>
-      <div class="sites">
-        ${d.bots.filter(b => !['bgsarkariresult/SG-News18','bgsarkariresult/TechGlow-India','bgsarkariresult/bgsarkariresult','bgsarkariresult/Bk-growup-','bgtechlab/BG-Reels-Bot','bgsarkariresult/youtube-live-bot','bgtechlab/bgtech','bgtechlab/Trending-Topic-Finder','bgtechlab/Job-Page-Auto-Publisher','bgtechlab/amazon_to_blogger','bgtechlab/News-Blog-Auto-Publisher'].includes(b.repo)).map(b => renderProjectCard(b)).join('')}
-      </div>
-    </div>`;
+boot('control.html','GitHub Actions Control Center',d=>{
+ const ae=document.activeElement,aeId=ae&&ae.id,selS=ae&&typeof ae.selectionStart==='number'?ae.selectionStart:null;
+ REG={};
+ const bots=Array.isArray(d.bots)?d.bots:[];
+ const siteBots=SITES.map(w=>{
+  const f=bots.find(x=>lc(x.repo)===lc(w.repo));
+  if(f){if(!f.site)f.site=w.url;return f}
+  return {name:w.name,repo:w.repo,site:w.url,tag:w.tag,status:'unknown',runs:[]};
+ });
+ const siteRepos=SITES.map(w=>lc(w.repo));
+ const running=bots.filter(b=>RUN_STATES.includes(latestState(b)));
+ const fails=bots.filter(isFail);
+ const allRuns=bots.flatMap(b=>Array.isArray(b.runs)?b.runs:[]);
+ const stateCounts=allRuns.reduce((a,r)=>{const s=String(r.s||'unknown');a[s]=(a[s]||0)+1;return a},{});
+ let liveNote=d.live_state==='live'?'✔ Live API चालू है। PAT Worker में सुरक्षित है (browser में नहीं)।':
+ d.live_state==='partial'?'⚠ Live API आंशिक है — '+(d.live_api_errors||0)+' repo पढ़ नहीं पाया, बाकी cached data दिख रहा है।':
+ '⚠ Live API उपलब्ध नहीं — dashboard.json का cached data दिख रहा है।';
+ const otherBots=bots.filter(b=>{const r=lc(b.repo);return !YT_REPOS.includes(r)&&!siteRepos.includes(r)&&!HIDDEN_REPOS.includes(r)});
+ $('#main').innerHTML=
+ '<div class="card"><div class="hd"><h2>🔑 Worker Proxy</h2><button class="btn g" type="button" id="syncBtn" onclick="runSync()">↻ Sync Dashboard</button></div><small id="patStatus">'+esc(liveNote)+' Origin: bgsarkariresult.github.io</small><small id="syncMsg" style="display:block;margin-top:6px"></small></div>'+
+ '<div class="card"><div class="hd"><h2>📊 Automation States</h2><small>Live sync data</small></div><div style="display:flex;flex-wrap:wrap;gap:6px">'+
+ ['success','failure','in_progress','queued','waiting','pending','cancelled','skipped','timed_out','action_required','requested','neutral','stale','startup_failure'].map(s=>stateBadge(s,stateCounts[s])).join('')+
+ '</div><small style="display:block;margin-top:8px;color:var(--mu)">0 ka matlab recent sync mein us state ka run nahi mila.</small></div>'+
+ '<div class="card"><h2>⏳ Chal rahe</h2>'+running.map(b=>{const u=safeUrl(b.url);return '<div class="li"><span>'+esc(b.name)+'</span>'+(u!=='#'?'<a class="t" href="'+esc(u)+'" target="_blank" rel="noopener">Dekho</a>':'')+'</div>'}).join('')||'<small>Abhi koi automation nahi chal raha.</small>'+'</div>'+
+ '<div class="card"><h2>❌ Asafal + Errors</h2>'+fails.map(b=>{
+   const s=slugOf(b);REG[s]=b;const f=b.failed||{},r0=(b.runs&&b.runs[0])||{},u=safeUrl(f.url||r0.u||b.url),noWf=!workflowFor(b);
+   return '<div class="li"><span><b>'+esc(b.name)+'</b><br><small>Fail: '+esc(f.job||'—')+' → '+esc(f.step||'—')+' • '+ago(f.t||r0.t)+'</small></span><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn" type="button" onclick="startBot(\''+s+'\',\'rerun\')" '+(noWf||UI.busy[s]?'disabled':'')+'>'+ (UI.busy[s]?'⏳ Starting…':'▶ दोबारा चलाएँ')+'</button>'+(u!=='#'?'<a class="btn g t" href="'+esc(u)+'" target="_blank" rel="noopener">Log</a>':'')+'</div></div>'
+ }).join('')||'<small>Koi asafal run nahi.</small>'+'<small id="rerunMsg" style="display:block;margin-top:6px"></small></div>'+
+ '<div class="card" id="liveLogPanel" hidden><div class="hd"><h2>💻 Live Logs <small id="liveLogTitle"></small></h2><button class="btn g" type="button" onclick="closeLiveLogs()">✕ बंद करें</button></div><div id="liveLogBody"><small>प्रोजेक्ट चुनें।</small></div></div>'+
+ '<div class="card"><h2>🌐 Websites <small>(वेबसाइट)</small></h2><div class="sites">'+siteBots.map(renderProjectCard).join('')+'</div><button class="btn g" type="button" onclick="addProject(\'website\')">＋ Add Website</button></div>'+
+ '<div class="card"><h2>▶ YouTube Channels <small>(यूट्यूब चैनल)</small></h2><div class="sites">'+bots.filter(b=>YT_REPOS.includes(lc(b.repo))).map(renderProjectCard).join('')+'</div><button class="btn g" type="button" onclick="addProject(\'youtube\')">＋ Add YouTube Channel</button></div>'+
+ '<div class="card"><h2>🧰 Other Automations</h2><div class="sites">'+(otherBots.map(renderProjectCard).join('')||'<small>कोई और automation नहीं।</small>')+'</div></div>';
+ restoreMsgs();restoreLogs();
+ if(aeId){const e=document.getElementById(aeId);if(e&&e.focus){e.focus();if(selS!==null&&e.setSelectionRange){try{e.setSelectionRange(selS,selS)}catch(_){}}}}
 });
 
-function renderProjectCard(b) {
-  const i=window.D.bots.indexOf(b);
-  const wf=workflowFor(b);
-  if (!b.workflow && wf) b.workflow=wf;
-  const currentState=String((Array.isArray(b.runs)&&b.runs.length&&b.runs[0].s)||b.status||'unknown');
-  const sm=stateMeta(currentState);
-  const detail=failureDetail(b);
-  const statusLine='<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:5px"><span class="badge-s '+sm.c+'">'+sm.i+' '+sm.l+'</span>'+(detail?'<small style="color:var(--mu)">'+esc(detail)+'</small>':'')+'</div>';
-  return `<div class="site">
-    <div class="row"><div><b>${esc(b.name)}</b><br><small>${b.runs.filter(okRun).length} safal • ${b.runs.filter(r => ['failure','timed_out','action_required','startup_failure','stale'].includes(r.s)).length} fail (pichhle ${b.runs.length} run)</small>${statusLine}</div></div>
-    <input class="lk" id="lk${i}" placeholder="Link dalo (article / product URL) — optional">
-    <div class="project-actions"><button class="btn g" type="button" onclick="showLiveLogs(${i})" aria-label=" ${esc(b.name)} ke live logs dekhein">📋 Logs</button><button class="btn run-action" type="button" id="btn${i}" onclick="runBot(${i})" ${!b.workflow ? 'disabled title="Iske paas workflow nahi"' : ''}>▶ Run</button><button class="btn g" type="button" onclick="tg(${i})" aria-controls="rs${i}" aria-expanded="false">↻ Runs</button></div>
-    <small class="hn" id="hn${i}" role="status" aria-live="polite"></small><div class="rs" id="rs${i}" hidden><div class="runs-heading">पिछले 5 रन</div>${b.runs.slice(0,5).map(r=>`<div class="run-item"><span class="dot s-${esc(r.s)}">${st(r.s)}</span><span class="run-info"><b>${esc(r.n)}</b><small>${esc(r.s)} • ${ago(r.t)}</small></span><a class="btn g t" href="${esc(r.u)}" target="_blank" rel="noopener">Log ↗</a></div>`).join('')||'<small>Koi run nahi.</small>'}</div>
-  </div>`;
+function renderProjectCard(b){
+ const s=slugOf(b);REG[s]=b;const wf=workflowFor(b),input=inputFor(b),multi=!!cfgFor(b).multi,runs=Array.isArray(b.runs)?b.runs:[],state=latestState(b),sm=stateMeta(state),detail=isFail(b)?failureDetail(b):'',busy=!!UI.busy[s],open=UI.open.has(s);
+ const okN=runs.filter(okRun).length,failN=runs.filter(r=>FAIL_STATES.includes(r.s)).length;
+ const linkBox=input?'<input class="lk" id="lk_'+s+'" value="'+esc(UI.links[s]||'')+'" oninput="UI.links[\''+s+'\']=this.value" placeholder="'+(multi?'Link(s) dalo (article / product URL) — optional':'Link dalo (article / product URL) — optional')+'" inputmode="url" autocomplete="off">':'';
+ const status='<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:5px"><span class="badge-s '+sm.c+'">'+sm.i+' '+sm.l+'</span>'+(detail?'<small style="color:var(--mu)">'+esc(detail)+'</small>':'')+'</div>'+(b.live_api_error?'<small style="display:block;color:var(--mu);margin-top:4px">⚠ Live API: '+esc(b.live_api_error)+'</small>':'');
+ const items=runs.slice(0,5).map(r=>'<div class="run-item"><span class="dot s-'+esc(r.s)+'">'+st(r.s)+'</span><span class="run-info"><b>'+esc(r.n)+'</b><small>'+esc(r.s)+' • '+ago(r.t)+'</small></span>'+(safeUrl(r.u)!=='#'?'<a class="btn g t" href="'+esc(safeUrl(r.u))+'" target="_blank" rel="noopener">Log ↗</a>':'')+'</div>').join('')||'<small>Koi run nahi.</small>';
+ return '<div class="site"><div class="row"><div><b>'+esc(b.name)+'</b><br><small>'+okN+' safal • '+failN+' fail (pichhle '+runs.length+' run)</small>'+status+'</div></div>'+
+ linkBox+'<div class="project-actions"><button class="btn g" type="button" onclick="showLiveLogs(\''+s+'\')">📋 Logs</button><button class="btn run-action" type="button" id="btn_'+s+'" onclick="startBot(\''+s+'\',\'run\')" '+(!wf||busy?'disabled':'')+'>'+ (busy?'⏳ Starting…':'▶ Run')+'</button><button class="btn g" type="button" onclick="tg(\''+s+'\')" aria-controls="rs_'+s+'" aria-expanded="'+open+'">↻ Runs</button></div>'+
+ '<small class="hn" id="hn_'+s+'" role="status" aria-live="polite"></small><div class="rs" id="rs_'+s+'" '+(open?'':'hidden')+'><div class="runs-heading">पिछले 5 रन</div>'+items+'</div></div>';
 }
-function addProject(type) {
-  const name=type==='website'?'Website':'YouTube Channel';
-  alert('Naya '+name+' जोड़ने के लिए data/dashboard.json में इसका project दर्ज करें।');
+function addProject(type){const name=type==='website'?'Website':'YouTube Channel';if(confirm('Naya '+name+' जोड़ने के लिए data/dashboard.json में project दर्ज करना होगा.\n\nGitHub का edit पेज खोलें?'))window.open(GH_EDIT_URL,'_blank','noopener')}
+function tg(s){const e=document.getElementById('rs_'+s);if(!e)return;e.hidden=!e.hidden;if(e.hidden)UI.open.delete(s);else UI.open.add(s);const b=e.parentElement.querySelector('[aria-controls="rs_'+s+'"]');if(b)b.setAttribute('aria-expanded',String(!e.hidden))}
+
+const TERM_STYLE='background:#071426;color:#dce8fa;border:1px solid #22354f;border-radius:12px;padding:14px;max-height:420px;overflow:auto;font:13px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere';
+function logSkeleton(){const b=document.getElementById('liveLogBody');if(!b)return;b.innerHTML='<div id="logStatus" class="li"></div><small id="logHint"></small><div class="log-terminal" id="logTerminal" style="'+TERM_STYLE+'"></div><div id="logSteps" style="margin-top:10px"></div><small id="logMsg"></small>'}
+function paintLogs(){
+ const L=UI.log,S=L,title=document.getElementById('liveLogTitle'),cur=(window.D&&Array.isArray(window.D.bots)?window.D.bots:[]).find(x=>lc(x.repo)===lc(L.repo));
+ if(title)title.textContent='— '+(S.title||S.name||'');
+ const stEl=document.getElementById('logStatus');if(stEl)stEl.innerHTML='<b>स्थिति</b>'+chip(cur?latestState(cur):'unknown');
+ const h=document.getElementById('logHint');if(h)h.textContent=S.hint||'';
+ const t=document.getElementById('logTerminal');if(t){const near=t.scrollHeight-t.scrollTop-t.clientHeight<40;t.textContent=S.term||'';if(near)t.scrollTop=t.scrollHeight}
+ const steps=document.getElementById('logSteps');if(steps)steps.innerHTML=S.steps||'';
+ const msg=document.getElementById('logMsg');if(msg)msg.textContent=S.msg||'';
+}
+function restoreLogs(){if(!UI.log.repo)return;const p=document.getElementById('liveLogPanel');if(!p)return;p.hidden=false;logSkeleton();paintLogs()}
+function showLiveLogs(s){
+ const b=REG[s],L=UI.log,p=document.getElementById('liveLogPanel');if(!b||!p)return;
+ clearTimeout(L.timer);L.token++;L.repo=b.repo;L.workflow=workflowFor(b);L.state={name:b.name,term:'⏳ GitHub Actions se asli logs liye ja rahe hain…',steps:'',msg:'',hint:'GitHub Actions se har 5 second mein refresh hota hai.'};
+ p.hidden=false;logSkeleton();paintLogs();p.scrollIntoView({behavior:'smooth',block:'start'});pollLogs();
+}
+function closeLiveLogs(){const L=UI.log;clearTimeout(L.timer);L.token++;L.repo=null;const p=document.getElementById('liveLogPanel');if(p)p.hidden=true}
+async function pollLogs(){
+ const L=UI.log;if(!L.repo)return;clearTimeout(L.timer);if(document.hidden){L.timer=setTimeout(pollLogs,5000);return}
+ const tok=++L.token;try{
+  const data=await callWorker({action:'logs',repo:L.repo,workflow:L.workflow},false,true);if(tok!==L.token||!L.repo)return;
+  if(!data.ok)throw new Error(data.error||('HTTP '+(data.status||'error')));
+  const lines=Array.isArray(data.lines)?data.lines:[],jobs=Array.isArray(data.jobs)?data.jobs:[];
+  L.state.term=lines.length?lines.join('\n'):'⏳ Raw log lines GitHub se abhi nahi mile. Status har 5 second mein refresh ho raha hai.';
+  L.state.steps=jobs.map(j=>'<div class="li"><b>'+esc(j.name)+'</b>'+chip(j.conclusion||j.status||'queued')+'</div>'+
+   (j.steps||[]).map(x=>{const icon=x.conclusion==='success'?'✓':x.conclusion==='failure'?'✕':x.status==='in_progress'?'⏳':'○';return '<div style="margin-left:12px;padding:7px 0;border-bottom:1px solid var(--line)"><div class="li"><span>'+icon+' '+esc(x.number||'')+'. '+esc(x.name)+'</span>'+chip(x.conclusion||x.status||'queued')+'</div></div>'}).join('')).join('');
+  L.state.msg=data.message||'';if(data.run)L.state.title=L.state.name+' · #'+data.run.id+' · '+(data.run.conclusion||data.run.status);
+  if(data.run&&data.run.status==='completed')L.state.hint='✅ Run पूरा हो गया — auto-refresh बंद। नया run चलाने पर फिर 📋 Logs दबाएँ।';
+  paintLogs();if(!(data.run&&data.run.status==='completed'))L.timer=setTimeout(pollLogs,5000);
+ }catch(e){L.state.msg='❌ '+e.message;paintLogs();L.timer=setTimeout(pollLogs,7000)}
 }
 
-let liveLogTimer=null;
-function closeLiveLogs(){const p=document.getElementById("liveLogPanel");if(p)p.hidden=true;if(liveLogTimer){clearInterval(liveLogTimer);liveLogTimer=null;}}
-function showLiveLogs(i){
- const b=window.D.bots[i], panel=document.getElementById("liveLogPanel"); if(!b||!panel)return;
- panel.hidden=false;document.getElementById("liveLogTitle").textContent="— "+b.name;
- const body=document.getElementById("liveLogBody");
- body.innerHTML='<small>⏳ GitHub Actions se asli logs liye ja rahe hain…</small>';
- const draw=async()=>{
-   const current=window.D.bots.find(x=>x.repo===b.repo)||b;
-   body.innerHTML='<div class="li"><b>स्थिति</b>'+chip(current.status||"unknown")+'</div><small>GitHub Actions se har 5 second mein refresh hota hai.</small><div class="log-terminal" id="logTerminal" style="background:#071426;color:#dce8fa;border:1px solid #22354f;border-radius:12px;padding:14px;max-height:420px;overflow:auto;font:13px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere">⏳ Logs load ho rahe hain…</div><div id="logSteps" style="margin-top:10px"></div><small id="logMsg"></small>';
-   try{
-     const data=await callWorker({action:"logs",repo:b.repo,workflow:b.workflow});
-     if(!data.ok)throw new Error(data.error||("HTTP "+(data.status||"error")));
-     const lines=Array.isArray(data.lines)?data.lines:[];
-     const jobs=data.jobs||[];
-     const activeJob=jobs.find(j=>j.status==="in_progress")||jobs.find(j=>j.status==="queued");
-     const activeStep=activeJob&&(activeJob.steps||[]).find(s=>s.status==="in_progress");
-     const stepsHtml=jobs.map(j=>'<div class="li"><b>'+esc(j.name)+'</b>'+chip(j.conclusion||j.status||"queued")+'</div>'+(j.steps||[]).map(s=>{
-       const active=j===activeJob&&s===activeStep;
-       const icon=s.conclusion==="success"?"✓":s.conclusion==="failure"?"✕":s.status==="in_progress"?"⏳":"○";
-       return '<div style="margin-left:12px;padding:7px 0;border-bottom:1px solid var(--line)"><div class="li"><span>'+icon+' '+esc(s.number||"")+'. '+esc(s.name)+'</span>'+chip(s.conclusion||s.status||"queued")+'</div>'+(active?'<div style="margin:6px 0 10px 8px;background:#071426;color:#dce8fa;border:1px solid #22354f;border-radius:10px;padding:12px;max-height:320px;overflow:auto;font:12px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere">'+esc(lines.length?lines.join("\n"):"⏳ Is step ke raw log lines GitHub se abhi nahi mile. Status har 5 second mein refresh ho raha hai.")+'</div>':'');
-     }).join('')).join('');
-     document.getElementById("logSteps").innerHTML=stepsHtml;
-     document.getElementById("logMsg").textContent=data.message||"";
-     if(data.run){document.getElementById("liveLogTitle").textContent="— "+b.name+" · #"+data.run.id+" · "+(data.run.conclusion||data.run.status); }
-   }catch(e){const term=document.getElementById("logTerminal");if(term)term.textContent="Logs load nahi hue: "+e.message;}
- };
- draw();if(liveLogTimer)clearInterval(liveLogTimer);liveLogTimer=setInterval(()=>{if(!panel.hidden)draw()},5000);
+function getPin(){try{return localStorage.getItem('bg_pin')||''}catch(_){return''}}
+function savePin(p){try{localStorage.setItem('bg_pin',p)}catch(_){}}
+async function callWorker(payload,retried,silent){
+ const body=Object.assign({},payload||{}),pin=getPin();if(pin)body.pin=pin;
+ const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+ let data={};try{data=await res.json()}catch(_){data={ok:false,error:'Invalid response',status:res.status}}
+ const pinNeeded=(res.status===401||data.status===401)&&/pin/i.test(String(data.error||''));
+ if(pinNeeded&&!retried){const p=prompt('PIN daalo:');if(p){savePin(p.trim());return callWorker(payload,true,silent)}}
+ return data;
 }
-function tg(i) {
-  const e = document.getElementById('rs' + i);
-  if (!e) return;
-  e.hidden = !e.hidden;
-  const btn = e.parentElement.querySelector('[aria-controls="rs' + i + '"]');
-  if (btn) btn.setAttribute('aria-expanded', String(!e.hidden));
+async function runSync(){
+ const m=document.getElementById('syncMsg');if(m)m.textContent='⏳ Sync start ho raha hai...';
+ try{const data=await callWorker({repo:'bgsarkariresult/BG-Automation',workflow:'sync.yml',ref:'main'});
+  if(data.ok){if(m)m.innerHTML='✅ <b>Sync start ho gaya!</b> 30–60 sec baad live status update hoga.';setTimeout(()=>window.refreshDashboard&&window.refreshDashboard(),1500)}
+  else if(m)m.textContent='❌ Sync fail: '+(data.error||data.status||'unknown');
+ }catch(e){if(m)m.textContent='❌ Network error: '+e.message}
 }
-
-/* ========== Worker se workflow dispatch ========== */
-
-/* Optional PIN: Worker PIN maange (401 + "PIN") to ek baar poochh kar yaad rakhta hai */
-function getPin() {
-  try { return localStorage.getItem('bg_pin') || ''; } catch (_) { return ''; }
-}
-function savePin(p) {
-  try { localStorage.setItem('bg_pin', p); } catch (_) {}
-}
-
-async function callWorker(payload, retried) {
-  const body = Object.assign({}, payload || {});
-  const pin = getPin();
-  if (pin) body.pin = pin;
-
-  const res = await fetch(WORKER_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
-  let data = {};
-  try {
-    data = await res.json();
-  } catch (_) {
-    data = { ok: false, error: 'Invalid response', status: res.status };
+async function startBot(s,mode){
+ const b=REG[s];if(!b)return;
+ const wf=workflowFor(b),input=inputFor(b),btn=document.getElementById('btn_'+s),hn=document.getElementById('hn_'+s),linkEl=document.getElementById('lk_'+s);
+ if(!wf){if(hn)hn.textContent='❌ Is project ka workflow configured nahi hai.';return}
+ const link=(linkEl&&linkEl.value||UI.links[s]||'').trim(),payload={repo:b.repo,workflow:wf,ref:'main'};
+ if(input&&link)payload.inputs={[input]:link};
+ UI.busy[s]=true;if(btn){btn.disabled=true;btn.textContent='⏳ Starting…'}if(hn)hn.textContent='⏳ Cloudflare Worker → GitHub Actions…';
+ try{
+  const data=await callWorker(payload,false);
+  if(data.ok){
+   if(hn)hn.innerHTML='✅ <b>GitHub Actions शुरू हो गया!</b> Worker + Master PAT से run भेजा गया।';
+   if(btn){btn.textContent='✅ Started'}
+   setTimeout(()=>window.refreshDashboard&&window.refreshDashboard(),1200);
+   setTimeout(()=>window.refreshDashboard&&window.refreshDashboard(),5000);
+  }else{
+   const code=data.status||'';let msg=data.error||data.message||'unknown';
+   if(code===404)msg='Repo/workflow नहीं मिला: '+b.repo+' / '+wf;
+   if(code===422)msg='GitHub ने request reject की (422). Required input या workflow configuration check करें.';
+   if(hn)hn.textContent='❌ Worker error '+code+': '+String(msg).slice(0,260);
   }
-
-  const pinNeeded = (res.status === 401 || data.status === 401) && /pin/i.test(String(data.error || ''));
-  if (pinNeeded && !retried) {
-    const p = prompt('PIN daalo:');
-    if (p) {
-      savePin(p.trim());
-      return callWorker(payload, true);
-    }
-  }
-  return data;
+ }catch(e){if(hn)hn.textContent='❌ Worker network error: '+e.message}
+ finally{delete UI.busy[s];if(btn){btn.disabled=false;btn.textContent='▶ Run'}}
 }
-
-/* Dashboard sync (default worker action) */
-async function runSync() {
-  const msg = document.getElementById('syncMsg');
-  if (msg) msg.textContent = '⏳ Sync start ho raha hai...';
-  try {
-    const data = await callWorker({
-      repo: 'bgsarkariresult/BG-Automation',
-      workflow: 'sync.yml',
-      ref: 'main'
-    });
-    if (data.ok) {
-      if (msg) msg.innerHTML = '✅ <b>Sync start ho gaya!</b> 30–60 sec baad page refresh karo.';
-    } else {
-      if (msg) msg.textContent = '❌ Sync fail: ' + (data.error || data.status || 'unknown');
-    }
-  } catch (e) {
-    if (msg) msg.textContent = '❌ Network error: ' + e.message;
-  }
-}
-
-/* Bot run via Worker */
-async function runBot(i) {
-  const b = window.D.bots[i];
-  const linkEl = document.getElementById('lk' + i);
-  const link = (linkEl?.value || '').trim();
-  const hn = document.getElementById('hn' + i);
-  const btn = document.getElementById('btn' + i);
-  const workflow = workflowFor(b);
-
-  if (!workflow) {
-    hn.textContent = '❌ Is project ka workflow configured nahi hai.';
-    return;
-  }
-
-  const inputName = INPUT_MAP[b.repo] || null;
-  const payload = { repo: b.repo, workflow, ref: 'main' };
-
-  if (inputName && link) {
-    payload.inputs = { [inputName]: link };
-  }
-
-  btn.disabled = true;
-  const oldText = btn.textContent;
-  btn.textContent = '⏳ Starting…';
-  hn.textContent = '⏳ Cloudflare Worker → GitHub Actions…';
-
-  try {
-    /* Browser se GitHub/PAT ko direct call nahi kiya ja raha.
-       Sirf Worker ko request ja rahi hai; Worker GH_TOKEN/GH_TOKENOK use karta hai. */
-    const data = await callWorker(payload);
-
-    if (data.ok) {
-      btn.textContent = '✅ Started';
-      hn.innerHTML = '✅ <b>GitHub Actions शुरू हो गया!</b> Worker + Master PAT से run भेजा गया।';
-
-      /* Live API ko turant aur phir kuch seconds baad refresh karo. */
-      if (typeof window.refreshDashboard === 'function') {
-        setTimeout(() => window.refreshDashboard(), 1500);
-        setTimeout(() => window.refreshDashboard(), 5000);
-      }
-      setTimeout(() => { btn.textContent = oldText; btn.disabled = false; }, 2500);
-      return;
-    }
-
-    if (data.status === 401 || data.status === 403) {
-      hn.textContent = '❌ Worker/GitHub permission error (' + data.status + '): ' +
-        (data.error || data.message || 'Permission denied').toString().slice(0, 260);
-    } else if (data.status === 404) {
-      hn.textContent = '❌ Repo/workflow नहीं मिला: ' + b.repo + ' / ' + workflow;
-    } else if (data.status === 422) {
-      hn.textContent = '❌ GitHub ने request reject की (422). ' +
-        (data.error || 'Required input या workflow configuration check करें.').toString().slice(0, 180);
-    } else {
-      hn.textContent = '❌ Worker error ' + (data.status || '') + ': ' +
-        (data.error || data.message || 'unknown').toString().slice(0, 180);
-    }
-  } catch (e) {
-    hn.textContent = '❌ Worker network error: ' + e.message;
-  } finally {
-    if (btn.disabled) {
-      btn.disabled = false;
-      btn.textContent = oldText;
-    }
-  }
-}
-
-/* Failed bot ko dubara same workflow se chalao (naya run) */
-async function rerunBot(i) {
-  const b = window.D.bots[i];
-  const msg = document.getElementById('rerunMsg');
-  const workflow = workflowFor(b);
-  if (!workflow) {
-    if (msg) msg.textContent = '❌ Workflow nahi mila';
-    return;
-  }
-  if (msg) msg.textContent = '⏳ Re-run start ho raha hai...';
-
-  try {
-    const data = await callWorker({
-      repo: b.repo,
-      workflow,
-      ref: 'main'
-    });
-    if (data.ok) {
-      if (msg) msg.innerHTML = '✅ <b>Re-run start ho gaya!</b> (' + esc(b.name) + ')';
-    } else {
-      if (msg) msg.textContent = '❌ Re-run fail: ' + (data.error || data.status || 'unknown');
-    }
-  } catch (e) {
-    if (msg) msg.textContent = '❌ Network error: ' + e.message;
-  }
-}
+window.startBot=startBot;
+window.runSync=runSync;
+window.showLiveLogs=showLiveLogs;
+window.closeLiveLogs=closeLiveLogs;
+window.tg=tg;
 </script>
 </body>
 </html>
