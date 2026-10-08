@@ -48,7 +48,25 @@ export default {
      e:x.event,n:x.display_title||x.name,branch:x.head_branch,
      actor:x.actor?.login||"",u:x.html_url
     }));
-    const row={...b,status:runs[0]?.s||"unknown",runs};
+    const latest=runs[0];
+    const row={...b,status:latest?.s||"unknown",runs};
+    // GitHub may leave a workflow run marked in_progress after all of its
+    // jobs have already completed successfully. Check the latest run's jobs
+    // and use the completed job result as the authoritative dashboard state.
+    if(latest && (latest.s==="in_progress" || latest.s==="queued")){
+      const jr=await fetch(base+"runs/"+latest.id+"/jobs?per_page=100",{headers:h});
+      if(jr.ok){
+        const jobs=(await jr.json()).jobs||[];
+        const allJobsTerminal=jobs.length>0 && jobs.every(j =>
+          j.status==="completed" &&
+          ["success","skipped","neutral"].includes(j.conclusion||"")
+        );
+        if(allJobsTerminal){
+          latest.s="success";
+          row.status="success";
+        }
+      }
+    }
     const failed=runs.find(x=>x.s==="failure");
     if(failed){
       const jr=await fetch(base+"runs/"+failed.id+"/jobs?per_page=100",{headers:h});
