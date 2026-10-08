@@ -1,14 +1,20 @@
 // BG-Automation service worker: network-first, cache fallback + notifications
-const CACHE = 'bg-automation-v1';
+const CACHE = 'bg-automation-v2-20261008';
 const ASSETS = [
+  '/BG-Automation/',
+  '/BG-Automation/index.html',
+  '/BG-Automation/app.js?v=20261008',
+  '/BG-Automation/app.css?v=20261008',
   '/BG-Automation/control.html',
-  '/BG-Automation/manifest.json',
-  '/BG-Automation/icons/icon-192.png',
-  '/BG-Automation/icons/icon-512.png'
+  '/BG-Automation/manifest.json'
 ];
 
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting()));
+  e.waitUntil(
+    caches.open(CACHE)
+      .then((c) => c.addAll(ASSETS).catch(() => Promise.resolve()))
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate', (e) => {
@@ -23,14 +29,22 @@ self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return;
   const url = new URL(e.request.url);
   if (url.origin !== location.origin) return;
+
   e.respondWith(
     fetch(e.request)
       .then((res) => {
-        const copy = res.clone();
-        caches.open(CACHE).then((c) => c.put(e.request, copy));
+        if (res && res.ok) {
+          const copy = res.clone();
+          caches.open(CACHE).then((c) => c.put(e.request, copy)).catch(() => {});
+        }
         return res;
       })
-      .catch(() => caches.match(e.request).then((r) => r || caches.match('/BG-Automation/control.html')))
+      .catch(() =>
+        caches.match(e.request).then((r) => r || new Response('Offline', {
+          status: 503,
+          headers: {'Content-Type':'text/plain;charset=utf-8'}
+        }))
+      )
   );
 });
 
