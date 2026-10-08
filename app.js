@@ -173,22 +173,36 @@
     const box = $('#trendBox');
     if (!box) return;
     try {
-      const data = await getJson(TREND_URL, 7000);
-      const rows = [];
+      // Load the newest topic from each category and use suggested topics
+      // as a fallback so the dashboard always shows up to 5 topics.
+      let data;
+      try {
+        data = await getJson(TREND_URL, 7000);
+      } catch (_) {
+        data = await getJson('https://cdn.jsdelivr.net/gh/bgtechlab/Trending-Topic-Finder@main/history.json', 7000);
+      }
+
+      const latest = [], suggested = [];
       Object.keys(data || {}).forEach((k) => {
         const g = data[k] || {};
-        const list = Array.isArray(g.latest) ? g.latest : (Array.isArray(g.suggested) ? g.suggested : []);
-        list.forEach((t) => rows.push(t));
+        (Array.isArray(g.latest) ? g.latest : []).forEach((t) => latest.push(t));
+        (Array.isArray(g.suggested) ? g.suggested : []).forEach((t) => suggested.push(t));
       });
+
       const seen = new Set();
-      const top = rows.filter((x) => x && x.title).filter((x) => {
-        const k = String(x.title).toLowerCase();
-        if (seen.has(k)) return false;
-        seen.add(k);
+      const pick = (rows) => rows.filter((x) => x && (x.title || x.topic || x.name || x.query)).filter((x) => {
+        const key = String(x.title || x.topic || x.name || x.query).trim().toLowerCase();
+        if (!key || seen.has(key)) return false;
+        seen.add(key);
         return true;
-      }).slice(0,5);
-      box.innerHTML = top.length ? top.map((t,i) => '<div class="trend-item"><div class="trend-num n' + (i+1) + '">' + (i+1) +
-        '</div><div class="trend-info"><b>' + esc(t.title) + '</b><small>' + esc(t.source || 'Trending') + '</small></div><span class="trend-up">↑</span></div>').join('') :
+      });
+
+      const top = pick(latest);
+      if (top.length < 5) top.push(...pick(suggested).slice(0, 5 - top.length));
+
+      box.innerHTML = top.slice(0,5).map((t,i) => '<div class="trend-item"><div class="trend-num n' + (i+1) + '">' + (i+1) +
+        '</div><div class="trend-info"><b>' + esc(t.title || t.topic || t.name || t.query) + '</b><small>' + esc(t.source || 'Trending') +
+        '</small></div><span class="trend-up">↑</span></div>').join('') ||
         '<small class="mu">No trending data</small>';
     } catch (_) {
       box.innerHTML = '<small class="mu">Trending unavailable · <a href="trending.html" style="color:var(--ac2)">Open →</a></small>';
