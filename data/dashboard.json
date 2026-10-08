@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-08T13:57:04Z",
+  "updated": "2026-10-08T15:45:27Z",
   "checked_at": "2026-10-08T13:57:04Z",
   "refresh_interval_seconds": 300,
   "source": "Live Dashboard Sync · GitHub Actions API + public site sitemaps",
@@ -74,12 +74,12 @@
       "tag": "News & Jobs",
       "cost": "",
       "kind": "video",
-      "status": "in_progress",
+      "status": "success",
       "runs": [
         {
           "id": 37764984923,
           "number": 156,
-          "s": "in_progress",
+          "s": "success",
           "t": "2026-10-08T10:40:25Z",
           "started": "2026-10-08T10:40:11Z",
           "created": "2026-10-08T10:40:11Z",
@@ -88,7 +88,8 @@
           "n": "SG News18 - Auto Video Bot",
           "branch": "main",
           "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37764984923"
+          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37764984923",
+          "effective_reason": "All GitHub Actions jobs completed successfully"
         },
         {
           "id": 37763623321,
