@@ -6,9 +6,9 @@
   <title>BG Automation | Dashboard</title>
   <meta name="theme-color" content="#3b5bff">
   <meta name="description" content="BG Automation live dashboard">
-  <link rel="manifest" href="manifest.json?v=20261008">
+  <link rel="manifest" href="manifest.json?v=20261009">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="app.css?v=20261008">
+  <link rel="stylesheet" href="app.css?v=20261009">
   <style>
     body{margin:0;background:#070d1f;color:#eef4ff;font-family:Inter,system-ui,sans-serif}
     #boot-msg{padding:40px 24px;text-align:center;color:#8ba3c7}
@@ -20,26 +20,8 @@
   <div id="boot-msg">⏳ Dashboard load ho raha hai…</div>
 
   <!-- Cache-busted script: prevents an old GitHub Pages/browser copy from blocking the dashboard. -->
-  <script src="app.js?v=20261008b" defer
+  <script src="app.js?v=20261009" defer
     onerror="document.getElementById('boot-msg').innerHTML='<b>⚠️ Dashboard script load nahi hua</b><span>GitHub Pages ka old cache clear karke dobara load karein.</span><br><button onclick="location.reload()">↻ Retry</button>'"></script>
 
-  <script>
-    // पुराने Service Worker की वजह से navigation index.html पर जा सकता था.
-    // Dashboard अब Service Worker के बिना चलेगा; पुराने workers + caches साफ करें.
-    (async function () {
-      try {
-        if ("serviceWorker" in navigator) {
-          const regs = await navigator.serviceWorker.getRegistrations();
-          await Promise.all(regs.map(function (r) { return r.unregister(); }));
-        }
-        if ("caches" in window) {
-          const keys = await caches.keys();
-          await Promise.all(keys.map(function (k) { return caches.delete(k); }));
-        }
-      } catch (e) {
-        console.warn("BG Automation cache cleanup:", e);
-      }
-    })();
-  </script>
-</body>
+/body>
 </html>
