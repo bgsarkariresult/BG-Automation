@@ -118,9 +118,19 @@ def runs(repo):
       failure_reason=sc
       break
     if failed_step: break
+  # GitHub can occasionally leave the workflow-level run stuck at
+  # "in_progress" even after every job has completed successfully.
+  # Jobs are the authoritative execution state for the dashboard.
+  all_jobs_terminal = bool(jobs) and all(
+   (j.get("status")=="completed") and
+   ((j.get("conclusion") or "") in ("success","skipped","neutral"))
+   for j in jobs
+  )
+  if workflow_state in ("in_progress","queued") and all_jobs_terminal:
+   effective="success"
   # Keep the real GitHub Actions state visible instead of converting
   # every non-success conclusion into generic "failure".
-  if any(s=="timed_out" for s in states):
+  elif any(s=="timed_out" for s in states):
    effective="timed_out"
   elif any(s=="action_required" for s in states):
    effective="action_required"
