@@ -145,4 +145,4 @@ function boot(key,title,render){
       const pill=document.querySelector('#pill'); if(pill){pill.textContent='⚠ Sync error';pill.classList.add('bad')}
       const sys=document.querySelector('#sysS'); if(sys)sys.textContent='Dashboard load error';
     }finally{if(btn){btn.disabled=false;btn.textContent='↻ Refresh'}}}
-  window.refreshDashboard=()=>go(true);go();setInterval(()=>{if(!document.hidden)go(false)},5000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)go(true)})}
+  window.refreshDashboard=()=>go(true);go();setInterval(()=>{if(!document.hidden)go(false)},45000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)go(true)})}
