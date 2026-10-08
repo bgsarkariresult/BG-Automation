@@ -34,7 +34,7 @@
         '<div class="top-right"><button class="icon-btn" id="notifyBtn" title="Notifications">🔔</button><div class="user-chip"><div class="user-av">B</div> Bhavesh</div></div>' +
       '</div>' +
       '<div class="app"><nav id="sideNav">' +
-        NAV.map((n) => '<a class="' + (n[0] === 'index.html' ? 'on' : '') + '" href="' + n[0] + '">' + n[1] + ' ' + n[2] + '</a>').join('') +
+        NAV.map((n) => '<a class="' + (n[0] === (location.pathname.split('/').pop() || 'index.html') ? 'on' : '') + '" href="' + n[0] + '">' + n[1] + ' ' + n[2] + '</a>').join('') +
         '<a href="https://github.com/bgsarkariresult/BG-Automation/settings/secrets/actions" target="_blank" rel="noopener">⚙️ Settings (Secrets)</a>' +
         '<div class="sys"><b>● System Online</b><br><small id="sysS">Loading…</small></div>' +
       '</nav><main id="main"></main></div>';
@@ -205,6 +205,9 @@
   }
 
   let lastSig = '';
+  let pageRenderer = null;
+  let pageTitle = 'BG Automation';
+
   async function refresh() {
     try {
       const d = await loadData();
@@ -220,8 +223,78 @@
     }
   }
 
-  shell();
-  refresh();
-  setInterval(() => { if (!document.hidden) refresh(); }, 45000);
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
+  // Shared helpers used by every dashboard sub-page.
+  const fmt = (n) => {
+    const x = Number(n);
+    if (!Number.isFinite(x)) return '0';
+    return x.toLocaleString('en-IN');
+  };
+  const dayOf = (t) => new Date(t).toISOString().slice(0,10);
+  const TD = () => new Date().toISOString().slice(0,10);
+  const at = (t) => t ? new Date(t).toLocaleString('hi-IN') : '—';
+  const st = (s) => ({success:'✓',failure:'✕',in_progress:'⏳',queued:'🟡',cancelled:'🚫',timed_out:'⏱️'}[String(s||'')] || '•');
+  const chip = (s) => {
+    const x=String(s||'unknown');
+    const cls=x==='success'?'success':(x==='failure'||x==='timed_out'||x==='action_required')?'failure':(['in_progress','queued','requested'].includes(x)?'running':'paused');
+    return '<span class="badge-s '+cls+'">'+esc(x.replace(/_/g,' '))+'</span>';
+  };
+  const okRun = (r) => String(r?.s||'') === 'success';
+  const stats = (d, start, end) => {
+    const a=Array.isArray(d?.bots)?d.bots:[];
+    const from=start?new Date(start+'T00:00:00').getTime():-Infinity;
+    const to=end?new Date(end+'T23:59:59').getTime():Infinity;
+    let ok=0,bad=0,vid=0,min=0,cost=0;
+    for(const b of a){
+      for(const r of (Array.isArray(b.runs)?b.runs:[])){
+        const tm=Date.parse(r.t||r.created||0);
+        if(tm<from||tm>to) continue;
+        if(okRun(r)){ok++; if(b.video||b.type==='video'||/video|reel/i.test(String(r.n||'')))vid++; }
+        if(['failure','timed_out','action_required','startup_failure'].includes(String(r.s)))bad++;
+        if(r.t&&r.completed_at){min+=Math.max(0,Math.round((Date.parse(r.completed_at)-tm)/60000));}
+        cost += okRun(r) ? Number(b.cost||0) : 0;
+      }
+    }
+    return {ok,bad,vid,min,cost};
+  };
+
+  // Sub-pages call boot(page, title, renderer). The old dashboard must not
+  // render over them; this was the reason every menu item opened Dashboard.
+  async function boot(page, title, renderer) {
+    pageTitle = title || 'BG Automation';
+    document.title = pageTitle;
+    pageRenderer = renderer;
+    shell();
+    const main=$('#main');
+    if(main) main.innerHTML='<div class="card"><h2>⏳ '+esc(pageTitle)+'</h2><small>Live data load ho raha hai…</small></div>';
+    try {
+      const d=await loadData();
+      if(typeof pageRenderer==='function') await pageRenderer(d);
+      if(page==='control.html') {
+        window.refreshDashboard = async () => {
+          const fresh=await loadData();
+          if(typeof pageRenderer==='function') await pageRenderer(fresh);
+        };
+      } else {
+        window.refreshDashboard = async () => {
+          const fresh=await loadData();
+          if(typeof pageRenderer==='function') await pageRenderer(fresh);
+        };
+      }
+    } catch(e) {
+      if(main) main.innerHTML='<div class="card"><div class="hd"><h2>⚠️ '+esc(pageTitle)+' load problem</h2><button class="btn g" onclick="location.reload()">↻ Retry</button></div><small>'+esc(e.message||e)+'</small></div>';
+    }
+    clearInterval(window.__bgPageTimer);
+    window.__bgPageTimer=setInterval(()=>{ if(!document.hidden) window.refreshDashboard?.(); },15000);
+  }
+
+  // Expose shared functions for the inline scripts in the sub-pages.
+  Object.assign(window,{boot,fmt,dayOf,TD,at,st,chip,stats,esc,ago,time});
+
+  const current = location.pathname.split('/').pop() || 'index.html';
+  if (current === 'index.html') {
+    shell();
+    refresh();
+    setInterval(() => { if (!document.hidden) refresh(); }, 45000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
+  }
 })();
