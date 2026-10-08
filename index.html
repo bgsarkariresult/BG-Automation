@@ -154,6 +154,11 @@ function stateMeta(s) {
     skipped:{i:'⏭',l:'Skipped',c:'paused'},
     timed_out:{i:'⏱',l:'Timed Out',c:'failure'},
     action_required:{i:'⚠',l:'Action Required',c:'paused'},
+    requested:{i:'📨',l:'Requested',c:'running'},
+    neutral:{i:'➖',l:'Neutral',c:'paused'},
+    stale:{i:'🕰',l:'Stale',c:'failure'},
+    startup_failure:{i:'💥',l:'Startup Failed',c:'failure'},
+    completed:{i:'✓',l:'Completed',c:'success'},
     unknown:{i:'?',l:'Unknown',c:'paused'}
   };
   return map[s] || {i:'•',l:s.replace(/_/g,' '),c:'paused'};
@@ -288,7 +293,23 @@ function render(d) {
                 '</div>' +
               '</div>' +
               '<div class="card"><div class="hd"><h2>🕐 Recent Activity</h2><a href="logs.html">View All →</a></div>' +
+                '<div style="font-size:.72rem;color:var(--mu);margin-bottom:6px">All workflow states</div>' +
                 '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">' +
+                  '<span class="badge-s success">✓ ' + (counts.success || 0) + ' Success</span>' +
+                  '<span class="badge-s failure">✕ ' + (counts.failure || 0) + ' Failed</span>' +
+                  '<span class="badge-s running">⏳ ' + (counts.in_progress || 0) + ' Running</span>' +
+                  '<span class="badge-s running">… ' + (counts.queued || 0) + ' Queued</span>' +
+                  '<span class="badge-s paused">⏸ ' + ((counts.waiting||0)+(counts.pending||0)) + ' Waiting/Pending</span>' +
+                  '<span class="badge-s paused">🚫 ' + (counts.cancelled || 0) + ' Cancelled</span>' +
+                  '<span class="badge-s paused">⏭ ' + (counts.skipped || 0) + ' Skipped</span>' +
+                  '<span class="badge-s failure">⏱ ' + (counts.timed_out || 0) + ' Timed Out</span>' +
+                  '<span class="badge-s paused">⚠ ' + (counts.action_required || 0) + ' Action Required</span>' +
+                  '<span class="badge-s running">📨 ' + (counts.requested || 0) + ' Requested</span>' +
+                  '<span class="badge-s paused">➖ ' + (counts.neutral || 0) + ' Neutral</span>' +
+                  '<span class="badge-s failure">🕰 ' + (counts.stale || 0) + ' Stale</span>' +
+                  '<span class="badge-s failure">💥 ' + (counts.startup_failure || 0) + ' Startup Failed</span>' +
+                '</div>' +
+                '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px"> +
                   '<span class="badge-s success">✓ ' + success + ' Success</span><span class="badge-s failure">✕ ' + failed + ' Failed</span>' +
                   '<span class="badge-s running">⏳ ' + running + ' Running</span><span class="badge-s running">… ' + queued + ' Queued</span>' +
                   (waiting ? '<span class="badge-s paused">⏸ ' + waiting + ' Waiting</span>' : '') +
