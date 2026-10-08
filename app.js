@@ -131,10 +131,13 @@
         ']</span><span class="log-msg">' + esc(x.b.name || x.b.repo || 'Automation') + '</span></div>';
     }).join('') || '<div class="log-line"><span class="log-msg">Waiting for activity…</span></div>';
 
-    const tgRows = msgs.slice(0,5).map((m) =>
-      '<div class="tg-row"><div class="tg-av">✈</div><div class="tg-info"><b>' + esc(m.from || m.bot || 'Telegram') +
-      '</b><small>' + esc(String(m.text || m.message || 'Message').slice(0,80)) + '</small></div><span class="tg-time">' + ago(m.t || m.time || m.date) + '</span></div>'
-    ).join('') || '<small class="mu">No messages yet</small>';
+    const runningBots = bots.filter((b) => ['in_progress','queued','waiting','pending','requested'].includes(String(b.status || (b.runs || [])[0]?.s || '')));
+    const runningRows = runningBots.map((b) => {
+      const s = String(b.status || (b.runs || [])[0]?.s || 'in_progress');
+      const label = s === 'queued' ? '🟡 Queued' : '🔵 Running';
+      return '<div class="tg-row"><div class="tg-av">⚙</div><div class="tg-info"><b>' + esc(b.name || b.repo || 'Automation') +
+        '</b><small>' + esc(label) + ' · ' + esc((b.runs || [])[0]?.n || 'Automation task') + '</small></div><span class="tg-time">' + ago((b.runs || [])[0]?.t) + '</span></div>';
+    }).join('') || '<small class="mu">अभी कोई automation नहीं चल रहा है।</small>';
 
     $('#main').innerHTML =
       '<div class="kpi-row">' +
@@ -155,7 +158,7 @@
       '</div><div class="col">' +
         '<div class="card"><div class="hd"><h2>🔥 Trending Topics</h2><a href="trending.html">View All →</a></div><div id="trendBox"><small class="mu">Loading…</small></div></div>' +
         '<div class="card"><div class="hd"><h2>📋 Live Logs</h2><span class="live-dot">Live</span></div>' + logs + '</div>' +
-        '<div class="card"><div class="hd"><h2>✈ Recent Telegram Messages</h2><a href="logs.html">View All →</a></div>' + tgRows + '</div>' +
+        '<div class="card"><div class="hd"><h2>⚙ Running Automations</h2><span class="live-dot">Live</span></div>' + runningRows + '</div>' +
       '</div></div>' +
       '<div class="footer"><div><b style="color:var(--ac2)">BG</b> Automation · AI + Automation | Grow Together</div><div class="status-ok">' +
       (d.live_state === 'live' ? '● Systems Operational' : '● Dashboard Online') + '</div></div>';
