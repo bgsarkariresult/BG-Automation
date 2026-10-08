@@ -37,6 +37,8 @@ const SITES=[
  {name:'Trending-Topic-Finder',tag:'Trending Topics',repo:'bgtechlab/Trending-Topic-Finder',url:'https://bgtechlab.github.io/Trending-Topic-Finder/'}
 ];
 const HIDDEN_REPOS=['bgsarkariresult/bgsarkariresult','bgsarkariresult/youtube-live-bot','bgtechlab/bgtech'];
+// Compatibility fallback: older cached app.js versions may not expose okRun.
+const okRun = window.okRun || ((r) => String(r?.s || '') === 'success');
 const RUN_STATES=['in_progress','queued','waiting','pending','requested'];
 const FAIL_STATES=['failure','timed_out','action_required','startup_failure','stale'];
 
