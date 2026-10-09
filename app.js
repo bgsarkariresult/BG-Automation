@@ -7,7 +7,7 @@
   }
 
   const RAW = 'https://raw.githubusercontent.com/bgsarkariresult/BG-Automation/main/data/dashboard.json';
-  const LIVE = 'https://bg-automation-live.garhwalbhavesh2002.workers.dev/api/status';
+  const LIVE = 'https://bg-runf.garhwalbhavesh2002.workers.dev/api/status';
   const TREND_URL = 'https://raw.githubusercontent.com/bgtechlab/Trending-Topic-Finder/main/history.json';
 
   const $ = (s) => document.querySelector(s);
