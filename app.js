@@ -65,7 +65,7 @@
     } finally { clearTimeout(timer); }
   }
 
-  async function loadData() {
+  async function loadData(forceLiveRefresh = false) {
     let d;
     try { d = await getJson('data/dashboard.json'); }
     catch (_) { d = await getJson(RAW); }
@@ -73,7 +73,7 @@
     let liveState = 'cached';
     try {
       // Ask the Worker for a fresh check; the timestamp also avoids browser-side caching.
-      const live = await getJson(LIVE + '?refresh=1', 7000);
+      const live = await getJson(forceLiveRefresh ? LIVE + '?refresh=1' : LIVE, 7000);
       if (live && live.ok && Array.isArray(live.bots) && live.bots.length) {
         const map = new Map(live.bots.map((b) => [String(b.repo || '').toLowerCase(), b]));
         const good = live.bots.filter((b) => b && b.status !== 'api_error');
@@ -305,13 +305,13 @@
       const d=await loadData();
       if(typeof pageRenderer==='function') await pageRenderer(d);
       if(page==='control.html') {
-        window.refreshDashboard = async () => {
-          const fresh=await loadData();
+        window.refreshDashboard = async (forceLiveRefresh = false) => {
+          const fresh=await loadData(forceLiveRefresh);
           if(typeof pageRenderer==='function') await pageRenderer(fresh);
         };
       } else {
-        window.refreshDashboard = async () => {
-          const fresh=await loadData();
+        window.refreshDashboard = async (forceLiveRefresh = false) => {
+          const fresh=await loadData(forceLiveRefresh);
           if(typeof pageRenderer==='function') await pageRenderer(fresh);
         };
       }
