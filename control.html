@@ -171,7 +171,7 @@ async function callWorker(payload,retried,silent){
 async function runSync(){
  const m=document.getElementById('syncMsg');if(m)m.textContent='⏳ Sync start ho raha hai...';
  try{const data=await callWorker({repo:'bgsarkariresult/BG-Automation',workflow:'sync.yml',ref:'main'});
-  if(data.ok){if(m)m.innerHTML='✅ <b>Sync start ho gaya!</b> 30–60 sec baad live status update hoga.';setTimeout(()=>window.refreshDashboard&&window.refreshDashboard(),1500)}
+  if(data.ok){if(m)m.innerHTML='✅ <b>Sync start ho gaya!</b> 30–60 sec baad live status update hoga.';setTimeout(()=>window.refreshDashboard&&window.refreshDashboard(true),1500)}
   else if(m)m.textContent='❌ Sync fail: '+(data.error||data.status||'unknown');
  }catch(e){if(m)m.textContent='❌ Network error: '+e.message}
 }
