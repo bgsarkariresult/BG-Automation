@@ -72,19 +72,27 @@
 
     let liveState = 'cached';
     try {
-      const live = await getJson(LIVE, 7000);
+      // Ask the Worker for a fresh check; the timestamp also avoids browser-side caching.
+      const live = await getJson(LIVE + '?refresh=1', 7000);
       if (live && live.ok && Array.isArray(live.bots) && live.bots.length) {
         const map = new Map(live.bots.map((b) => [String(b.repo || '').toLowerCase(), b]));
+        const good = live.bots.filter((b) => b && b.status !== 'api_error');
+        const errors = live.bots.filter((b) => b && b.status === 'api_error');
+        d.live_api_errors = errors.length;
+        d.live_api_error_message = errors[0]?.api_error || '';
         d.bots = (d.bots || []).map((b) => {
           const f = map.get(String(b.repo || '').toLowerCase());
-          if (!f || f.status === 'api_error' || (Array.isArray(f.runs) && !f.runs.length && !['in_progress','queued','unknown'].includes(f.status))) return b;
-          return {...b, ...f, runs:Array.isArray(f.runs) ? f.runs : (b.runs || [])};
+          if (!f) return b;
+          if (f.status === 'api_error') return {...b, live_api_error:f.api_error || 'Live API error'};
+          if (Array.isArray(f.runs) && !f.runs.length && !['in_progress','queued','unknown'].includes(f.status)) return {...b, live_api_error:null};
+          return {...b, ...f, live_api_error:null, runs:Array.isArray(f.runs) ? f.runs : (b.runs || [])};
         });
         for (const b of live.bots) {
           if (b.status !== 'api_error' && !(d.bots || []).some((x) => String(x.repo || '').toLowerCase() === String(b.repo || '').toLowerCase())) d.bots.push(b);
         }
         d.live_updated = live.updated || live.checked_at || live.timestamp || new Date().toISOString();
-        liveState = 'live';
+        // Never label cached JSON as live when every GitHub Actions request failed.
+        liveState = good.length === live.bots.length ? 'live' : good.length ? 'partial' : 'cached';
       }
     } catch (_) {}
     d.live_state = liveState;
@@ -163,9 +171,10 @@
       '<div class="footer"><div><b style="color:var(--ac2)">BG</b> Automation · AI + Automation | Grow Together</div><div class="status-ok">' +
       (d.live_state === 'live' ? '● Systems Operational' : '● Dashboard Online') + '</div></div>';
 
-    const stamp = d.live_state === 'live' ? (d.live_updated || d.updated) : d.updated;
-    $('#goalLive').textContent = (d.live_state === 'live' ? 'LIVE · ' : 'Cached · ') + ago(stamp) + ' · ' + running + ' running · ' + failed + ' failed';
-    $('#sysS').textContent = (d.live_state === 'live' ? 'Cloudflare Live: ' : 'Dashboard sync: ') + (stamp ? new Date(stamp).toLocaleString('hi-IN') : '—');
+    const stamp = ['live','partial'].includes(d.live_state) ? (d.live_updated || d.updated) : d.updated;
+    const liveLabel = d.live_state === 'live' ? 'LIVE · ' : d.live_state === 'partial' ? 'Partial · ' : 'Cached · ';
+    $('#goalLive').textContent = liveLabel + ago(stamp) + ' · ' + running + ' running · ' + failed + ' failed';
+    $('#sysS').textContent = (d.live_state === 'live' ? 'Cloudflare Live: ' : d.live_state === 'partial' ? 'Live API partial: ' : 'Dashboard sync: ') + (stamp ? new Date(stamp).toLocaleString('hi-IN') : '—');
     loadTrends();
   }
 
