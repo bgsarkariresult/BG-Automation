@@ -1,8 +1,8 @@
 {
-  "updated": "2026-10-13T22:55:42Z",
-  "checked_at": "2026-10-13T22:55:42Z",
+  "updated": "2026-10-13T23:51:58Z",
+  "checked_at": "2026-10-13T23:51:58Z",
   "refresh_interval_seconds": 300,
-  "source": "Live Dashboard Sync · GitHub Actions API + public site sitemaps",
+  "source": "GitHub Actions API",
   "channels": [
     {
       "name": "SG News",
@@ -21,7 +21,7 @@
           "title": "#trending",
           "id": "DUdKYdVcm-c",
           "date": "2026-10-13",
-          "views": "50"
+          "views": "69"
         },
         {
           "title": "🔥 सिर्फ ₹999 में स्मार्टवॉच? Fastrack Revoltt XR1-1.38 Review (खरीदने से पहले यह सच जान लो!)",
@@ -76,6 +76,20 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 38469441528,
+          "number": 207,
+          "s": "success",
+          "t": "2026-10-13T21:17:45Z",
+          "started": "2026-10-13T21:17:16Z",
+          "created": "2026-10-13T21:17:16Z",
+          "d": 29,
+          "e": "schedule",
+          "n": "SG News18 - Auto Video Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/38469441528"
+        },
         {
           "id": 38428500476,
           "number": 206,
@@ -1461,32 +1475,18 @@
           "branch": "main",
           "actor": "bgsarkariresult",
           "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37345722645"
-        },
-        {
-          "id": 37281034779,
-          "number": 107,
-          "s": "success",
-          "t": "2026-10-05T08:01:17Z",
-          "started": "2026-10-05T08:01:04Z",
-          "created": "2026-10-05T08:01:04Z",
-          "d": 13,
-          "e": "schedule",
-          "n": "SG News18 - Auto Video Bot",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37281034779"
         }
       ],
-      "time": "2026-10-13T16:12:05Z",
-      "url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/38428500476",
-      "last_run_id": 38428500476,
-      "run_number": 206,
+      "time": "2026-10-13T21:17:45Z",
+      "url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/38469441528",
+      "last_run_id": 38469441528,
+      "run_number": 207,
       "branch": "main",
       "event": "schedule",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/38428500476",
+      "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/38469441528",
       "cron": "*/5 * * * *",
-      "next": "2026-10-13T20:40:00Z"
+      "next": "2026-10-13T23:55:00Z"
     },
     {
       "name": "TechGlow India",
@@ -1498,6 +1498,20 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 38473225407,
+          "number": 132,
+          "s": "success",
+          "t": "2026-10-13T21:47:50Z",
+          "started": "2026-10-13T21:47:38Z",
+          "created": "2026-10-13T21:47:38Z",
+          "d": 12,
+          "e": "schedule",
+          "n": "TechGlow India - Tech Review Auto Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/38473225407"
+        },
         {
           "id": 38435112666,
           "number": 131,
@@ -2883,32 +2897,18 @@
           "branch": "main",
           "actor": "bgsarkariresult",
           "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/36642888141"
-        },
-        {
-          "id": 36618032391,
-          "number": 32,
-          "s": "failure",
-          "t": "2026-09-29T19:16:22Z",
-          "started": "2026-09-29T19:16:11Z",
-          "created": "2026-09-29T19:16:11Z",
-          "d": 11,
-          "e": "schedule",
-          "n": "TechGlow India - Tech Review Auto Bot",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/36618032391"
         }
       ],
-      "time": "2026-10-13T17:00:29Z",
-      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/38435112666",
-      "last_run_id": 38435112666,
-      "run_number": 131,
+      "time": "2026-10-13T21:47:50Z",
+      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/38473225407",
+      "last_run_id": 38473225407,
+      "run_number": 132,
       "branch": "main",
       "event": "schedule",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/38435112666",
+      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/38473225407",
       "cron": "*/5 * * * *",
-      "next": "2026-10-13T20:40:00Z"
+      "next": "2026-10-13T23:55:00Z"
     },
     {
       "name": "BK GrowUp",
@@ -6999,6 +6999,20 @@
       "status": "success",
       "runs": [
         {
+          "id": 38466357912,
+          "number": 117,
+          "s": "success",
+          "t": "2026-10-13T20:53:45Z",
+          "started": "2026-10-13T20:53:15Z",
+          "created": "2026-10-13T20:53:15Z",
+          "d": 30,
+          "e": "schedule",
+          "n": "BG Reels Bot - Multi-Platform Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/38466357912"
+        },
+        {
           "id": 38425749393,
           "number": 116,
           "s": "success",
@@ -8383,32 +8397,18 @@
           "branch": "main",
           "actor": "bgtechlab",
           "u": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/36224257075"
-        },
-        {
-          "id": 36209153291,
-          "number": 17,
-          "s": "success",
-          "t": "2026-09-26T01:39:42Z",
-          "started": "2026-09-26T01:39:20Z",
-          "created": "2026-09-26T01:39:20Z",
-          "d": 22,
-          "e": "schedule",
-          "n": "BG Reels Bot - Multi-Platform Auto Publisher",
-          "branch": "main",
-          "actor": "bgtechlab",
-          "u": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/36209153291"
         }
       ],
-      "time": "2026-10-13T15:52:44Z",
-      "url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/38425749393",
-      "last_run_id": 38425749393,
-      "run_number": 116,
+      "time": "2026-10-13T20:53:45Z",
+      "url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/38466357912",
+      "last_run_id": 38466357912,
+      "run_number": 117,
       "branch": "main",
       "event": "schedule",
       "actor": "bgtechlab",
-      "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/38425749393",
+      "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/38466357912",
       "cron": "*/5 * * * *",
-      "next": "2026-10-13T20:40:00Z"
+      "next": "2026-10-13T23:55:00Z"
     },
     {
       "name": "Job Page Auto Publisher",
@@ -11081,52 +11081,52 @@
       "url": "https://bgsarkariresult.github.io/bgsarkariresult/",
       "articles": [
         {
-          "t": "Supreme Court of India (SCI) Senior Personal Assistant Recruitment 2026 Notification Out – Apply Online for 65 Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "supreme court of india sci senior personal assistant recruitment 2026 notification out apply online for 65 posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/supreme-court-of-india-sci-senior-personal-assistant-recruitment-2026-notification-out-apply-online-for-65-posts.html",
           "d": "2026-10-13"
         },
         {
-          "t": "LIC HFL Management Trainee Recruitment 2026 Notification Out – Apply Online for 50 Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "lic hfl management trainee recruitment 2026 notification out apply online for 50 posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/lic-hfl-management-trainee-recruitment-2026-notification-out-apply-online-for-50-posts.html",
           "d": "2026-10-12"
         },
         {
-          "t": "SSC MTS and Havaldar Result 2026 Out - Check Additional Result PDF | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "ssc mts and havaldar result 2026 out check additional result pdf.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/ssc-mts-and-havaldar-result-2026-out-check-additional-result-pdf.html",
           "d": "2026-10-11"
         },
         {
-          "t": "BSF Sub Inspector Recruitment 2026 – Apply Offline for 34 Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "bsf sub inspector recruitment 2026 apply offline for 34 posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/bsf-sub-inspector-recruitment-2026-apply-offline-for-34-posts.html",
           "d": "2026-10-11"
         },
         {
-          "t": "UPSC NDA 2 Result 2026 Out - Check Written Result and Roll Number List PDF for NDA & NA (II) | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "upsc nda 2 result 2026 out check written result and roll number list pdf for nda na ii.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/upsc-nda-2-result-2026-out-check-written-result-and-roll-number-list-pdf-for-nda-na-ii.html",
           "d": "2026-10-10"
         },
         {
-          "t": "India Post GDS Result 2026 - Check 1st Merit List Date, Circle-wise PDF and How to Check | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "india post gds result 2026 check 1st merit list date circle wise pdf and how to check.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/india-post-gds-result-2026-check-1st-merit-list-date-circle-wise-pdf-and-how-to-check.html",
           "d": "2026-10-10"
         },
         {
-          "t": "SBI Wealth Management SCO Recruitment 2026 - Apply Online for Specialist Cadre Officers Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "sbi wealth management sco recruitment 2026 apply online for specialist cadre officers posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/sbi-wealth-management-sco-recruitment-2026-apply-online-for-specialist-cadre-officers-posts.html",
           "d": "2026-10-09"
         },
         {
-          "t": "RRB Section Controller Admit Card 2026 Out Today - Download Hall Ticket at rrb.indianrailways.gov.in | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "rrb section controller admit card 2026 out today download hall ticket at rrbindianrailwaysgovin.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rrb-section-controller-admit-card-2026-out-today-download-hall-ticket-at-rrbindianrailwaysgovin.html",
           "d": "2026-10-09"
         },
         {
-          "t": "NICL AO Recruitment 2026 – Apply Online for 321 Administrative Officer (Generalist & Specialist) Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "nicl ao recruitment 2026 apply online for 321 administrative officer generalist specialist posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/nicl-ao-recruitment-2026-apply-online-for-321-administrative-officer-generalist-specialist-posts.html",
           "d": "2026-10-09"
         },
         {
-          "t": "Delhi Police PEMT and DV Admit Card 2026 - Download Link for Head Constable and Constable Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "delhi police pemt and dv admit card 2026 download link for head constable and constable posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/delhi-police-pemt-and-dv-admit-card-2026-download-link-for-head-constable-and-constable-posts.html",
           "d": "2026-10-09"
         }
@@ -11166,6 +11166,7 @@
         "2026-09-10": 2,
         "2026-09-09": 1,
         "2026-09-08": 2,
+        "2026-09-07": 6,
         "2026-09-06": 2,
         "2026-09-05": 1,
         "2026-09-04": 1,
@@ -11177,9 +11178,7 @@
         "2026-08-27": 2,
         "2026-08-26": 7
       },
-      "total": 78,
-      "today": 0,
-      "week": 12
+      "total": 84
     },
     {
       "name": "SG News18",
