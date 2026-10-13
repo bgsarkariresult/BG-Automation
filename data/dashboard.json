@@ -1,8 +1,8 @@
 {
-  "updated": "2026-10-12T23:29:14Z",
-  "checked_at": "2026-10-12T23:29:14Z",
+  "updated": "2026-10-13T00:33:40Z",
+  "checked_at": "2026-10-13T00:33:40Z",
   "refresh_interval_seconds": 300,
-  "source": "Live Dashboard Sync · GitHub Actions API + public site sitemaps",
+  "source": "GitHub Actions API",
   "channels": [
     {
       "name": "SG News",
@@ -39,7 +39,7 @@
           "title": "🔥 Apple iPhone 17 Pro Review 2026: खरीदने से पहले ये कड़वा सच जान लो!",
           "id": "2J_-GNSpXn0",
           "date": "2026-10-11",
-          "views": "239"
+          "views": "245"
         },
         {
           "title": "🔥 ₹1,34,900 barbaad ya vasool? Apple iPhone 17 Pro ka sach dekh kar hosh ud jayenge!",
@@ -76,6 +76,20 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 38297409401,
+          "number": 201,
+          "s": "success",
+          "t": "2026-10-12T19:24:22Z",
+          "started": "2026-10-12T19:24:11Z",
+          "created": "2026-10-12T19:24:11Z",
+          "d": 11,
+          "e": "schedule",
+          "n": "SG News18 - Auto Video Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/38297409401"
+        },
         {
           "id": 38259349120,
           "number": 200,
@@ -1461,32 +1475,18 @@
           "branch": "main",
           "actor": "bgsarkariresult",
           "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37242271435"
-        },
-        {
-          "id": 37230671170,
-          "number": 101,
-          "s": "success",
-          "t": "2026-10-04T20:04:15Z",
-          "started": "2026-10-04T20:04:04Z",
-          "created": "2026-10-04T20:04:04Z",
-          "d": 11,
-          "e": "schedule",
-          "n": "SG News18 - Auto Video Bot",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37230671170"
         }
       ],
-      "time": "2026-10-12T14:06:09Z",
-      "url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/38259349120",
-      "last_run_id": 38259349120,
-      "run_number": 200,
+      "time": "2026-10-12T19:24:22Z",
+      "url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/38297409401",
+      "last_run_id": 38297409401,
+      "run_number": 201,
       "branch": "main",
-      "event": "workflow_dispatch",
+      "event": "schedule",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/38259349120",
+      "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/38297409401",
       "cron": "*/5 * * * *",
-      "next": "2026-10-12T18:05:00Z"
+      "next": "2026-10-13T00:35:00Z"
     },
     {
       "name": "TechGlow India",
@@ -1498,6 +1498,20 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 38301710310,
+          "number": 127,
+          "s": "success",
+          "t": "2026-10-12T20:03:34Z",
+          "started": "2026-10-12T20:03:22Z",
+          "created": "2026-10-12T20:03:22Z",
+          "d": 12,
+          "e": "schedule",
+          "n": "TechGlow India - Tech Review Auto Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/38301710310"
+        },
         {
           "id": 38238974097,
           "number": 126,
@@ -2883,32 +2897,18 @@
           "branch": "main",
           "actor": "bgsarkariresult",
           "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/36528619419"
-        },
-        {
-          "id": 36506967945,
-          "number": 27,
-          "s": "failure",
-          "t": "2026-09-29T01:15:25Z",
-          "started": "2026-09-29T01:14:40Z",
-          "created": "2026-09-29T01:14:40Z",
-          "d": 45,
-          "e": "schedule",
-          "n": "TechGlow India - Tech Review Auto Bot",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/36506967945"
         }
       ],
-      "time": "2026-10-12T10:52:05Z",
-      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/38238974097",
-      "last_run_id": 38238974097,
-      "run_number": 126,
+      "time": "2026-10-12T20:03:34Z",
+      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/38301710310",
+      "last_run_id": 38301710310,
+      "run_number": 127,
       "branch": "main",
       "event": "schedule",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/38238974097",
+      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/38301710310",
       "cron": "*/5 * * * *",
-      "next": "2026-10-12T18:05:00Z"
+      "next": "2026-10-13T00:35:00Z"
     },
     {
       "name": "BK GrowUp",
@@ -6972,7 +6972,7 @@
         "run_id": 37506451282
       },
       "cron": "10 0 * * *",
-      "next": "2026-10-13T00:10:00Z"
+      "next": "2026-10-14T00:10:00Z"
     },
     {
       "name": "BG Reels Bot",
@@ -6984,6 +6984,20 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 38296517253,
+          "number": 113,
+          "s": "success",
+          "t": "2026-10-12T19:16:32Z",
+          "started": "2026-10-12T19:16:12Z",
+          "created": "2026-10-12T19:16:12Z",
+          "d": 20,
+          "e": "schedule",
+          "n": "BG Reels Bot - Multi-Platform Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/38296517253"
+        },
         {
           "id": 38230446302,
           "number": 112,
@@ -8369,32 +8383,18 @@
           "branch": "main",
           "actor": "bgtechlab",
           "u": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/36159817653"
-        },
-        {
-          "id": 36146446544,
-          "number": 13,
-          "s": "success",
-          "t": "2026-09-25T14:19:07Z",
-          "started": "2026-09-25T14:17:06Z",
-          "created": "2026-09-25T14:17:06Z",
-          "d": 121,
-          "e": "workflow_dispatch",
-          "n": "BG Reels Bot - Multi-Platform Auto Publisher",
-          "branch": "main",
-          "actor": "bgtechlab",
-          "u": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/36146446544"
         }
       ],
-      "time": "2026-10-12T09:31:52Z",
-      "url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/38230446302",
-      "last_run_id": 38230446302,
-      "run_number": 112,
+      "time": "2026-10-12T19:16:32Z",
+      "url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/38296517253",
+      "last_run_id": 38296517253,
+      "run_number": 113,
       "branch": "main",
       "event": "schedule",
       "actor": "bgtechlab",
-      "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/38230446302",
+      "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/38296517253",
       "cron": "*/5 * * * *",
-      "next": "2026-10-12T18:05:00Z"
+      "next": "2026-10-13T00:35:00Z"
     },
     {
       "name": "Job Page Auto Publisher",
@@ -10997,52 +10997,52 @@
       "url": "https://bgsarkariresult.github.io/bgsarkariresult/",
       "articles": [
         {
-          "t": "LIC HFL Management Trainee Recruitment 2026 Notification Out – Apply Online for 50 Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "lic hfl management trainee recruitment 2026 notification out apply online for 50 posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/lic-hfl-management-trainee-recruitment-2026-notification-out-apply-online-for-50-posts.html",
           "d": "2026-10-12"
         },
         {
-          "t": "SSC MTS and Havaldar Result 2026 Out - Check Additional Result PDF | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "ssc mts and havaldar result 2026 out check additional result pdf.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/ssc-mts-and-havaldar-result-2026-out-check-additional-result-pdf.html",
           "d": "2026-10-11"
         },
         {
-          "t": "BSF Sub Inspector Recruitment 2026 – Apply Offline for 34 Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "bsf sub inspector recruitment 2026 apply offline for 34 posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/bsf-sub-inspector-recruitment-2026-apply-offline-for-34-posts.html",
           "d": "2026-10-11"
         },
         {
-          "t": "UPSC NDA 2 Result 2026 Out - Check Written Result and Roll Number List PDF for NDA & NA (II) | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "upsc nda 2 result 2026 out check written result and roll number list pdf for nda na ii.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/upsc-nda-2-result-2026-out-check-written-result-and-roll-number-list-pdf-for-nda-na-ii.html",
           "d": "2026-10-10"
         },
         {
-          "t": "India Post GDS Result 2026 - Check 1st Merit List Date, Circle-wise PDF and How to Check | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "india post gds result 2026 check 1st merit list date circle wise pdf and how to check.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/india-post-gds-result-2026-check-1st-merit-list-date-circle-wise-pdf-and-how-to-check.html",
           "d": "2026-10-10"
         },
         {
-          "t": "SBI Wealth Management SCO Recruitment 2026 - Apply Online for Specialist Cadre Officers Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "sbi wealth management sco recruitment 2026 apply online for specialist cadre officers posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/sbi-wealth-management-sco-recruitment-2026-apply-online-for-specialist-cadre-officers-posts.html",
           "d": "2026-10-09"
         },
         {
-          "t": "RRB Section Controller Admit Card 2026 Out Today - Download Hall Ticket at rrb.indianrailways.gov.in | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "rrb section controller admit card 2026 out today download hall ticket at rrbindianrailwaysgovin.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rrb-section-controller-admit-card-2026-out-today-download-hall-ticket-at-rrbindianrailwaysgovin.html",
           "d": "2026-10-09"
         },
         {
-          "t": "NICL AO Recruitment 2026 – Apply Online for 321 Administrative Officer (Generalist & Specialist) Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "nicl ao recruitment 2026 apply online for 321 administrative officer generalist specialist posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/nicl-ao-recruitment-2026-apply-online-for-321-administrative-officer-generalist-specialist-posts.html",
           "d": "2026-10-09"
         },
         {
-          "t": "Delhi Police PEMT and DV Admit Card 2026 - Download Link for Head Constable and Constable Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "delhi police pemt and dv admit card 2026 download link for head constable and constable posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/delhi-police-pemt-and-dv-admit-card-2026-download-link-for-head-constable-and-constable-posts.html",
           "d": "2026-10-09"
         },
         {
-          "t": "Supreme Court Junior Court Assistant Recruitment 2026 Notification Out - Apply Online for 250 Posts | Download Link & Details 2026 - BG Sarkari Result",
+          "t": "supreme court junior court assistant recruitment 2026 notification out apply online for 250 posts.html",
           "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/supreme-court-junior-court-assistant-recruitment-2026-notification-out-apply-online-for-250-posts.html",
           "d": "2026-10-08"
         }
@@ -11081,6 +11081,7 @@
         "2026-09-10": 2,
         "2026-09-09": 1,
         "2026-09-08": 2,
+        "2026-09-07": 6,
         "2026-09-06": 2,
         "2026-09-05": 1,
         "2026-09-04": 1,
@@ -11092,9 +11093,7 @@
         "2026-08-27": 2,
         "2026-08-26": 7
       },
-      "total": 77,
-      "today": 0,
-      "week": 16
+      "total": 83
     },
     {
       "name": "SG News18",
