@@ -1,8 +1,8 @@
 {
-  "updated": "2026-10-18T11:25:18Z",
-  "checked_at": "2026-10-18T11:25:18Z",
+  "updated": "2026-10-18T13:36:01Z",
+  "checked_at": "2026-10-18T13:36:01Z",
   "refresh_interval_seconds": 300,
-  "source": "Live Dashboard Sync · GitHub Actions API + public site sitemaps",
+  "source": "GitHub Actions API",
   "channels": [
     {
       "name": "SG News",
@@ -27,7 +27,7 @@
           "title": "🔥 सिर्फ ₹699 में 60 घंटे बैटरी? Mivi Duopods Horizon खरीदने से पहले ये सच जान लो!",
           "id": "0yenYszUyq8",
           "date": "2026-10-15",
-          "views": "47"
+          "views": "52"
         },
         {
           "title": "🔥 ₹1,64,900 का iPhone 18 Pro! खरीदने से पहले ये कड़वा सच ज़रूर जान लो वरना पछताओगे!",
@@ -76,6 +76,90 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 39130530529,
+          "number": 268,
+          "s": "success",
+          "t": "2026-10-18T13:20:07Z",
+          "started": "2026-10-18T13:12:30Z",
+          "created": "2026-10-18T13:12:30Z",
+          "d": 457,
+          "e": "workflow_dispatch",
+          "n": "SG News18 - Auto Video Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/39130530529"
+        },
+        {
+          "id": 39130470045,
+          "number": 267,
+          "s": "success",
+          "t": "2026-10-18T13:18:44Z",
+          "started": "2026-10-18T13:11:42Z",
+          "created": "2026-10-18T13:11:42Z",
+          "d": 422,
+          "e": "workflow_dispatch",
+          "n": "SG News18 - Auto Video Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/39130470045"
+        },
+        {
+          "id": 39123209331,
+          "number": 266,
+          "s": "success",
+          "t": "2026-10-18T11:34:19Z",
+          "started": "2026-10-18T11:25:59Z",
+          "created": "2026-10-18T11:25:59Z",
+          "d": 500,
+          "e": "workflow_dispatch",
+          "n": "SG News18 - Auto Video Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/39123209331"
+        },
+        {
+          "id": 39121895686,
+          "number": 265,
+          "s": "success",
+          "t": "2026-10-18T11:12:38Z",
+          "started": "2026-10-18T11:06:25Z",
+          "created": "2026-10-18T11:06:25Z",
+          "d": 373,
+          "e": "workflow_dispatch",
+          "n": "SG News18 - Auto Video Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/39121895686"
+        },
+        {
+          "id": 39121302109,
+          "number": 264,
+          "s": "success",
+          "t": "2026-10-18T11:04:39Z",
+          "started": "2026-10-18T10:57:40Z",
+          "created": "2026-10-18T10:57:40Z",
+          "d": 419,
+          "e": "workflow_dispatch",
+          "n": "SG News18 - Auto Video Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/39121302109"
+        },
+        {
+          "id": 39116911016,
+          "number": 263,
+          "s": "success",
+          "t": "2026-10-18T09:50:35Z",
+          "started": "2026-10-18T09:50:23Z",
+          "created": "2026-10-18T09:50:23Z",
+          "d": 12,
+          "e": "schedule",
+          "n": "SG News18 - Auto Video Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/39116911016"
+        },
         {
           "id": 39100727322,
           "number": 262,
@@ -1391,102 +1475,18 @@
           "branch": "main",
           "actor": "bgsarkariresult",
           "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37951125813"
-        },
-        {
-          "id": 37950817054,
-          "number": 168,
-          "s": "success",
-          "t": "2026-10-09T15:25:27Z",
-          "started": "2026-10-09T15:19:03Z",
-          "created": "2026-10-09T15:19:03Z",
-          "d": 384,
-          "e": "workflow_dispatch",
-          "n": "SG News18 - Auto Video Bot",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37950817054"
-        },
-        {
-          "id": 37949115482,
-          "number": 167,
-          "s": "success",
-          "t": "2026-10-09T15:13:39Z",
-          "started": "2026-10-09T15:05:40Z",
-          "created": "2026-10-09T15:05:40Z",
-          "d": 479,
-          "e": "workflow_dispatch",
-          "n": "SG News18 - Auto Video Bot",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37949115482"
-        },
-        {
-          "id": 37935980249,
-          "number": 166,
-          "s": "success",
-          "t": "2026-10-09T13:26:09Z",
-          "started": "2026-10-09T13:19:07Z",
-          "created": "2026-10-09T13:19:07Z",
-          "d": 422,
-          "e": "workflow_dispatch",
-          "n": "SG News18 - Auto Video Bot",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37935980249"
-        },
-        {
-          "id": 37910974440,
-          "number": 165,
-          "s": "success",
-          "t": "2026-10-09T09:23:48Z",
-          "started": "2026-10-09T09:23:37Z",
-          "created": "2026-10-09T09:23:37Z",
-          "d": 11,
-          "e": "schedule",
-          "n": "SG News18 - Auto Video Bot",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37910974440"
-        },
-        {
-          "id": 37874296327,
-          "number": 164,
-          "s": "success",
-          "t": "2026-10-09T02:23:04Z",
-          "started": "2026-10-09T02:22:52Z",
-          "created": "2026-10-09T02:22:52Z",
-          "d": 12,
-          "e": "schedule",
-          "n": "SG News18 - Auto Video Bot",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37874296327"
-        },
-        {
-          "id": 37861243172,
-          "number": 163,
-          "s": "success",
-          "t": "2026-10-08T23:53:18Z",
-          "started": "2026-10-08T23:46:05Z",
-          "created": "2026-10-08T23:46:05Z",
-          "d": 433,
-          "e": "workflow_dispatch",
-          "n": "SG News18 - Auto Video Bot",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/37861243172"
         }
       ],
-      "time": "2026-10-18T05:29:50Z",
-      "url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/39100727322",
-      "last_run_id": 39100727322,
-      "run_number": 262,
+      "time": "2026-10-18T13:20:07Z",
+      "url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/39130530529",
+      "last_run_id": 39130530529,
+      "run_number": 268,
       "branch": "main",
-      "event": "schedule",
+      "event": "workflow_dispatch",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/39100727322",
+      "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/39130530529",
       "cron": "*/5 * * * *",
-      "next": "2026-10-18T09:45:00Z"
+      "next": "2026-10-18T13:40:00Z"
     },
     {
       "name": "TechGlow India",
@@ -1498,6 +1498,20 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 39116982105,
+          "number": 169,
+          "s": "success",
+          "t": "2026-10-18T09:51:40Z",
+          "started": "2026-10-18T09:51:29Z",
+          "created": "2026-10-18T09:51:29Z",
+          "d": 11,
+          "e": "schedule",
+          "n": "TechGlow India - Tech Review Auto Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/39116982105"
+        },
         {
           "id": 39100950897,
           "number": 168,
@@ -2883,32 +2897,18 @@
           "branch": "main",
           "actor": "bgsarkariresult",
           "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37345964467"
-        },
-        {
-          "id": 37318896070,
-          "number": 69,
-          "s": "success",
-          "t": "2026-10-05T13:51:00Z",
-          "started": "2026-10-05T13:42:34Z",
-          "created": "2026-10-05T13:42:34Z",
-          "d": 506,
-          "e": "workflow_dispatch",
-          "n": "TechGlow India - Tech Review Auto Bot",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/37318896070"
         }
       ],
-      "time": "2026-10-18T05:33:30Z",
-      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/39100950897",
-      "last_run_id": 39100950897,
-      "run_number": 168,
+      "time": "2026-10-18T09:51:40Z",
+      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/39116982105",
+      "last_run_id": 39116982105,
+      "run_number": 169,
       "branch": "main",
       "event": "schedule",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/39100950897",
+      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/39116982105",
       "cron": "*/5 * * * *",
-      "next": "2026-10-18T09:45:00Z"
+      "next": "2026-10-18T13:40:00Z"
     },
     {
       "name": "BK GrowUp",
@@ -2920,6 +2920,20 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 39121873032,
+          "number": 66,
+          "s": "success",
+          "t": "2026-10-18T11:16:38Z",
+          "started": "2026-10-18T11:06:04Z",
+          "created": "2026-10-18T11:06:04Z",
+          "d": 634,
+          "e": "workflow_dispatch",
+          "n": "Run Job Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/Bk-growup-/actions/runs/39121873032"
+        },
         {
           "id": 39087226599,
           "number": 65,
@@ -3831,14 +3845,14 @@
           "u": "https://github.com/bgsarkariresult/Bk-growup-/actions/runs/36102751141"
         }
       ],
-      "time": "2026-10-18T01:46:56Z",
-      "url": "https://github.com/bgsarkariresult/Bk-growup-/actions/runs/39087226599",
-      "last_run_id": 39087226599,
-      "run_number": 65,
+      "time": "2026-10-18T11:16:38Z",
+      "url": "https://github.com/bgsarkariresult/Bk-growup-/actions/runs/39121873032",
+      "last_run_id": 39121873032,
+      "run_number": 66,
       "branch": "main",
       "event": "workflow_dispatch",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/Bk-growup-/actions/runs/39087226599"
+      "html_url": "https://github.com/bgsarkariresult/Bk-growup-/actions/runs/39121873032"
     },
     {
       "name": "BG Sarkari Result",
@@ -3850,6 +3864,48 @@
       "kind": "other",
       "status": "success",
       "runs": [
+        {
+          "id": 39121817356,
+          "number": 330,
+          "s": "success",
+          "t": "2026-10-18T11:05:48Z",
+          "started": "2026-10-18T11:05:14Z",
+          "created": "2026-10-18T11:05:14Z",
+          "d": 34,
+          "e": "push",
+          "n": "Update sitemap for https://bgsarkariresult.github.io/bgsarkariresult/…",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/39121817356"
+        },
+        {
+          "id": 39121815760,
+          "number": 329,
+          "s": "cancelled",
+          "t": "2026-10-18T11:05:15Z",
+          "started": "2026-10-18T11:05:13Z",
+          "created": "2026-10-18T11:05:13Z",
+          "d": 2,
+          "e": "push",
+          "n": "Update jobs.json for indian-army-tes-57-notification-2026-out-for-jul…",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/39121815760"
+        },
+        {
+          "id": 39121813009,
+          "number": 328,
+          "s": "success",
+          "t": "2026-10-18T11:05:30Z",
+          "started": "2026-10-18T11:05:11Z",
+          "created": "2026-10-18T11:05:11Z",
+          "d": 19,
+          "e": "push",
+          "n": "Add/Update page: indian-army-tes-57-notification-2026-out-for-july-20…",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/39121813009"
+        },
         {
           "id": 39089138490,
           "number": 327,
@@ -5207,58 +5263,16 @@
           "branch": "main",
           "actor": "bgsarkariresult",
           "u": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/37624915319"
-        },
-        {
-          "id": 37624913217,
-          "number": 230,
-          "s": "cancelled",
-          "t": "2026-10-07T12:58:35Z",
-          "started": "2026-10-07T12:58:32Z",
-          "created": "2026-10-07T12:58:32Z",
-          "d": 3,
-          "e": "push",
-          "n": "Update jobs.json for itbp-sports-quota-recruitment-2026-notification-…",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/37624913217"
-        },
-        {
-          "id": 37624907590,
-          "number": 229,
-          "s": "success",
-          "t": "2026-10-07T12:59:46Z",
-          "started": "2026-10-07T12:58:29Z",
-          "created": "2026-10-07T12:58:29Z",
-          "d": 77,
-          "e": "push",
-          "n": "Add/Update page: itbp-sports-quota-recruitment-2026-notification-out-…",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/37624907590"
-        },
-        {
-          "id": 37561658797,
-          "number": 228,
-          "s": "success",
-          "t": "2026-10-07T02:22:49Z",
-          "started": "2026-10-07T02:22:19Z",
-          "created": "2026-10-07T02:22:19Z",
-          "d": 30,
-          "e": "push",
-          "n": "Update sitemap for https://bgsarkariresult.github.io/bgsarkariresult/…",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/37561658797"
         }
       ],
-      "time": "2026-10-18T02:10:42Z",
-      "url": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/39089138490",
-      "last_run_id": 39089138490,
-      "run_number": 327,
+      "time": "2026-10-18T11:05:48Z",
+      "url": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/39121817356",
+      "last_run_id": 39121817356,
+      "run_number": 330,
       "branch": "main",
       "event": "push",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/39089138490"
+      "html_url": "https://github.com/bgsarkariresult/bgsarkariresult/actions/runs/39121817356"
     },
     {
       "name": "YouTube Live Bot",
@@ -7299,6 +7313,20 @@
       "status": "success",
       "runs": [
         {
+          "id": 39130867210,
+          "number": 149,
+          "s": "success",
+          "t": "2026-10-18T13:17:27Z",
+          "started": "2026-10-18T13:17:06Z",
+          "created": "2026-10-18T13:17:06Z",
+          "d": 21,
+          "e": "schedule",
+          "n": "BG Reels Bot - Multi-Platform Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/39130867210"
+        },
+        {
           "id": 39114309190,
           "number": 148,
           "s": "success",
@@ -8683,32 +8711,18 @@
           "branch": "main",
           "actor": "bgtechlab",
           "u": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/36926586955"
-        },
-        {
-          "id": 36891400305,
-          "number": 49,
-          "s": "success",
-          "t": "2026-10-01T16:22:05Z",
-          "started": "2026-10-01T16:21:41Z",
-          "created": "2026-10-01T16:21:41Z",
-          "d": 24,
-          "e": "schedule",
-          "n": "BG Reels Bot - Multi-Platform Auto Publisher",
-          "branch": "main",
-          "actor": "bgtechlab",
-          "u": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/36891400305"
         }
       ],
-      "time": "2026-10-18T09:11:04Z",
-      "url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/39114309190",
-      "last_run_id": 39114309190,
-      "run_number": 148,
+      "time": "2026-10-18T13:17:27Z",
+      "url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/39130867210",
+      "last_run_id": 39130867210,
+      "run_number": 149,
       "branch": "main",
       "event": "schedule",
       "actor": "bgtechlab",
-      "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/39114309190",
+      "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/39130867210",
       "cron": "*/5 * * * *",
-      "next": "2026-10-18T09:45:00Z"
+      "next": "2026-10-18T13:40:00Z"
     },
     {
       "name": "Job Page Auto Publisher",
@@ -8720,6 +8734,20 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 39121762759,
+          "number": 60,
+          "s": "success",
+          "t": "2026-10-18T11:05:18Z",
+          "started": "2026-10-18T11:04:27Z",
+          "created": "2026-10-18T11:04:27Z",
+          "d": 51,
+          "e": "workflow_dispatch",
+          "n": "Job Page Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/Job-Page-Auto-Publisher/actions/runs/39121762759"
+        },
         {
           "id": 39087130307,
           "number": 59,
@@ -9547,14 +9575,14 @@
           "u": "https://github.com/bgtechlab/Job-Page-Auto-Publisher/actions/runs/36857102194"
         }
       ],
-      "time": "2026-10-18T01:37:42Z",
-      "url": "https://github.com/bgtechlab/Job-Page-Auto-Publisher/actions/runs/39087130307",
-      "last_run_id": 39087130307,
-      "run_number": 59,
+      "time": "2026-10-18T11:05:18Z",
+      "url": "https://github.com/bgtechlab/Job-Page-Auto-Publisher/actions/runs/39121762759",
+      "last_run_id": 39121762759,
+      "run_number": 60,
       "branch": "main",
       "event": "workflow_dispatch",
       "actor": "bgtechlab",
-      "html_url": "https://github.com/bgtechlab/Job-Page-Auto-Publisher/actions/runs/39087130307"
+      "html_url": "https://github.com/bgtechlab/Job-Page-Auto-Publisher/actions/runs/39121762759"
     },
     {
       "name": "Amazon to Blogger",
@@ -10524,6 +10552,48 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 39130289549,
+          "number": 122,
+          "s": "success",
+          "t": "2026-10-18T13:10:53Z",
+          "started": "2026-10-18T13:09:13Z",
+          "created": "2026-10-18T13:09:13Z",
+          "d": 100,
+          "e": "workflow_dispatch",
+          "n": "News Blog Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/39130289549"
+        },
+        {
+          "id": 39122759351,
+          "number": 121,
+          "s": "success",
+          "t": "2026-10-18T11:21:01Z",
+          "started": "2026-10-18T11:19:19Z",
+          "created": "2026-10-18T11:19:19Z",
+          "d": 102,
+          "e": "workflow_dispatch",
+          "n": "News Blog Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/39122759351"
+        },
+        {
+          "id": 39121588265,
+          "number": 120,
+          "s": "success",
+          "t": "2026-10-18T11:03:36Z",
+          "started": "2026-10-18T11:01:54Z",
+          "created": "2026-10-18T11:01:54Z",
+          "d": 102,
+          "e": "workflow_dispatch",
+          "n": "News Blog Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/39121588265"
+        },
         {
           "id": 39109122008,
           "number": 119,
@@ -11881,58 +11951,16 @@
           "branch": "main",
           "actor": "bgtechlab",
           "u": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/37125980753"
-        },
-        {
-          "id": 37125487443,
-          "number": 22,
-          "s": "success",
-          "t": "2026-10-03T13:15:15Z",
-          "started": "2026-10-03T13:14:12Z",
-          "created": "2026-10-03T13:14:12Z",
-          "d": 63,
-          "e": "workflow_dispatch",
-          "n": "News Blog Auto Publisher",
-          "branch": "main",
-          "actor": "bgtechlab",
-          "u": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/37125487443"
-        },
-        {
-          "id": 37109530812,
-          "number": 21,
-          "s": "success",
-          "t": "2026-10-03T08:24:08Z",
-          "started": "2026-10-03T08:23:21Z",
-          "created": "2026-10-03T08:23:21Z",
-          "d": 47,
-          "e": "workflow_dispatch",
-          "n": "News Blog Auto Publisher",
-          "branch": "main",
-          "actor": "bgtechlab",
-          "u": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/37109530812"
-        },
-        {
-          "id": 37107788444,
-          "number": 20,
-          "s": "success",
-          "t": "2026-10-03T07:53:18Z",
-          "started": "2026-10-03T07:52:25Z",
-          "created": "2026-10-03T07:52:25Z",
-          "d": 53,
-          "e": "workflow_dispatch",
-          "n": "News Blog Auto Publisher",
-          "branch": "main",
-          "actor": "bgtechlab",
-          "u": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/37107788444"
         }
       ],
-      "time": "2026-10-18T07:51:25Z",
-      "url": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/39109122008",
-      "last_run_id": 39109122008,
-      "run_number": 119,
+      "time": "2026-10-18T13:10:53Z",
+      "url": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/39130289549",
+      "last_run_id": 39130289549,
+      "run_number": 122,
       "branch": "main",
       "event": "workflow_dispatch",
       "actor": "bgtechlab",
-      "html_url": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/39109122008"
+      "html_url": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/39130289549"
     }
   ],
   "sites": [
@@ -11941,58 +11969,62 @@
       "url": "https://bgsarkariresult.github.io/bgsarkariresult/",
       "articles": [
         {
-          "t": "UP Police Constable Final Result 2026 (Out) - Download Merit List PDF | Download Link & Details 2026 - BG Sarkari Result",
-          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/up-police-constable-final-result-2026-out-download-merit-list-pdf.html",
-          "d": "2026-10-14"
+          "t": "rbi officer grade b final result 2026 out download general merit list pdf.html",
+          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rbi-officer-grade-b-final-result-2026-out-download-general-merit-list-pdf.html",
+          "d": "2026-10-18"
         },
         {
-          "t": "RRB NTPC Graduate Recruitment 06/2026 Notification Out - Apply Online for 3,548 Posts | Download Link & Details 2026 - BG Sarkari Result",
-          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rrb-ntpc-graduate-recruitment-062026-notification-out-apply-online-for-3548-posts.html",
-          "d": "2026-10-14"
+          "t": "indian army tes 57 notification 2026 out for july 2027 course apply online for 90 posts.html",
+          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/indian-army-tes-57-notification-2026-out-for-july-2027-course-apply-online-for-90-posts.html",
+          "d": "2026-10-18"
         },
         {
-          "t": "Supreme Court of India (SCI) Senior Personal Assistant Recruitment 2026 Notification Out – Apply Online for 65 Posts | Download Link & Details 2026 - BG Sarkari Result",
-          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/supreme-court-of-india-sci-senior-personal-assistant-recruitment-2026-notification-out-apply-online-for-65-posts.html",
-          "d": "2026-10-13"
+          "t": "supreme court of india to recruit 20 court master posts.html",
+          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/supreme-court-of-india-to-recruit-20-court-master-posts.html",
+          "d": "2026-10-17"
         },
         {
-          "t": "LIC HFL Management Trainee Recruitment 2026 Notification Out – Apply Online for 50 Posts | Download Link & Details 2026 - BG Sarkari Result",
-          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/lic-hfl-management-trainee-recruitment-2026-notification-out-apply-online-for-50-posts.html",
-          "d": "2026-10-12"
+          "t": "supreme court of india junior court attendant recruitment 2026 notification out apply online for 130 posts.html",
+          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/supreme-court-of-india-junior-court-attendant-recruitment-2026-notification-out-apply-online-for-130-posts.html",
+          "d": "2026-10-17"
         },
         {
-          "t": "SSC MTS and Havaldar Result 2026 Out - Check Additional Result PDF | Download Link & Details 2026 - BG Sarkari Result",
-          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/ssc-mts-and-havaldar-result-2026-out-check-additional-result-pdf.html",
-          "d": "2026-10-11"
+          "t": "ssc cgl admit card 2026 out download tier 1 hall ticket at sscgovin.html",
+          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/ssc-cgl-admit-card-2026-out-download-tier-1-hall-ticket-at-sscgovin.html",
+          "d": "2026-10-16"
         },
         {
-          "t": "BSF Sub Inspector Recruitment 2026 – Apply Offline for 34 Posts | Download Link & Details 2026 - BG Sarkari Result",
-          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/bsf-sub-inspector-recruitment-2026-apply-offline-for-34-posts.html",
-          "d": "2026-10-11"
+          "t": "oil india executive recruitment 2026 apply online for 32 superintending research scientist senior officer and more posts.html",
+          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/oil-india-executive-recruitment-2026-apply-online-for-32-superintending-research-scientist-senior-officer-and-more-posts.html",
+          "d": "2026-10-16"
         },
         {
-          "t": "UPSC NDA 2 Result 2026 Out - Check Written Result and Roll Number List PDF for NDA & NA (II) | Download Link & Details 2026 - BG Sarkari Result",
-          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/upsc-nda-2-result-2026-out-check-written-result-and-roll-number-list-pdf-for-nda-na-ii.html",
-          "d": "2026-10-10"
+          "t": "mp police constable driver gd recruitment 2026 notification out apply online for 1000 posts.html",
+          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/mp-police-constable-driver-gd-recruitment-2026-notification-out-apply-online-for-1000-posts.html",
+          "d": "2026-10-16"
         },
         {
-          "t": "India Post GDS Result 2026 - Check 1st Merit List Date, Circle-wise PDF and How to Check | Download Link & Details 2026 - BG Sarkari Result",
-          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/india-post-gds-result-2026-check-1st-merit-list-date-circle-wise-pdf-and-how-to-check.html",
-          "d": "2026-10-10"
+          "t": "bhel artisan recruitment 2026 notification out apply online for 660 posts.html",
+          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/bhel-artisan-recruitment-2026-notification-out-apply-online-for-660-posts.html",
+          "d": "2026-10-16"
         },
         {
-          "t": "SBI Wealth Management SCO Recruitment 2026 - Apply Online for Specialist Cadre Officers Posts | Download Link & Details 2026 - BG Sarkari Result",
-          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/sbi-wealth-management-sco-recruitment-2026-apply-online-for-specialist-cadre-officers-posts.html",
-          "d": "2026-10-09"
+          "t": "ssc gd constable result 2026 out check merit list pdf cut off and petpst update.html",
+          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/ssc-gd-constable-result-2026-out-check-merit-list-pdf-cut-off-and-petpst-update.html",
+          "d": "2026-10-15"
         },
         {
-          "t": "RRB Section Controller Admit Card 2026 Out Today - Download Hall Ticket at rrb.indianrailways.gov.in | Download Link & Details 2026 - BG Sarkari Result",
-          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rrb-section-controller-admit-card-2026-out-today-download-hall-ticket-at-rrbindianrailwaysgovin.html",
-          "d": "2026-10-09"
+          "t": "rrb technician answer key 2026 cen 022026 response sheet objection details and score calculation.html",
+          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rrb-technician-answer-key-2026-cen-022026-response-sheet-objection-details-and-score-calculation.html",
+          "d": "2026-10-15"
         }
       ],
       "days": {
-        "2026-10-14": 2,
+        "2026-10-18": 2,
+        "2026-10-17": 2,
+        "2026-10-16": 4,
+        "2026-10-15": 4,
+        "2026-10-14": 3,
         "2026-10-13": 1,
         "2026-10-12": 1,
         "2026-10-11": 2,
@@ -12027,6 +12059,7 @@
         "2026-09-10": 2,
         "2026-09-09": 1,
         "2026-09-08": 2,
+        "2026-09-07": 6,
         "2026-09-06": 2,
         "2026-09-05": 1,
         "2026-09-04": 1,
@@ -12038,14 +12071,27 @@
         "2026-08-27": 2,
         "2026-08-26": 7
       },
-      "total": 80,
-      "today": 0,
-      "week": 4
+      "total": 99
     },
     {
       "name": "SG News18",
       "url": "https://bgnewswab.github.io/sgnewswab/index.html",
       "articles": [
+        {
+          "t": "Ind W vs Zim W 2nd T20 Live Score: जिंबाब्वे ने जीता टॉस, भारत की",
+          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=221",
+          "d": "2026-10-18"
+        },
+        {
+          "t": "IND vs WI: वैभव सूर्यवंशी को न्यूजीलैंड में भी नहीं मिलेगा मौका! ",
+          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=220",
+          "d": "2026-10-18"
+        },
+        {
+          "t": "'हमें प्लीज बचा लो', भारत के खिलाफ T20I सीरीज ड्रॉ करने के बाद वे",
+          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=219",
+          "d": "2026-10-18"
+        },
         {
           "t": "IND vs WI: सीरीज ड्रॉ होने के बाद श्रेयस अय्यर को हो रहा है बड़ा ",
           "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=218",
@@ -12080,25 +12126,10 @@
           "t": "न्यूजीलैंड के खिलाफ वनडे और टेस्ट सीरीज के लिए भारतीय टीम का एलान",
           "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=212",
           "d": "2026-10-16"
-        },
-        {
-          "t": "IND W vs ZIM W: 'मंधाना युग' की विजयी शुरुआत, दीप्‍ति और डेब्‍यूट",
-          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=211",
-          "d": "2026-10-16"
-        },
-        {
-          "t": "Ind W vs Zim W 1st T20 Live Score: स्मृति मंधाना ने जीता टॉस, गें",
-          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=210",
-          "d": "2026-10-16"
-        },
-        {
-          "t": "स्मृति मंधाना की कप्तानी में नए युग की शुरुआत करेगी महिला टीम, जि",
-          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=209",
-          "d": "2026-10-16"
         }
       ],
       "days": {
-        "2026-10-18": 3,
+        "2026-10-18": 6,
         "2026-10-17": 3,
         "2026-10-16": 4,
         "2026-10-15": 5,
