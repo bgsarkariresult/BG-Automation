@@ -39,31 +39,44 @@ key = os.environ.get("YT_API_KEY", "")
 YT = "https://www.googleapis.com/youtube/v3/"
 channels = []
 ids = [c["id"] for c in cfg["channels"] if c.get("id")]
-if key and ids:
-    q = urllib.parse.urlencode({"part": "snippet,statistics,contentDetails", "id": ",".join(ids), "key": key})
-    found = {i["id"]: i for i in get(YT + "channels?" + q).get("items", [])}
-    for c in cfg["channels"]:
-        it = found.get(c["id"])
-        if not it:
-            channels.append({"name": c["name"], "id": c["id"], "error": "Channel ID galat ya nahi mila"})
-            continue
-        s, latest = it["statistics"], []
-        try:
-            up = it["contentDetails"]["relatedPlaylists"]["uploads"]
-            pl = get(YT + "playlistItems?" + urllib.parse.urlencode(
-                {"part": "snippet", "playlistId": up, "maxResults": 5, "key": key})).get("items", [])
-            vid_ids = [v["snippet"]["resourceId"]["videoId"] for v in pl]
-            vs = {v["id"]: v["statistics"] for v in get(YT + "videos?" + urllib.parse.urlencode(
-                {"part": "statistics", "id": ",".join(vid_ids), "key": key})).get("items", [])}
-            for v in pl:
-                sn = v["snippet"]; vid = sn["resourceId"]["videoId"]
-                latest.append({"title": sn["title"], "id": vid, "date": sn["publishedAt"][:10],
-                               "views": vs.get(vid, {}).get("viewCount")})
-        except Exception:
-            pass
-        channels.append({"name": c["name"], "id": c["id"], "icon": it["snippet"]["thumbnails"]["default"]["url"],
-                         "subs": s.get("subscriberCount"), "views": s.get("viewCount"),
-                         "videos": s.get("videoCount"), "latest": latest})
+prev_channels = []
+try:
+    with open("data/dashboard.json", encoding="utf-8") as _f:
+        prev_channels = json.load(_f).get("channels") or []
+except Exception:
+    prev_channels = []
+try:
+    if key and ids:
+        q = urllib.parse.urlencode({"part": "snippet,statistics,contentDetails", "id": ",".join(ids), "key": key})
+        found = {i["id"]: i for i in get(YT + "channels?" + q).get("items", [])}
+        for c in cfg["channels"]:
+            it = found.get(c["id"])
+            if not it:
+                channels.append({"name": c["name"], "id": c["id"], "error": "Channel ID galat ya nahi mila"})
+                continue
+            s, latest = it["statistics"], []
+            try:
+                up = it["contentDetails"]["relatedPlaylists"]["uploads"]
+                pl = get(YT + "playlistItems?" + urllib.parse.urlencode(
+                    {"part": "snippet", "playlistId": up, "maxResults": 5, "key": key})).get("items", [])
+                vid_ids = [v["snippet"]["resourceId"]["videoId"] for v in pl]
+                vs = {v["id"]: v["statistics"] for v in get(YT + "videos?" + urllib.parse.urlencode(
+                    {"part": "statistics", "id": ",".join(vid_ids), "key": key})).get("items", [])}
+                for v in pl:
+                    sn = v["snippet"]; vid = sn["resourceId"]["videoId"]
+                    latest.append({"title": sn["title"], "id": vid, "date": sn["publishedAt"][:10],
+                                   "views": vs.get(vid, {}).get("viewCount")})
+            except Exception:
+                pass
+            channels.append({"name": c["name"], "id": c["id"], "icon": it["snippet"]["thumbnails"]["default"]["url"],
+                             "subs": s.get("subscriberCount"), "views": s.get("viewCount"),
+                             "videos": s.get("videoCount"), "latest": latest})
+except Exception as e:
+    print("YouTube API error:", e)
+    channels = []
+# Key na mile ya API fail ho to pichla achha data rakho (channels khali na ho)
+if not channels and prev_channels:
+    channels = prev_channels
 
 # --- Bots: runs, failed step, next schedule ---
 hdr = {"Accept": "application/vnd.github+json"}

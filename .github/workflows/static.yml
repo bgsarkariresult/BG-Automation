@@ -30,6 +30,8 @@ jobs:
       - name: Build latest dashboard data
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_PAT: ${{ secrets.GH_PAT }}
+          YT_API_KEY: ${{ secrets.YT_API_KEY }}
         run: python3 sync.py
       - name: Setup Pages
         uses: actions/configure-pages@v5
