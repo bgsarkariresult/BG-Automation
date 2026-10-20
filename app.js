@@ -35,7 +35,7 @@
       '<div class="top">' +
         '<button class="burger" id="menuBtn">☰</button>' +
         '<div class="logo"><div class="logo-bot">🤖</div><div>BG <span>Automation</span><small>AI + Automation | Grow Together</small></div></div>' +
-        '<div class="goal-banner">✨ 🚀 Live Status: <span id="goalLive">Loading…</span></div>' +
+        '<div class="goal-banner">✨ 🚀 <span id="goalLive">Loading…</span> <button class="btn g" id="syncNow" type="button" title="Fresh GitHub Actions sync">↻ Sync</button></div>' +
         '<div class="top-right"><button class="icon-btn" id="notifyBtn" title="Notifications">🔔</button><div class="user-chip"><div class="user-av">B</div> Bhavesh</div></div>' +
       '</div>' +
       '<div class="app"><nav id="sideNav">' +
@@ -46,6 +46,22 @@
 
     $('#menuBtn')?.addEventListener('click', () => $('#sideNav')?.classList.toggle('open'));
     $('#notifyBtn')?.addEventListener('click', enableNotifications);
+    $('#syncNow')?.addEventListener('click', async () => {
+      const btn = $('#syncNow');
+      if (btn) { btn.disabled = true; btn.textContent = '⏳ Sync…'; }
+      try {
+        if ((location.pathname.split('/').pop() || 'index.html') === 'index.html') {
+          await refresh(true);
+        } else if (typeof window.refreshDashboard === 'function') {
+          await window.refreshDashboard(true);
+        } else {
+          await refresh(true);
+        }
+      } finally {
+        const b = $('#syncNow');
+        if (b) { b.disabled = false; b.textContent = '↻ Sync'; }
+      }
+    });
   }
 
   async function getJson(url, timeoutMs = 8000) {
@@ -172,8 +188,9 @@
       (d.live_state === 'live' ? '● Systems Operational' : '● Dashboard Online') + '</div></div>';
 
     const stamp = ['live','partial'].includes(d.live_state) ? (d.live_updated || d.updated) : d.updated;
-    const liveLabel = d.live_state === 'live' ? 'LIVE · ' : d.live_state === 'partial' ? 'Partial · ' : 'Cached · ';
-    $('#goalLive').textContent = liveLabel + ago(stamp) + ' · ' + running + ' running · ' + failed + ' failed';
+    const liveLabel = d.live_state === 'live' ? '🟢 Live' : d.live_state === 'partial' ? '🟡 Partial data' : '⚠ Cached / API unavailable';
+    const syncedAt = d.live_state === 'live' || d.live_state === 'partial' ? (d.live_updated || d.updated) : d.updated;
+    $('#goalLive').textContent = liveLabel + ' · Last sync: ' + (syncedAt ? new Date(syncedAt).toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit'}) : '—') + ' · ' + running + ' running · ' + failed + ' failed';
     $('#sysS').textContent = (d.live_state === 'live' ? 'Cloudflare Live: ' : d.live_state === 'partial' ? 'Live API partial: ' : 'Dashboard sync: ') + (stamp ? new Date(stamp).toLocaleString('hi-IN') : '—');
     loadTrends();
   }
@@ -243,11 +260,13 @@
   let pageRenderer = null;
   let pageTitle = 'BG Automation';
 
-  async function refresh() {
+  async function refresh(forceLiveRefresh = false) {
     try {
-      const d = await loadData();
+      const d = await loadData(forceLiveRefresh);
       const sig = JSON.stringify((d.bots || []).map((b) => ({repo:b.repo,status:b.status,runs:(b.runs || []).slice(0,20).map((r) => [r.id,r.s,r.t])})));
-      if (sig !== lastSig) { lastSig = sig; render(d); }
+      // Render each successful sync so the visible "Last sync" timestamp stays current.
+      lastSig = sig;
+      render(d);
       await notifyChanges((d.bots || []).flatMap((b) => (b.runs || []).map((r) => ({b,r}))));
     } catch (e) {
       const main = $('#main');
@@ -324,7 +343,7 @@
       });
     }
     clearInterval(window.__bgPageTimer);
-    window.__bgPageTimer=setInterval(()=>{ if(!document.hidden) window.refreshDashboard?.(); },15000);
+    window.__bgPageTimer=setInterval(()=>{ if(!document.hidden) window.refreshDashboard?.(false); },30000);
   }
 
   // Expose shared functions for the inline scripts in the sub-pages.
@@ -334,7 +353,7 @@
   if (current === 'index.html') {
     shell();
     refresh();
-    window.__bgIndexTimer = setInterval(() => { if (!document.hidden) refresh(); }, 45000);
+    window.__bgIndexTimer = setInterval(() => { if (!document.hidden) refresh(false); }, 45000);
     document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
   }
 })();
