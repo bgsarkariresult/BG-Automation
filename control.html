@@ -71,7 +71,7 @@ function failureDetail(b){
  b.failed.reason&&String(b.failed.reason).replace(/_/g,' ')].filter(Boolean).join(' · ');
 }
 
-const UI={open:new Set(),links:{},msgs:{},busy:{},log:{repo:null,workflow:'',timer:null,token:0,state:{}}};
+const UI={q:'',f:'all',open:new Set(),links:{},msgs:{},busy:{},log:{repo:null,workflow:'',timer:null,token:0,state:{}}};
 let REG={};
 function setMsg(id,v,isHtml){UI.msgs[id]={v,isHtml:!!isHtml,t:Date.now()};const e=document.getElementById(id);if(e){if(isHtml)e.innerHTML=v;else e.textContent=v}}
 function restoreMsgs(){for(const id in UI.msgs){const m=UI.msgs[id];if(Date.now()-m.t>60000){delete UI.msgs[id];continue}const e=document.getElementById(id);if(e){if(m.isHtml)e.innerHTML=m.v;else e.textContent=m.v}}}
@@ -98,7 +98,9 @@ function askPin(){
  });
 }
 
-boot('control.html','GitHub Actions Control Center',d=>{
+let LASTD=null;
+function renderControl(d){
+ LASTD=d;
  const ae=document.activeElement,aeId=ae&&ae.id,selS=ae&&typeof ae.selectionStart==='number'?ae.selectionStart:null;
  REG={};
  const bots=Array.isArray(d.bots)?d.bots:[];
@@ -116,12 +118,15 @@ boot('control.html','GitHub Actions Control Center',d=>{
  let liveNote=d.live_state==='live'?'✔ Live API चालू है ('+ago(d.live_updated)+')। PAT Worker में सुरक्षित है (browser में नहीं)।':
  d.live_state==='partial'?'⚠ Live API आंशिक है — '+(d.live_api_errors||0)+' repo पढ़ नहीं पाया, बाकी cached data दिख रहा है।':
  '⚠ Live API उपलब्ध नहीं — dashboard.json का cached data दिख रहा है।';
+ const match=b=>(!UI.q||(String(b.name||'')+' '+String(b.repo||'')).toLowerCase().includes(UI.q))&&(UI.f==='all'||(UI.f==='run'&&RUN_STATES.includes(latestState(b)))||(UI.f==='fail'&&isFail(b)));
+ const none='<small>इस फ़िल्टर से कोई project नहीं मिला।</small>';
  const otherBots=bots.filter(b=>{const r=lc(b.repo);return !YT_REPOS.includes(r)&&!siteRepos.includes(r)&&!HIDDEN_REPOS.includes(r)});
  $('#main').innerHTML=
  '<div class="card"><div class="hd"><h2>🔑 Worker Proxy</h2><button class="btn g" type="button" id="syncBtn" onclick="runSync()">↻ Sync Dashboard</button></div><small id="patStatus">'+esc(liveNote)+' Origin: bgsarkariresult.github.io</small><small id="syncMsg" style="display:block;margin-top:6px"></small></div>'+
  '<div class="card"><div class="hd"><h2>📊 Automation States</h2><small>लाइव sync डेटा · '+running.length+' चल रहे · '+fails.length+' असफल</small></div><div style="display:flex;flex-wrap:wrap;gap:6px">'+
  (['success','failure','in_progress','queued','waiting','pending','cancelled','skipped','timed_out','action_required','requested','neutral','stale','startup_failure'].filter(s=>stateCounts[s]).map(s=>stateBadge(s,stateCounts[s])).join('')||'<small>अभी कोई run डेटा नहीं मिला।</small>')+
  '</div><small style="display:block;margin-top:8px;color:var(--mu)">सिर्फ़ वही states दिखती हैं जिनके हाल के runs मिले हैं।</small></div>'+
+ '<div class="card"><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><input class="lk" id="qBox" type="search" value="'+esc(UI.q)+'" oninput="setQuery(this.value)" placeholder="🔍 project खोजें…" aria-label="project खोजें" autocomplete="off" style="flex:1;min-width:150px">'+[['all','सब'],['run','चल रहे'],['fail','असफल']].map(x=>'<button class="btn '+(UI.f===x[0]?'':'g')+'" type="button" aria-pressed="'+(UI.f===x[0])+'" onclick="setFilter(\''+x[0]+'\')">'+x[1]+'</button>').join('')+'</div></div>'+
  '<div class="card"><h2>⏳ चल रहे हैं</h2>'+(running.map(b=>{const u=safeUrl(b.url);return '<div class="li"><span>'+esc(b.name)+'</span>'+(u!=='#'?'<a class="t" href="'+esc(u)+'" target="_blank" rel="noopener">देखें</a>':'')+'</div>'}).join('')||'<small>अभी कोई automation नहीं चल रहा।</small>')+'</div>'+
  '<div class="card"><h2>❌ असफल + Errors</h2>'+(fails.map(b=>{
    const s=slugOf(b);REG[s]=b;const f=b.failed||{},r0=(b.runs&&b.runs[0])||{},u=safeUrl(f.url||r0.u||b.url),noWf=!workflowFor(b);
@@ -129,20 +134,24 @@ boot('control.html','GitHub Actions Control Center',d=>{
    return '<div class="li"><span><b>'+esc(b.name)+'</b><br><small>'+why+' • '+ago(f.t||r0.t)+'</small></span><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn" type="button" onclick="startBot(\''+s+'\',\'rerun\')" '+(noWf||UI.busy[s]?'disabled':'')+'>'+ (UI.busy[s]?'⏳ शुरू हो रहा…':'▶ दोबारा चलाएँ')+'</button>'+(u!=='#'?'<a class="btn g t" href="'+esc(u)+'" target="_blank" rel="noopener">Log</a>':'')+'</div></div>'
  }).join('')||'<small>कोई असफल run नहीं।</small>')+'<small id="rerunMsg" role="status" aria-live="polite" style="display:block;margin-top:6px"></small></div>'+
  '<div class="card" id="liveLogPanel" hidden><div class="hd"><h2>💻 Live Logs <small id="liveLogTitle"></small></h2><button class="btn g" type="button" onclick="closeLiveLogs()">✕ बंद करें</button></div><div id="liveLogBody"><small>प्रोजेक्ट चुनें।</small></div></div>'+
- '<div class="card"><h2>🌐 Websites <small>(वेबसाइट)</small></h2><div class="sites">'+siteBots.map(renderProjectCard).join('')+'</div><button class="btn g" type="button" onclick="addProject(\'website\')">＋ Add Website</button></div>'+
- '<div class="card"><h2>▶ YouTube Channels <small>(यूट्यूब चैनल)</small></h2><div class="sites">'+bots.filter(b=>YT_REPOS.includes(lc(b.repo))).map(renderProjectCard).join('')+'</div><button class="btn g" type="button" onclick="addProject(\'youtube\')">＋ Add YouTube Channel</button></div>'+
- '<div class="card"><h2>🧰 Other Automations</h2><div class="sites">'+(otherBots.map(renderProjectCard).join('')||'<small>कोई और automation नहीं।</small>')+'</div></div>';
+ '<div class="card"><h2>🌐 Websites <small>(वेबसाइट)</small></h2><div class="sites">'+(siteBots.filter(match).map(renderProjectCard).join('')||none)+'</div><button class="btn g" type="button" onclick="addProject(\'website\')">＋ Add Website</button></div>'+
+ '<div class="card"><h2>▶ YouTube Channels <small>(यूट्यूब चैनल)</small></h2><div class="sites">'+(bots.filter(b=>YT_REPOS.includes(lc(b.repo))&&match(b)).map(renderProjectCard).join('')||none)+'</div><button class="btn g" type="button" onclick="addProject(\'youtube\')">＋ Add YouTube Channel</button></div>'+
+ '<div class="card"><h2>🧰 Other Automations</h2><div class="sites">'+(otherBots.filter(match).map(renderProjectCard).join('')||(UI.q||UI.f!=='all'?none:'<small>कोई और automation नहीं।</small>'))+'</div></div>';
  restoreMsgs();restoreLogs();
  if(aeId){const e=document.getElementById(aeId);if(e&&e.focus){e.focus();if(selS!==null&&e.setSelectionRange){try{e.setSelectionRange(selS,selS)}catch(_){}}}}
-});
+}
+boot('control.html','GitHub Actions Control Center',renderControl);
+function setFilter(f){UI.f=f;if(LASTD)renderControl(LASTD)}
+function setQuery(v){UI.q=String(v||'').trim().toLowerCase();if(LASTD)renderControl(LASTD)}
 
 function renderProjectCard(b){
  const s=slugOf(b);REG[s]=b;const wf=workflowFor(b),input=inputFor(b),multi=!!cfgFor(b).multi,runs=Array.isArray(b.runs)?b.runs:[],state=latestState(b),sm=stateMeta(state),detail=isFail(b)?failureDetail(b):'',busy=!!UI.busy[s],open=UI.open.has(s);
+ const durs=runs.filter(r=>okRun(r)&&Number(r.d)>0).map(r=>Number(r.d)),avgM=durs.length?Math.max(1,Math.round(durs.reduce((a,x)=>a+x,0)/durs.length/60)):0,lastT=runs[0]&&runs[0].t,siteU=b.site?safeUrl(b.site):'#';
  const okN=runs.filter(okRun).length,failN=runs.filter(r=>FAIL_STATES.includes(r.s)).length;
  const linkBox=input?'<input class="lk" id="lk_'+s+'" value="'+esc(UI.links[s]||'')+'" oninput="UI.links[\''+s+'\']=this.value" placeholder="'+(multi?'लिंक डालें (कई हों तो space या comma से अलग करें) — वैकल्पिक':'लिंक डालें (article / product URL) — वैकल्पिक')+'" inputmode="url" autocomplete="off" aria-label="'+esc(b.name)+' के लिए लिंक">':'';
  const status='<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:5px"><span class="badge-s '+sm.c+'">'+sm.i+' '+sm.l+'</span>'+(detail?'<small style="color:var(--mu)">'+esc(detail)+'</small>':'')+'</div>'+(b.live_api_error?'<small style="display:block;color:var(--mu);margin-top:4px">⚠ Live API: '+esc(b.live_api_error)+'</small>':'');
  const items=runs.slice(0,5).map(r=>'<div class="run-item"><span class="dot s-'+esc(r.s)+'">'+st(r.s)+'</span><span class="run-info"><b>'+esc(r.n)+'</b><small>'+esc(r.s)+' • '+ago(r.t)+'</small></span>'+(safeUrl(r.u)!=='#'?'<a class="btn g t" href="'+esc(safeUrl(r.u))+'" target="_blank" rel="noopener">Log ↗</a>':'')+'</div>').join('')||'<small>कोई run नहीं।</small>';
- return '<div class="site"><div class="row"><div><b>'+esc(b.name)+'</b><br><small>'+okN+' सफल • '+failN+' असफल (पिछले '+runs.length+' run)</small>'+status+'</div></div>'+
+ return '<div class="site"><div class="row"><div><b>'+esc(b.name)+'</b><br><small>'+okN+' सफल • '+failN+' असफल (पिछले '+runs.length+' run)'+(lastT?' • आख़िरी: '+ago(lastT):'')+(avgM?' • औसत ~'+avgM+' मिनट':'')+'</small>'+status+(siteU!=='#'?'<a class="btn g" style="margin-top:8px" href="'+esc(siteU)+'" target="_blank" rel="noopener">🌐 साइट खोलें</a>':'')+'</div></div>'+
  linkBox+'<div class="project-actions"><button class="btn g" type="button" onclick="showLiveLogs(\''+s+'\')">📋 Logs</button><button class="btn run-action" type="button" id="btn_'+s+'" onclick="startBot(\''+s+'\',\'run\')" '+(!wf||busy?'disabled':'')+'>'+ (busy?'⏳ शुरू हो रहा…':'▶ Run')+'</button><button class="btn g" type="button" onclick="tg(\''+s+'\')" aria-controls="rs_'+s+'" aria-expanded="'+open+'">↻ Runs</button></div>'+
  '<small class="hn" id="hn_'+s+'" role="status" aria-live="polite"></small><div class="rs" id="rs_'+s+'" '+(open?'':'hidden')+'><div class="runs-heading">पिछले 5 रन</div>'+items+'</div></div>';
 }
@@ -247,6 +256,8 @@ window.runSync=runSync;
 window.showLiveLogs=showLiveLogs;
 window.closeLiveLogs=closeLiveLogs;
 window.tg=tg;
+window.setFilter=setFilter;
+window.setQuery=setQuery;
 </script>
 </body>
 </html>
