@@ -76,6 +76,28 @@ let REG={};
 function setMsg(id,v,isHtml){UI.msgs[id]={v,isHtml:!!isHtml,t:Date.now()};const e=document.getElementById(id);if(e){if(isHtml)e.innerHTML=v;else e.textContent=v}}
 function restoreMsgs(){for(const id in UI.msgs){const m=UI.msgs[id];if(Date.now()-m.t>60000){delete UI.msgs[id];continue}const e=document.getElementById(id);if(e){if(m.isHtml)e.innerHTML=m.v;else e.textContent=m.v}}}
 
+/* पिछली बार इस्तेमाल हुआ link याद रखें, ताकि "दोबारा चलाएँ" वही input भेजे */
+const LASTLINK_KEY='bg_lastlinks';
+function lastLinks(){try{return JSON.parse(localStorage.getItem(LASTLINK_KEY)||'{}')||{}}catch(_){return{}}}
+function rememberLink(s,v){try{const m=lastLinks();if(v)m[s]=v;else delete m[s];localStorage.setItem(LASTLINK_KEY,JSON.stringify(m))}catch(_){}}
+function badUrls(v){return String(v||'').split(/[\s,]+/).filter(Boolean).filter(u=>{try{const x=new URL(u);return x.protocol!=='https:'&&x.protocol!=='http:'}catch(_){return true}})}
+
+/* PIN के लिए छुपा हुआ (password) input — prompt() में PIN साफ़ दिखता था */
+function askPin(){
+ return new Promise(res=>{
+  const o=document.createElement('div');
+  o.setAttribute('role','dialog');o.setAttribute('aria-modal','true');
+  o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:9999;padding:16px';
+  o.innerHTML='<form style="background:var(--cd);color:var(--tx);border:1px solid var(--bd2);border-radius:14px;padding:18px;width:100%;max-width:320px;display:grid;gap:10px"><b>🔐 PIN डालें</b><input class="lk" type="password" inputmode="numeric" autocomplete="current-password" placeholder="PIN" aria-label="PIN"><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn g" type="button" data-x>रद्द करें</button><button class="btn" type="submit">ठीक है</button></div></form>';
+  const f=o.firstChild,i=f.querySelector('input');
+  const done=v=>{o.remove();res(v)};
+  f.addEventListener('submit',e=>{e.preventDefault();done(i.value.trim()||null)});
+  f.querySelector('[data-x]').onclick=()=>done(null);
+  o.addEventListener('click',e=>{if(e.target===o)done(null)});
+  document.body.appendChild(o);i.focus();
+ });
+}
+
 boot('control.html','GitHub Actions Control Center',d=>{
  const ae=document.activeElement,aeId=ae&&ae.id,selS=ae&&typeof ae.selectionStart==='number'?ae.selectionStart:null;
  REG={};
@@ -90,20 +112,22 @@ boot('control.html','GitHub Actions Control Center',d=>{
  const fails=bots.filter(isFail);
  const allRuns=bots.flatMap(b=>Array.isArray(b.runs)?b.runs:[]);
  const stateCounts=allRuns.reduce((a,r)=>{const s=String(r.s||'unknown');a[s]=(a[s]||0)+1;return a},{});
- let liveNote=d.live_state==='live'?'✔ Live API चालू है। PAT Worker में सुरक्षित है (browser में नहीं)।':
+ /* live_updated से बताएँ कि डेटा कितना ताज़ा है */
+ let liveNote=d.live_state==='live'?'✔ Live API चालू है ('+ago(d.live_updated)+')। PAT Worker में सुरक्षित है (browser में नहीं)।':
  d.live_state==='partial'?'⚠ Live API आंशिक है — '+(d.live_api_errors||0)+' repo पढ़ नहीं पाया, बाकी cached data दिख रहा है।':
  '⚠ Live API उपलब्ध नहीं — dashboard.json का cached data दिख रहा है।';
  const otherBots=bots.filter(b=>{const r=lc(b.repo);return !YT_REPOS.includes(r)&&!siteRepos.includes(r)&&!HIDDEN_REPOS.includes(r)});
  $('#main').innerHTML=
  '<div class="card"><div class="hd"><h2>🔑 Worker Proxy</h2><button class="btn g" type="button" id="syncBtn" onclick="runSync()">↻ Sync Dashboard</button></div><small id="patStatus">'+esc(liveNote)+' Origin: bgsarkariresult.github.io</small><small id="syncMsg" style="display:block;margin-top:6px"></small></div>'+
- '<div class="card"><div class="hd"><h2>📊 Automation States</h2><small>Live sync data</small></div><div style="display:flex;flex-wrap:wrap;gap:6px">'+
- ['success','failure','in_progress','queued','waiting','pending','cancelled','skipped','timed_out','action_required','requested','neutral','stale','startup_failure'].map(s=>stateBadge(s,stateCounts[s])).join('')+
- '</div><small style="display:block;margin-top:8px;color:var(--mu)">0 ka matlab recent sync mein us state ka run nahi mila.</small></div>'+
- '<div class="card"><h2>⏳ Chal rahe</h2>'+(running.map(b=>{const u=safeUrl(b.url);return '<div class="li"><span>'+esc(b.name)+'</span>'+(u!=='#'?'<a class="t" href="'+esc(u)+'" target="_blank" rel="noopener">Dekho</a>':'')+'</div>'}).join('')||'<small>Abhi koi automation nahi chal raha.</small>')+'</div>'+
- '<div class="card"><h2>❌ Asafal + Errors</h2>'+(fails.map(b=>{
+ '<div class="card"><div class="hd"><h2>📊 Automation States</h2><small>लाइव sync डेटा · '+running.length+' चल रहे · '+fails.length+' असफल</small></div><div style="display:flex;flex-wrap:wrap;gap:6px">'+
+ (['success','failure','in_progress','queued','waiting','pending','cancelled','skipped','timed_out','action_required','requested','neutral','stale','startup_failure'].filter(s=>stateCounts[s]).map(s=>stateBadge(s,stateCounts[s])).join('')||'<small>अभी कोई run डेटा नहीं मिला।</small>')+
+ '</div><small style="display:block;margin-top:8px;color:var(--mu)">सिर्फ़ वही states दिखती हैं जिनके हाल के runs मिले हैं।</small></div>'+
+ '<div class="card"><h2>⏳ चल रहे हैं</h2>'+(running.map(b=>{const u=safeUrl(b.url);return '<div class="li"><span>'+esc(b.name)+'</span>'+(u!=='#'?'<a class="t" href="'+esc(u)+'" target="_blank" rel="noopener">देखें</a>':'')+'</div>'}).join('')||'<small>अभी कोई automation नहीं चल रहा।</small>')+'</div>'+
+ '<div class="card"><h2>❌ असफल + Errors</h2>'+(fails.map(b=>{
    const s=slugOf(b);REG[s]=b;const f=b.failed||{},r0=(b.runs&&b.runs[0])||{},u=safeUrl(f.url||r0.u||b.url),noWf=!workflowFor(b);
-   return '<div class="li"><span><b>'+esc(b.name)+'</b><br><small>Fail: '+esc(f.job||'—')+' → '+esc(f.step||'—')+' • '+ago(f.t||r0.t)+'</small></span><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn" type="button" onclick="startBot(\''+s+'\',\'rerun\')" '+(noWf||UI.busy[s]?'disabled':'')+'>'+ (UI.busy[s]?'⏳ Starting…':'▶ दोबारा चलाएँ')+'</button>'+(u!=='#'?'<a class="btn g t" href="'+esc(u)+'" target="_blank" rel="noopener">Log</a>':'')+'</div></div>'
- }).join('')||'<small>Koi asafal run nahi.</small>')+'<small id="rerunMsg" style="display:block;margin-top:6px"></small></div>'+
+   const why=(f.job||f.step)?('फ़ेल: '+esc(f.job||'—')+' → '+esc(f.step||'—')):('स्थिति: '+esc(stateMeta(latestState(b)).l));
+   return '<div class="li"><span><b>'+esc(b.name)+'</b><br><small>'+why+' • '+ago(f.t||r0.t)+'</small></span><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn" type="button" onclick="startBot(\''+s+'\',\'rerun\')" '+(noWf||UI.busy[s]?'disabled':'')+'>'+ (UI.busy[s]?'⏳ शुरू हो रहा…':'▶ दोबारा चलाएँ')+'</button>'+(u!=='#'?'<a class="btn g t" href="'+esc(u)+'" target="_blank" rel="noopener">Log</a>':'')+'</div></div>'
+ }).join('')||'<small>कोई असफल run नहीं।</small>')+'<small id="rerunMsg" role="status" aria-live="polite" style="display:block;margin-top:6px"></small></div>'+
  '<div class="card" id="liveLogPanel" hidden><div class="hd"><h2>💻 Live Logs <small id="liveLogTitle"></small></h2><button class="btn g" type="button" onclick="closeLiveLogs()">✕ बंद करें</button></div><div id="liveLogBody"><small>प्रोजेक्ट चुनें।</small></div></div>'+
  '<div class="card"><h2>🌐 Websites <small>(वेबसाइट)</small></h2><div class="sites">'+siteBots.map(renderProjectCard).join('')+'</div><button class="btn g" type="button" onclick="addProject(\'website\')">＋ Add Website</button></div>'+
  '<div class="card"><h2>▶ YouTube Channels <small>(यूट्यूब चैनल)</small></h2><div class="sites">'+bots.filter(b=>YT_REPOS.includes(lc(b.repo))).map(renderProjectCard).join('')+'</div><button class="btn g" type="button" onclick="addProject(\'youtube\')">＋ Add YouTube Channel</button></div>'+
@@ -115,14 +139,14 @@ boot('control.html','GitHub Actions Control Center',d=>{
 function renderProjectCard(b){
  const s=slugOf(b);REG[s]=b;const wf=workflowFor(b),input=inputFor(b),multi=!!cfgFor(b).multi,runs=Array.isArray(b.runs)?b.runs:[],state=latestState(b),sm=stateMeta(state),detail=isFail(b)?failureDetail(b):'',busy=!!UI.busy[s],open=UI.open.has(s);
  const okN=runs.filter(okRun).length,failN=runs.filter(r=>FAIL_STATES.includes(r.s)).length;
- const linkBox=input?'<input class="lk" id="lk_'+s+'" value="'+esc(UI.links[s]||'')+'" oninput="UI.links[\''+s+'\']=this.value" placeholder="'+(multi?'Link(s) dalo (article / product URL) — optional':'Link dalo (article / product URL) — optional')+'" inputmode="url" autocomplete="off">':'';
+ const linkBox=input?'<input class="lk" id="lk_'+s+'" value="'+esc(UI.links[s]||'')+'" oninput="UI.links[\''+s+'\']=this.value" placeholder="'+(multi?'लिंक डालें (कई हों तो space या comma से अलग करें) — वैकल्पिक':'लिंक डालें (article / product URL) — वैकल्पिक')+'" inputmode="url" autocomplete="off" aria-label="'+esc(b.name)+' के लिए लिंक">':'';
  const status='<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:5px"><span class="badge-s '+sm.c+'">'+sm.i+' '+sm.l+'</span>'+(detail?'<small style="color:var(--mu)">'+esc(detail)+'</small>':'')+'</div>'+(b.live_api_error?'<small style="display:block;color:var(--mu);margin-top:4px">⚠ Live API: '+esc(b.live_api_error)+'</small>':'');
- const items=runs.slice(0,5).map(r=>'<div class="run-item"><span class="dot s-'+esc(r.s)+'">'+st(r.s)+'</span><span class="run-info"><b>'+esc(r.n)+'</b><small>'+esc(r.s)+' • '+ago(r.t)+'</small></span>'+(safeUrl(r.u)!=='#'?'<a class="btn g t" href="'+esc(safeUrl(r.u))+'" target="_blank" rel="noopener">Log ↗</a>':'')+'</div>').join('')||'<small>Koi run nahi.</small>';
- return '<div class="site"><div class="row"><div><b>'+esc(b.name)+'</b><br><small>'+okN+' safal • '+failN+' fail (pichhle '+runs.length+' run)</small>'+status+'</div></div>'+
- linkBox+'<div class="project-actions"><button class="btn g" type="button" onclick="showLiveLogs(\''+s+'\')">📋 Logs</button><button class="btn run-action" type="button" id="btn_'+s+'" onclick="startBot(\''+s+'\',\'run\')" '+(!wf||busy?'disabled':'')+'>'+ (busy?'⏳ Starting…':'▶ Run')+'</button><button class="btn g" type="button" onclick="tg(\''+s+'\')" aria-controls="rs_'+s+'" aria-expanded="'+open+'">↻ Runs</button></div>'+
+ const items=runs.slice(0,5).map(r=>'<div class="run-item"><span class="dot s-'+esc(r.s)+'">'+st(r.s)+'</span><span class="run-info"><b>'+esc(r.n)+'</b><small>'+esc(r.s)+' • '+ago(r.t)+'</small></span>'+(safeUrl(r.u)!=='#'?'<a class="btn g t" href="'+esc(safeUrl(r.u))+'" target="_blank" rel="noopener">Log ↗</a>':'')+'</div>').join('')||'<small>कोई run नहीं।</small>';
+ return '<div class="site"><div class="row"><div><b>'+esc(b.name)+'</b><br><small>'+okN+' सफल • '+failN+' असफल (पिछले '+runs.length+' run)</small>'+status+'</div></div>'+
+ linkBox+'<div class="project-actions"><button class="btn g" type="button" onclick="showLiveLogs(\''+s+'\')">📋 Logs</button><button class="btn run-action" type="button" id="btn_'+s+'" onclick="startBot(\''+s+'\',\'run\')" '+(!wf||busy?'disabled':'')+'>'+ (busy?'⏳ शुरू हो रहा…':'▶ Run')+'</button><button class="btn g" type="button" onclick="tg(\''+s+'\')" aria-controls="rs_'+s+'" aria-expanded="'+open+'">↻ Runs</button></div>'+
  '<small class="hn" id="hn_'+s+'" role="status" aria-live="polite"></small><div class="rs" id="rs_'+s+'" '+(open?'':'hidden')+'><div class="runs-heading">पिछले 5 रन</div>'+items+'</div></div>';
 }
-function addProject(type){const name=type==='website'?'Website':'YouTube Channel';if(confirm('Naya '+name+' जोड़ने के लिए data/dashboard.json में project दर्ज करना होगा.\n\nGitHub का edit पेज खोलें?'))window.open(GH_EDIT_URL,'_blank','noopener')}
+function addProject(type){const name=type==='website'?'Website':'YouTube Channel';if(confirm('नया '+name+' जोड़ने के लिए data/dashboard.json में project दर्ज करना होगा।\n\nGitHub का edit पेज खोलें?'))window.open(GH_EDIT_URL,'_blank','noopener')}
 function tg(s){const e=document.getElementById('rs_'+s);if(!e)return;e.hidden=!e.hidden;if(e.hidden)UI.open.delete(s);else UI.open.add(s);const b=e.parentElement.querySelector('[aria-controls="rs_'+s+'"]');if(b)b.setAttribute('aria-expanded',String(!e.hidden))}
 
 const TERM_STYLE='background:#071426;color:#dce8fa;border:1px solid #22354f;border-radius:12px;padding:14px;max-height:420px;overflow:auto;font:13px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere';
@@ -139,7 +163,7 @@ function paintLogs(){
 function restoreLogs(){if(!UI.log.repo)return;const p=document.getElementById('liveLogPanel');if(!p)return;p.hidden=false;logSkeleton();paintLogs()}
 function showLiveLogs(s){
  const b=REG[s],L=UI.log,p=document.getElementById('liveLogPanel');if(!b||!p)return;
- clearTimeout(L.timer);L.token++;L.repo=b.repo;L.workflow=workflowFor(b);L.state={name:b.name,term:'⏳ GitHub Actions se asli logs liye ja rahe hain…',steps:'',msg:'',hint:'GitHub Actions se har 5 second mein refresh hota hai.'};
+ clearTimeout(L.timer);L.token++;L.repo=b.repo;L.workflow=workflowFor(b);L.state={name:b.name,term:'⏳ GitHub Actions से असली logs लिए जा रहे हैं…',steps:'',msg:'',hint:'GitHub Actions से हर 5 सेकंड में refresh होता है।'};
  p.hidden=false;logSkeleton();paintLogs();p.scrollIntoView({behavior:'smooth',block:'start'});pollLogs();
 }
 function closeLiveLogs(){const L=UI.log;clearTimeout(L.timer);L.token++;L.repo=null;const p=document.getElementById('liveLogPanel');if(p)p.hidden=true}
@@ -149,7 +173,7 @@ async function pollLogs(){
   const data=await callWorker({action:'logs',repo:L.repo,workflow:L.workflow},false,true);if(tok!==L.token||!L.repo)return;
   if(!data.ok)throw new Error(data.error||('HTTP '+(data.status||'error')));
   const lines=Array.isArray(data.lines)?data.lines:[],jobs=Array.isArray(data.jobs)?data.jobs:[];
-  L.state.term=lines.length?lines.join('\n'):'⏳ Raw log lines GitHub se abhi nahi mile. Status har 5 second mein refresh ho raha hai.';
+  L.state.term=lines.length?lines.join('\n'):'⏳ Raw log lines अभी GitHub से नहीं मिलीं। Status हर 5 सेकंड में refresh हो रहा है।';
   L.state.steps=jobs.map(j=>'<div class="li"><b>'+esc(j.name)+'</b>'+chip(j.conclusion||j.status||'queued')+'</div>'+
    (j.steps||[]).map(x=>{const icon=x.conclusion==='success'?'✓':x.conclusion==='failure'?'✕':x.status==='in_progress'?'⏳':'○';return '<div style="margin-left:12px;padding:7px 0;border-bottom:1px solid var(--line)"><div class="li"><span>'+icon+' '+esc(x.number||'')+'. '+esc(x.name)+'</span>'+chip(x.conclusion||x.status||'queued')+'</div></div>'}).join('')).join('');
   L.state.msg=data.message||'';if(data.run)L.state.title=L.state.name+' · #'+data.run.id+' · '+(data.run.conclusion||data.run.status);
@@ -160,43 +184,63 @@ async function pollLogs(){
 
 function getPin(){try{return localStorage.getItem('bg_pin')||''}catch(_){return''}}
 function savePin(p){try{localStorage.setItem('bg_pin',p)}catch(_){}}
+function clearPin(){try{localStorage.removeItem('bg_pin')}catch(_){}}
 async function callWorker(payload,retried,silent){
  const body=Object.assign({},payload||{}),pin=getPin();if(pin)body.pin=pin;
  const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
  let data={};try{data=await res.json()}catch(_){data={ok:false,error:'Invalid response',status:res.status}}
  const pinNeeded=(res.status===401||data.status===401)&&/pin/i.test(String(data.error||''));
- if(pinNeeded&&!retried){const p=prompt('PIN daalo:');if(p){savePin(p.trim());return callWorker(payload,true,silent)}}
+ if(pinNeeded){
+  clearPin(); /* गलत/पुराना PIN हटाएँ ताकि अटका न रहे */
+  if(!retried&&!silent){const p=await askPin();if(p){savePin(p);return callWorker(payload,true,silent)}}
+ }
  return data;
 }
 async function runSync(){
- const m=document.getElementById('syncMsg');if(m)m.textContent='⏳ Sync start ho raha hai...';
+ const m=document.getElementById('syncMsg');if(m)m.textContent='⏳ Sync शुरू हो रहा है…';
  try{const data=await callWorker({repo:'bgsarkariresult/BG-Automation',workflow:'sync.yml',ref:'main'});
-  if(data.ok){if(m)m.innerHTML='✅ <b>Sync start ho gaya!</b> 30–60 sec baad live status update hoga.';setTimeout(()=>window.refreshDashboard&&window.refreshDashboard(true),1500)}
-  else if(m)m.textContent='❌ Sync fail: '+(data.error||data.status||'unknown');
+  if(data.ok){if(m)m.innerHTML='✅ <b>Sync शुरू हो गया!</b> 30–60 सेकंड में live status अपने-आप update होगा।';setTimeout(()=>window.refreshDashboard&&window.refreshDashboard(true),1500)}
+  else if(m)m.textContent='❌ Sync फ़ेल: '+(data.error||data.status||'unknown');
  }catch(e){if(m)m.textContent='❌ Network error: '+e.message}
 }
 async function startBot(s,mode){
- const b=REG[s];if(!b)return;
- const wf=workflowFor(b),input=inputFor(b),btn=document.getElementById('btn_'+s),hn=document.getElementById('hn_'+s),linkEl=document.getElementById('lk_'+s);
- if(!wf){if(hn)hn.textContent='❌ Is project ka workflow configured nahi hai.';return}
- const link=(linkEl&&linkEl.value||UI.links[s]||'').trim(),payload={repo:b.repo,workflow:wf,ref:'main'};
+ const b=REG[s];if(!b||UI.busy[s])return;
+ const rerun=mode==='rerun';
+ const wf=workflowFor(b),input=inputFor(b),btn=document.getElementById('btn_'+s),linkEl=document.getElementById('lk_'+s);
+ /* "दोबारा चलाएँ" का संदेश असफल कार्ड में दिखे; Run का संदेश उसी प्रोजेक्ट कार्ड में */
+ const say=(v,h)=>setMsg(rerun?'rerunMsg':'hn_'+s,v,h);
+ if(!wf){say('❌ इस project का workflow configure नहीं है।');return}
+ /* link: बॉक्स > याद रखा गया (सिर्फ़ re-run में) */
+ const typed=(linkEl&&linkEl.value||UI.links[s]||'').trim();
+ const link=typed||(rerun?(lastLinks()[s]||''):'');
+ const bad=input&&link?badUrls(link):[];
+ if(bad.length){say('❌ यह लिंक सही नहीं है: '+bad[0].slice(0,80)+' (http:// या https:// से शुरू होना चाहिए)');return}
+ const payload={repo:b.repo,workflow:wf,ref:'main'};
  if(input&&link)payload.inputs={[input]:link};
- UI.busy[s]=true;if(btn){btn.disabled=true;btn.textContent='⏳ Starting…'}if(hn)hn.textContent='⏳ Cloudflare Worker → GitHub Actions…';
+ UI.busy[s]=true;if(btn){btn.disabled=true;btn.textContent='⏳ शुरू हो रहा…'}
+ say('⏳ Cloudflare Worker → GitHub Actions…');
+ let started=false;
  try{
   const data=await callWorker(payload,false);
   if(data.ok){
-   if(hn)hn.innerHTML='✅ <b>GitHub Actions शुरू हो गया!</b> Worker + Master PAT से run भेजा गया।';
-   if(btn){btn.textContent='✅ Started'}
+   started=true;
+   if(input)rememberLink(s,link);
+   say('✅ <b>GitHub Actions शुरू हो गया!</b>'+(rerun&&link&&!typed?' (पिछला लिंक दोबारा भेजा गया)':'')+' Worker + Master PAT से run भेजा गया।',true);
+   if(btn)btn.textContent='✅ शुरू हो गया';
    setTimeout(()=>window.refreshDashboard&&window.refreshDashboard(),1200);
    setTimeout(()=>window.refreshDashboard&&window.refreshDashboard(),5000);
   }else{
    const code=data.status||'';let msg=data.error||data.message||'unknown';
+   if(code===401)msg='PIN गलत है या ज़रूरी है — दोबारा कोशिश करें।';
    if(code===404)msg='Repo/workflow नहीं मिला: '+b.repo+' / '+wf;
-   if(code===422)msg='GitHub ने request reject की (422). Required input या workflow configuration check करें.';
-   if(hn)hn.textContent='❌ Worker error '+code+': '+String(msg).slice(0,260);
+   if(code===422)msg='GitHub ने request reject की (422). Required input या workflow configuration check करें।';
+   say('❌ Worker error '+code+': '+String(msg).slice(0,260));
   }
- }catch(e){if(hn)hn.textContent='❌ Worker network error: '+e.message}
- finally{delete UI.busy[s];if(btn){btn.disabled=false;btn.textContent='▶ Run'}}
+ }catch(e){say('❌ Worker network error: '+e.message)}
+ finally{
+  /* सफल होने पर कुछ सेकंड बटन बंद रखें, ताकि गलती से दोहरा run न बने */
+  setTimeout(()=>{delete UI.busy[s];const x=document.getElementById('btn_'+s);if(x){x.disabled=!workflowFor(b);x.textContent='▶ Run'}},started?4000:0);
+ }
 }
 window.startBot=startBot;
 window.runSync=runSync;
