@@ -1,6 +1,6 @@
 {
-  "updated": "2026-10-21T07:30:11Z",
-  "checked_at": "2026-10-21T07:30:11Z",
+  "updated": "2026-10-21T07:38:30Z",
+  "checked_at": "2026-10-21T07:38:30Z",
   "refresh_interval_seconds": 300,
   "source": "GitHub Actions API",
   "channels": [
@@ -1486,7 +1486,7 @@
       "actor": "bgsarkariresult",
       "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/39562087727",
       "cron": "*/5 * * * *",
-      "next": "2026-10-21T07:35:00Z"
+      "next": "2026-10-21T07:40:00Z"
     },
     {
       "name": "TechGlow India",
@@ -2908,7 +2908,7 @@
       "actor": "bgsarkariresult",
       "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/39562117528",
       "cron": "*/5 * * * *",
-      "next": "2026-10-21T07:35:00Z"
+      "next": "2026-10-21T07:40:00Z"
     },
     {
       "name": "BK GrowUp",
@@ -2918,16 +2918,16 @@
       "tag": "Sarkari Job",
       "cost": "",
       "kind": "video",
-      "status": "in_progress",
+      "status": "success",
       "runs": [
         {
           "id": 39561426626,
           "number": 73,
-          "s": "in_progress",
-          "t": "2026-10-21T07:21:46Z",
+          "s": "success",
+          "t": "2026-10-21T07:31:02Z",
           "started": "2026-10-21T07:21:41Z",
           "created": "2026-10-21T07:21:41Z",
-          "d": 5,
+          "d": 561,
           "e": "workflow_dispatch",
           "n": "Run Job Bot",
           "branch": "main",
@@ -3943,7 +3943,7 @@
           "u": "https://github.com/bgsarkariresult/Bk-growup-/actions/runs/36102751141"
         }
       ],
-      "time": "2026-10-21T07:21:46Z",
+      "time": "2026-10-21T07:31:02Z",
       "url": "https://github.com/bgsarkariresult/Bk-growup-/actions/runs/39561426626",
       "last_run_id": 39561426626,
       "run_number": 73,
@@ -8862,7 +8862,7 @@
       "actor": "bgtechlab",
       "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/39556446302",
       "cron": "*/5 * * * *",
-      "next": "2026-10-21T07:35:00Z"
+      "next": "2026-10-21T07:40:00Z"
     },
     {
       "name": "Job Page Auto Publisher",
