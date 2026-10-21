@@ -43,7 +43,7 @@ const RUN_STATES=['in_progress','queued','waiting','pending','requested'];
 const FAIL_STATES=['failure','timed_out','action_required','startup_failure','stale'];
 
 const lc=s=>String(s||'').toLowerCase();
-const slugOf=b=>String(b.repo||b.name||'x').replace(/[^a-zA-Z0-9]/g,'_');
+const slugOf=b=>b.control_id||String(b.repo||b.name||'x').replace(/[^a-zA-Z0-9]/g,'_');
 const cfgFor=b=>BOT_CONFIG[lc(b.repo)]||{};
 const workflowFor=b=>b.workflow||cfgFor(b).workflow||'';
 const inputFor=b=>(b.input_name!==undefined?b.input_name:cfgFor(b).input)||null;
@@ -104,6 +104,7 @@ function renderControl(d){
  const ae=document.activeElement,aeId=ae&&ae.id,selS=ae&&typeof ae.selectionStart==='number'?ae.selectionStart:null;
  REG={};
  const bots=Array.isArray(d.bots)?d.bots:[];
+ const reelBot={name:'BK GrowUp Reel Bot',repo:'bgsarkariresult/Bk-growup-',workflow:'run-job-reel-bot.yml',input_name:'post_url',control_id:'bk_growup_reel_bot',status:'unknown',runs:[]};
  const siteBots=SITES.map(w=>{
   const f=bots.find(x=>lc(x.repo)===lc(w.repo));
   if(f){if(!f.site)f.site=w.url;return f}
@@ -136,6 +137,7 @@ function renderControl(d){
  '<div class="card" id="liveLogPanel" hidden><div class="hd"><h2>💻 Live Logs <small id="liveLogTitle"></small></h2><button class="btn g" type="button" onclick="closeLiveLogs()">✕ बंद करें</button></div><div id="liveLogBody"><small>प्रोजेक्ट चुनें।</small></div></div>'+
  '<div class="card"><h2>🌐 Websites <small>(वेबसाइट)</small></h2><div class="sites">'+(siteBots.filter(match).map(renderProjectCard).join('')||none)+'</div><button class="btn g" type="button" onclick="addProject(\'website\')">＋ Add Website</button></div>'+
  '<div class="card"><h2>▶ YouTube Channels <small>(यूट्यूब चैनल)</small></h2><div class="sites">'+(bots.filter(b=>YT_REPOS.includes(lc(b.repo))&&match(b)).map(renderProjectCard).join('')||none)+'</div><button class="btn g" type="button" onclick="addProject(\'youtube\')">＋ Add YouTube Channel</button></div>'+
+ '<div class="card"><h2>🎬 Reels / Shorts <small>(अलग Reel लिंक)</small></h2><small style="display:block;margin-bottom:10px">यहाँ Blogger पोस्ट का लिंक डालें और Run दबाएँ — केवल Shorts/Reel workflow चलेगा।</small><div class="sites">'+(match(reelBot)?renderProjectCard(reelBot):none)+'</div></div>'+
  '<div class="card"><h2>🧰 Other Automations</h2><div class="sites">'+(otherBots.filter(match).map(renderProjectCard).join('')||(UI.q||UI.f!=='all'?none:'<small>कोई और automation नहीं।</small>'))+'</div></div>';
  restoreMsgs();restoreLogs();
  if(aeId){const e=document.getElementById(aeId);if(e&&e.focus){e.focus();if(selS!==null&&e.setSelectionRange){try{e.setSelectionRange(selS,selS)}catch(_){}}}}
