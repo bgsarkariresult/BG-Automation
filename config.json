@@ -91,6 +91,12 @@
       "workflow": "news-blog-publisher.yml",
       "site": "https://bgtechlab.github.io/News-Blog-Auto-Publisher/",
       "tag": "Website"
+    },
+    {
+      "name": "SG News18 - Reels Maker",
+      "repo": "bgsarkariresult/SG-News18",
+      "workflow": "reels-bot.yml",
+      "tag": "Reels / Shorts"
     }
   ],
   "sites": [
