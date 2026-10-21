@@ -104,7 +104,8 @@ function renderControl(d){
  const ae=document.activeElement,aeId=ae&&ae.id,selS=ae&&typeof ae.selectionStart==='number'?ae.selectionStart:null;
  REG={};
  const bots=Array.isArray(d.bots)?d.bots:[];
- const reelBot={name:'BK GrowUp Reel Bot',repo:'bgsarkariresult/bk-growup-',workflow:'run-job-reel-bot.yml',input_name:'post_url',control_id:'bk_growup_reel_bot',status:'unknown',runs:[]};
+ const reelSource=bots.find(x=>lc(x.repo)==='bgsarkariresult/bk-growup-');
+ const reelBot={...(reelSource||{}),name:'BK GrowUp Reel Bot',repo:'bgsarkariresult/bk-growup-',workflow:'run-job-reel-bot.yml',input_name:'post_url',control_id:'bk_growup_reel_bot',status:(reelSource&&reelSource.status)||'unknown',runs:Array.isArray(reelSource&&reelSource.runs)?reelSource.runs:[]};
  const siteBots=SITES.map(w=>{
   const f=bots.find(x=>lc(x.repo)===lc(w.repo));
   if(f){if(!f.site)f.site=w.url;return f}
