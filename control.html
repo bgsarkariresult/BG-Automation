@@ -106,7 +106,8 @@ function renderControl(d){
  const bots=Array.isArray(d.bots)?d.bots:[];
  const reelSource=bots.find(x=>lc(x.repo)==='bgsarkariresult/bk-growup-');
  const reelBot={...(reelSource||{}),name:'BK GrowUp Reel Bot',repo:'bgsarkariresult/bk-growup-',workflow:'run-job-reel-bot.yml',input_name:'post_url',control_id:'bk_growup_reel_bot',status:(reelSource&&reelSource.status)||'unknown',runs:Array.isArray(reelSource&&reelSource.runs)?reelSource.runs:[]};
-  const sgReelBot={name:'SG News18 - Reels Maker',repo:'bgsarkariresult/SG-News18',workflow:'reels-bot.yml',input_name:'article_url',control_id:'sg_news18_reels_maker',status:'unknown',runs:[],site:'https://github.com/bgsarkariresult/SG-News18/actions/workflows/reels-bot.yml'};
+  const sgReelSource=bots.find(x=>lc(x.repo)==='bgsarkariresult/sg-news18'&&lc(x.workflow)==='reels-bot.yml');
+ const sgReelBot={...(sgReelSource||{}),name:'SG News18 - Reels Maker',repo:'bgsarkariresult/SG-News18',workflow:'reels-bot.yml',input_name:'article_url',control_id:'sg_news18_reels_maker',status:(sgReelSource&&sgReelSource.status)||'unknown',runs:Array.isArray(sgReelSource&&sgReelSource.runs)?sgReelSource.runs:[],site:'https://github.com/bgsarkariresult/SG-News18/actions/workflows/reels-bot.yml'};
  const siteBots=SITES.map(w=>{
   const f=bots.find(x=>lc(x.repo)===lc(w.repo));
   if(f){if(!f.site)f.site=w.url;return f}
@@ -138,7 +139,7 @@ function renderControl(d){
  }).join('')||'<small>कोई असफल run नहीं।</small>')+'<small id="rerunMsg" role="status" aria-live="polite" style="display:block;margin-top:6px"></small></div>'+
  '<div class="card" id="liveLogPanel" hidden><div class="hd"><h2>💻 Live Logs <small id="liveLogTitle"></small></h2><button class="btn g" type="button" onclick="closeLiveLogs()">✕ बंद करें</button></div><div id="liveLogBody"><small>प्रोजेक्ट चुनें।</small></div></div>'+
  '<div class="card"><h2>🌐 Websites <small>(वेबसाइट)</small></h2><div class="sites">'+(siteBots.filter(match).map(renderProjectCard).join('')||none)+'</div><button class="btn g" type="button" onclick="addProject(\'website\')">＋ Add Website</button></div>'+
- '<div class="card"><h2>▶ YouTube Channels <small>(यूट्यूब चैनल)</small></h2><div class="sites">'+(bots.filter(b=>YT_REPOS.includes(lc(b.repo))&&match(b)).map(renderProjectCard).join('')||none)+'</div><button class="btn g" type="button" onclick="addProject(\'youtube\')">＋ Add YouTube Channel</button></div>'+
+ '<div class="card"><h2>▶ YouTube Channels <small>(यूट्यूब चैनल)</small></h2><div class="sites">'+(bots.filter(b=>YT_REPOS.includes(lc(b.repo))&&lc(b.workflow)!=='reels-bot.yml'&&match(b)).map(renderProjectCard).join('')||none)+'</div><button class="btn g" type="button" onclick="addProject(\'youtube\')">＋ Add YouTube Channel</button></div>'+
  '<div class="card"><h2>🎬 Reels / Shorts <small>(अलग Reel लिंक)</small></h2><small style="display:block;margin-bottom:10px">यहाँ Blogger पोस्ट का लिंक डालें और Run दबाएँ — केवल Shorts/Reel workflow चलेगा।</small><div class="sites">'+([reelBot,sgReelBot].filter(match).map(renderProjectCard).join('')||none)+'</div></div>'+
  '<div class="card"><h2>🧰 Other Automations</h2><div class="sites">'+(otherBots.filter(match).map(renderProjectCard).join('')||(UI.q||UI.f!=='all'?none:'<small>कोई और automation नहीं।</small>'))+'</div></div>';
  restoreMsgs();restoreLogs();
