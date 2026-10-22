@@ -110,9 +110,12 @@ const sgNewsBotFallback={
  site:'https://github.com/bgsarkariresult/SG-News18/actions/workflows/news-bot.yml',
  tag:'News & Jobs',kind:'video',status:'unknown',runs:[]
 };
-const youtubeBots=bots.some(b=>lc(b.repo)==='bgsarkariresult/sg-news18')
- ? bots
- : [...bots,sgNewsBotFallback];
+const hasSgNewsMainChannel=bots.some(b=>
+ lc(b.repo)==='bgsarkariresult/sg-news18' &&
+ lc(b.workflow||cfgFor(b).workflow)!=='reels-bot.yml'
+);
+// SG News18 का main news workflow अलग कार्ड रहे; केवल Reels entry होने पर भी fallback जोड़ें।
+const youtubeBots=hasSgNewsMainChannel ? bots : [...bots,sgNewsBotFallback];
  const reelSource=bots.find(x=>lc(x.repo)==='bgsarkariresult/bk-growup-');
  const reelBot={...(reelSource||{}),name:'BK GrowUp Reel Bot',repo:'bgsarkariresult/bk-growup-',workflow:'run-job-reel-bot.yml',input_name:'post_url',control_id:'bk_growup_reel_bot',status:(reelSource&&reelSource.status)||'unknown',runs:Array.isArray(reelSource&&reelSource.runs)?reelSource.runs:[]};
   const sgReelSource=bots.find(x=>lc(x.repo)==='bgsarkariresult/sg-news18'&&lc(x.workflow)==='reels-bot.yml');
