@@ -155,7 +155,7 @@ const youtubeBots=hasSgNewsMainChannel ? bots : [...bots,sgNewsBotFallback];
  '<div class="card"><h2>🌐 Websites <small>(वेबसाइट)</small></h2><div class="sites">'+(siteBots.filter(match).map(renderProjectCard).join('')||none)+'</div><button class="btn g" type="button" onclick="addProject(\'website\')">＋ Add Website</button></div>'+
  '<div class="card"><h2>▶ YouTube Channels <small>(यूट्यूब चैनल)</small></h2><div class="sites">'+(youtubeBots.filter(b=>YT_REPOS.includes(lc(b.repo))&&lc(b.workflow)!=='reels-bot.yml'&&match(b)).map(renderProjectCard).join('')||none)+'</div><button class="btn g" type="button" onclick="addProject(\'youtube\')">＋ Add YouTube Channel</button></div>'+
  '<div class="card"><h2>🎬 Reels / Shorts <small>(अलग Reel लिंक)</small></h2><small style="display:block;margin-bottom:10px">यहाँ Blogger पोस्ट का लिंक डालें और Run दबाएँ — केवल Shorts/Reel workflow चलेगा।</small><div class="sites">'+([reelBot,sgReelBot,techGlowReelBot].filter(match).map(renderProjectCard).join('')||none)+'</div></div>'+
- '<div class="card"><h2>🧰 Other Automations</h2><div class="sites">'+(otherBots.filter(match).map(renderProjectCard).join('')||(UI.q||UI.f!=='all'?none:'<small>कोई और automation नहीं।</small>'))+'</div></div>';
+ 
  restoreMsgs();restoreLogs();
  if(aeId){const e=document.getElementById(aeId);if(e&&e.focus){e.focus();if(selS!==null&&e.setSelectionRange){try{e.setSelectionRange(selS,selS)}catch(_){}}}}
 }
