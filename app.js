@@ -100,7 +100,7 @@
           const f = map.get(String(b.repo || '').toLowerCase());
           if (!f) return b;
           if (f.status === 'api_error') return {...b, live_api_error:f.api_error || 'Live API error'};
-          if (Array.isArray(f.runs) && !f.runs.length && (f.status === 'unknown' || (!['in_progress','queued','in_progress'].includes(f.status) && (b.runs || []).length))) {
+          if (Array.isArray(f.runs) && !f.runs.length && (f.status === 'unknown' || (!['in_progress','queued'].includes(f.status) && (b.runs || []).length))) {
             // Worker कभी-कभी unknown + empty runs देता है; पुराने cached runs/status न मिटाएँ।
             return {...b, live_api_error:null};
           }
