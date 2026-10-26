@@ -17,7 +17,7 @@
 .log-open{font-size:.68rem;color:var(--ac2);white-space:nowrap}
 .log-empty{padding:9px 2px;color:var(--mu);font-size:.78rem}
 @media(max-width:560px){.repo-card{padding:10px}.log-line{grid-template-columns:46px minmax(0,1fr);gap:6px}.log-status{grid-column:2;grid-row:2}.log-open{grid-column:2;grid-row:3}.repo-head{align-items:flex-start}.repo-name{font-size:.82rem}}
-</style></head><body><script src="app.js?v=20261009-livefix"></script><script>
+</style></head><body><script src="app.js?v=20261026-only3logs"></script><script>
 let STATUS='all',SEARCH='';
 const statusLabel=s=>({success:'SUCCESS',failure:'FAILURE',cancelled:'CANCELLED',in_progress:'IN_PROGRESS',queued:'QUEUED'}[s]||String(s||'UNKNOWN').toUpperCase());
 const logTime=t=>t?new Date(t).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false}):'--:--';
@@ -32,11 +32,11 @@ function renderLogs(d){
  }).sort((a,b)=>new Date(b.t||b.created||0)-new Date(a.t||a.created||0))}))
  .filter(b=>b._runs.length||(!SEARCH&&STATUS==='all'));
  const total=normalized.reduce((n,b)=>n+(b.runs||[]).length,0);
- const shown=filtered.reduce((n,b)=>n+b._runs.length,0);
+ const shown=filtered.reduce((n,b)=>n+Math.min(b._runs.length,3),0);
  const cards=filtered.map(b=>{
   const repo=b._repo;
   const repoUrl='https://github.com/'+repo;
-  const rows=b._runs.slice(0,100).map(r=>{
+  const rows=b._runs.slice(0,3).map(r=>{
    const s=String(r.s||'unknown').toLowerCase();
    const cls=['success','failure','cancelled','in_progress','queued'].includes(s)?s:'other';
    const label=statusLabel(s);
@@ -44,9 +44,9 @@ function renderLogs(d){
    const url=r.u||('https://github.com/'+repo+'/actions');
    return '<div class="log-line"><span class="log-time">'+logTime(r.t||r.created)+'</span><div class="log-message">'+esc(title)+(r.number?' <span class="muted">#'+esc(r.number)+'</span>':'')+'</div><span class="log-status '+cls+'">['+label+']</span><a class="log-open" href="'+esc(url)+'" target="_blank" rel="noopener">Open ↗</a></div>';
   }).join('');
-  return '<section class="repo-card"><div class="repo-head"><div class="repo-name">🐙 '+esc(b.name||repo)+'</div><div><span class="repo-count">'+b._runs.length+' logs</span> · <a class="repo-link" href="'+esc(repoUrl)+'/actions" target="_blank" rel="noopener">All runs ↗</a></div></div>'+(rows||'<div class="log-empty">इस रिपॉजिटरी में चुने गए स्टेटस का कोई लॉग उपलब्ध नहीं है।</div>')+'</section>';
+  return '<section class="repo-card"><div class="repo-head"><div class="repo-name">🐙 '+esc(b.name||repo)+'</div><div><span class="repo-count">'+Math.min(b._runs.length,3)+' / '+b._runs.length+' logs</span> · <a class="repo-link" href="'+esc(repoUrl)+'/actions" target="_blank" rel="noopener">All runs ↗</a></div></div>'+(rows||'<div class="log-empty">इस रिपॉजिटरी में चुने गए स्टेटस का कोई लॉग उपलब्ध नहीं है।</div>')+'</section>';
  }).join('');
- $('#main').innerHTML='<section class="card"><div class="hd"><h2>📋 GitHub Actions Logs</h2><button class="btn g" id="refreshBtn" onclick="window.refreshDashboard&&window.refreshDashboard()">↻ Refresh</button></div><div class="muted">सभी डैशबोर्ड में जुड़े repositories के उपलब्ध GitHub Actions runs · समय स्थानीय (24-hour) · हर लॉग से GitHub run खोलें।</div><div class="log-toolbar"><input id="logSearch" placeholder="Repository या workflow खोजें…" value="'+esc(SEARCH)+'"><select id="logFilter"><option value="all">सभी स्टेटस</option><option value="success">SUCCESS</option><option value="failure">FAILURE</option><option value="cancelled">CANCELLED</option><option value="running">IN_PROGRESS / QUEUED</option></select></div><div class="muted">'+filtered.length+' repositories · '+shown+' matching logs / '+total+' loaded logs</div></section><div class="logs-wrap">'+(cards||'<section class="repo-card"><div class="log-empty">कोई matching log नहीं मिला।</div></section>')+'</div>';
+ $('#main').innerHTML='<section class="card"><div class="hd"><h2>📋 GitHub Actions Logs</h2><button class="btn g" id="refreshBtn" onclick="window.refreshDashboard&&window.refreshDashboard()">↻ Refresh</button></div><div class="muted">सभी डैशबोर्ड में जुड़े repositories के उपलब्ध GitHub Actions runs · समय स्थानीय (24-hour) · हर लॉग से GitHub run खोलें।</div><div class="log-toolbar"><input id="logSearch" placeholder="Repository या workflow खोजें…" value="'+esc(SEARCH)+'"><select id="logFilter"><option value="all">सभी स्टेटस</option><option value="success">SUCCESS</option><option value="failure">FAILURE</option><option value="cancelled">CANCELLED</option><option value="running">IN_PROGRESS / QUEUED</option></select></div><div class="muted">'+filtered.length+' repositories · '+shown+' displayed logs / '+total+' available logs</div></section><div class="logs-wrap">'+(cards||'<section class="repo-card"><div class="log-empty">कोई matching log नहीं मिला।</div></section>')+'</div>';
  const input=$('#logSearch'),select=$('#logFilter');select.value=STATUS;
  input.addEventListener('input',e=>{SEARCH=e.target.value;STATUS=select.value;window.refreshDashboard?.()});
  select.addEventListener('change',e=>{STATUS=e.target.value;SEARCH=input.value;window.refreshDashboard?.()});
