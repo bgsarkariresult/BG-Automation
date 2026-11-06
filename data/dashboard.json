@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-06T08:25:20Z",
-  "checked_at": "2026-11-06T08:25:20Z",
+  "updated": "2026-11-06T08:29:05Z",
+  "checked_at": "2026-11-06T08:29:05Z",
   "refresh_interval_seconds": 300,
   "source": "GitHub Actions API",
   "channels": [
@@ -76,6 +76,20 @@
       "kind": "video",
       "status": "in_progress",
       "runs": [
+        {
+          "id": 42187714151,
+          "number": 471,
+          "s": "in_progress",
+          "t": "2026-11-06T08:26:54Z",
+          "started": "2026-11-06T08:26:41Z",
+          "created": "2026-11-06T08:26:41Z",
+          "d": 13,
+          "e": "workflow_dispatch",
+          "n": "SG News18 - Auto Video Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/42187714151"
+        },
         {
           "id": 42187081781,
           "number": 470,
@@ -1461,30 +1475,16 @@
           "branch": "main",
           "actor": "bgsarkariresult",
           "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/40337149028"
-        },
-        {
-          "id": 40283541041,
-          "number": 371,
-          "s": "success",
-          "t": "2026-10-26T07:04:31Z",
-          "started": "2026-10-26T07:04:20Z",
-          "created": "2026-10-26T07:04:20Z",
-          "d": 11,
-          "e": "schedule",
-          "n": "SG News18 - Auto Video Bot",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/40283541041"
         }
       ],
-      "time": "2026-11-06T08:21:38Z",
-      "url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/42187081781",
-      "last_run_id": 42187081781,
-      "run_number": 470,
+      "time": "2026-11-06T08:26:54Z",
+      "url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/42187714151",
+      "last_run_id": 42187714151,
+      "run_number": 471,
       "branch": "main",
       "event": "workflow_dispatch",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/42187081781",
+      "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/42187714151",
       "cron": "*/5 * * * *",
       "next": "2026-11-06T08:30:00Z"
     },
@@ -11804,16 +11804,30 @@
       "tag": "Website",
       "cost": "",
       "kind": "video",
-      "status": "in_progress",
+      "status": "success",
       "runs": [
+        {
+          "id": 42187827203,
+          "number": 240,
+          "s": "success",
+          "t": "2026-11-06T08:29:06Z",
+          "started": "2026-11-06T08:27:37Z",
+          "created": "2026-11-06T08:27:37Z",
+          "d": 89,
+          "e": "workflow_dispatch",
+          "n": "News Blog Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/42187827203"
+        },
         {
           "id": 42187488613,
           "number": 239,
-          "s": "in_progress",
-          "t": "2026-11-06T08:24:53Z",
+          "s": "success",
+          "t": "2026-11-06T08:26:16Z",
           "started": "2026-11-06T08:24:48Z",
           "created": "2026-11-06T08:24:48Z",
-          "d": 5,
+          "d": 88,
           "e": "workflow_dispatch",
           "n": "News Blog Auto Publisher",
           "branch": "main",
@@ -13191,30 +13205,16 @@
           "branch": "main",
           "actor": "bgtechlab",
           "u": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/39564563491"
-        },
-        {
-          "id": 39534082710,
-          "number": 140,
-          "s": "success",
-          "t": "2026-10-21T02:39:39Z",
-          "started": "2026-10-21T02:37:53Z",
-          "created": "2026-10-21T02:37:53Z",
-          "d": 106,
-          "e": "workflow_dispatch",
-          "n": "News Blog Auto Publisher",
-          "branch": "main",
-          "actor": "bgtechlab",
-          "u": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/39534082710"
         }
       ],
-      "time": "2026-11-06T08:24:53Z",
-      "url": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/42187488613",
-      "last_run_id": 42187488613,
-      "run_number": 239,
+      "time": "2026-11-06T08:29:06Z",
+      "url": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/42187827203",
+      "last_run_id": 42187827203,
+      "run_number": 240,
       "branch": "main",
       "event": "workflow_dispatch",
       "actor": "bgtechlab",
-      "html_url": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/42187488613"
+      "html_url": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/42187827203"
     },
     {
       "name": "SG News18 - Reels Maker",
@@ -13224,8 +13224,22 @@
       "tag": "Reels / Shorts",
       "cost": "",
       "kind": "video",
-      "status": "failure",
+      "status": "in_progress",
       "runs": [
+        {
+          "id": 42187738535,
+          "number": 112,
+          "s": "in_progress",
+          "t": "2026-11-06T08:26:59Z",
+          "started": "2026-11-06T08:26:54Z",
+          "created": "2026-11-06T08:26:54Z",
+          "d": 5,
+          "e": "workflow_dispatch",
+          "n": "SG News18 - Reels Maker",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/42187738535"
+        },
         {
           "id": 42162778568,
           "number": 111,
@@ -14611,30 +14625,16 @@
           "branch": "main",
           "actor": "bgsarkariresult",
           "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/39564890290"
-        },
-        {
-          "id": 39562547199,
-          "number": 11,
-          "s": "success",
-          "t": "2026-10-21T07:39:49Z",
-          "started": "2026-10-21T07:31:11Z",
-          "created": "2026-10-21T07:31:11Z",
-          "d": 518,
-          "e": "workflow_dispatch",
-          "n": "SG News18 - Reels Maker",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/39562547199"
         }
       ],
-      "time": "2026-11-06T04:39:36Z",
-      "url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/42162778568",
-      "last_run_id": 42162778568,
-      "run_number": 111,
+      "time": "2026-11-06T08:26:59Z",
+      "url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/42187738535",
+      "last_run_id": 42187738535,
+      "run_number": 112,
       "branch": "main",
       "event": "workflow_dispatch",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/42162778568",
+      "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/42187738535",
       "failed": {
         "job": "make-reel",
         "step": "System packages (ffmpeg + Hindi font + text shaping)",
@@ -14770,6 +14770,16 @@
       "url": "https://bgnewswab.github.io/sgnewswab/index.html",
       "articles": [
         {
+          "t": "40 करोड़ की सैलरी मांगकर खिलाड़ियों ने बढ़ाई IPL फ्रेंचाइजियों की",
+          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=301",
+          "d": "2026-11-06"
+        },
+        {
+          "t": "IND vs NZ: दूसरे वनडे से पहले न्यूजीलैंड को लगा बड़ा झटका, धाकड़ ",
+          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=300",
+          "d": "2026-11-06"
+        },
+        {
           "t": "IND vs NZ: वेलिंगटन में होगा 'दिमाग' का असली टेस्‍ट, तेज हवाएं और",
           "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=299",
           "d": "2026-11-06"
@@ -14808,20 +14818,10 @@
           "t": "WPL 2027 के शेड्यूल का BCCI ने किया एलान, सीजन के ओपनर मैच में RC",
           "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=292",
           "d": "2026-11-04"
-        },
-        {
-          "t": "IND vs NZ: विराट कोहली के तूफानी अर्धशतक से भारत की धमाकेदार जीत,",
-          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=291",
-          "d": "2026-11-04"
-        },
-        {
-          "t": "IND vs NZ: विराट कोहली ने ODI में लिखा नया इतिहास, नंबर-3 पर ये ख",
-          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=290",
-          "d": "2026-11-04"
         }
       ],
       "days": {
-        "2026-11-06": 2,
+        "2026-11-06": 4,
         "2026-11-05": 3,
         "2026-11-04": 6,
         "2026-11-03": 1,
@@ -14844,7 +14844,7 @@
         "2026-10-17": 3,
         "2026-10-16": 4,
         "2026-10-15": 5,
-        "2026-10-14": 4
+        "2026-10-14": 2
       },
       "total": 100
     },
