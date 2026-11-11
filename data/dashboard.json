@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-11T03:03:29Z",
-  "checked_at": "2026-11-11T03:03:29Z",
+  "updated": "2026-11-11T03:06:34Z",
+  "checked_at": "2026-11-11T03:06:34Z",
   "refresh_interval_seconds": 300,
   "source": "GitHub Actions API",
   "channels": [
@@ -1486,7 +1486,7 @@
       "actor": "bgsarkariresult",
       "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/42940518938",
       "cron": "*/5 * * * *",
-      "next": "2026-11-11T03:05:00Z"
+      "next": "2026-11-11T03:10:00Z"
     },
     {
       "name": "TechGlow India",
@@ -2908,7 +2908,7 @@
       "actor": "bgsarkariresult",
       "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/42933649596",
       "cron": "*/5 * * * *",
-      "next": "2026-11-11T03:05:00Z"
+      "next": "2026-11-11T03:10:00Z"
     },
     {
       "name": "BK GrowUp",
@@ -9422,7 +9422,7 @@
       "actor": "bgtechlab",
       "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/42927099316",
       "cron": "*/5 * * * *",
-      "next": "2026-11-11T03:05:00Z"
+      "next": "2026-11-11T03:10:00Z"
     },
     {
       "name": "Job Page Auto Publisher",
@@ -12104,16 +12104,16 @@
       "tag": "Website",
       "cost": "",
       "kind": "video",
-      "status": "in_progress",
+      "status": "success",
       "runs": [
         {
           "id": 42950107701,
           "number": 262,
-          "s": "in_progress",
-          "t": "2026-11-11T03:03:04Z",
+          "s": "success",
+          "t": "2026-11-11T03:04:26Z",
           "started": "2026-11-11T03:03:00Z",
           "created": "2026-11-11T03:03:00Z",
-          "d": 4,
+          "d": 86,
           "e": "workflow_dispatch",
           "n": "News Blog Auto Publisher",
           "branch": "main",
@@ -13507,7 +13507,7 @@
           "u": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/39968416276"
         }
       ],
-      "time": "2026-11-11T03:03:04Z",
+      "time": "2026-11-11T03:04:26Z",
       "url": "https://github.com/bgtechlab/News-Blog-Auto-Publisher/actions/runs/42950107701",
       "last_run_id": 42950107701,
       "run_number": 262,
@@ -15074,6 +15074,11 @@
       "url": "https://bgnewswab.github.io/sgnewswab/index.html",
       "articles": [
         {
+          "t": "IND vs NZ: भारत के खिलाफ टेस्ट सीरीज के लिए न्यूजीलैंड स्क्वाड का",
+          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=320",
+          "d": "2026-11-11"
+        },
+        {
           "t": "'टीम से बाहर होने के बाद शुरुआती दो महीने काफी मुश्किल रहे', सूर्",
           "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=319",
           "d": "2026-11-11"
@@ -15117,15 +15122,10 @@
           "t": "IND vs NZ: रोहित और गिल को तीसरे वनडे से पहले डरा रहा है 92 रनों ",
           "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=311",
           "d": "2026-11-08"
-        },
-        {
-          "t": "Ind U19 vs Pak U19 Live Score पाकिस्तान ने भारत को 3 विकेट से रौं",
-          "u": "https://bgnewswab.github.io/sgnewswab/article.html?id=310",
-          "d": "2026-11-08"
         }
       ],
       "days": {
-        "2026-11-11": 1,
+        "2026-11-11": 2,
         "2026-11-10": 4,
         "2026-11-09": 3,
         "2026-11-08": 4,
@@ -15149,7 +15149,7 @@
         "2026-10-21": 4,
         "2026-10-20": 7,
         "2026-10-19": 2,
-        "2026-10-18": 3
+        "2026-10-18": 2
       },
       "total": 100
     },
