@@ -1,8 +1,8 @@
 {
-  "updated": "2026-11-14T09:29:50Z",
-  "checked_at": "2026-11-14T09:29:50Z",
+  "updated": "2026-11-14T09:49:50Z",
+  "checked_at": "2026-11-14T09:49:50Z",
   "refresh_interval_seconds": 300,
-  "source": "Live Dashboard Sync · GitHub Actions API + public site sitemaps",
+  "source": "GitHub Actions API",
   "channels": [
     {
       "name": "SG News",
@@ -14,9 +14,15 @@
       "id": "UCosaFY8El412UGzlyT6LA5Q",
       "icon": "https://yt3.ggpht.com/pE3Dkzblbc40LN8E76ryLosJ8h9Qh71h1wOUHKec5MPBPlwP-mhYMZo4zZhSwtQ8N6AJVW17lA=s88-c-k-c0x00ffffff-no-rj",
       "subs": "5",
-      "views": "7690",
-      "videos": "102",
+      "views": "7707",
+      "videos": "103",
       "latest": [
+        {
+          "title": "Best Deal on BOLTT ACE 5G (64 GB Storage! #deals #GBStorageMobiles #Shorts",
+          "id": "UdXhuLA72b4",
+          "date": "2026-11-14",
+          "views": "0"
+        },
         {
           "title": "🔥 BOLTT ACE 5G Review 2026: सिर्फ ₹15,999 में खरीदने से पहले ये सच जान लो!",
           "id": "xGqwyWx87mU",
@@ -33,19 +39,13 @@
           "title": "🔥 Rvs Clp Landing Page At Store Review: मत खरीदो जब तक ये सच्चाई ना जान लो!",
           "id": "l4sRoMpzl2M",
           "date": "2026-11-08",
-          "views": "36"
+          "views": "39"
         },
         {
           "title": "🔥 BOSCH 302 L Triple Door Fridge Review: ₹36,990 खर्च करने से पहले ये कड़वा सच जान लो!",
           "id": "73vFnCNx5aM",
           "date": "2026-11-05",
           "views": "17"
-        },
-        {
-          "title": "Deal on Rvs Clp Landing Page At Store Online - Buy Rvs Clp Landing Page At #deals #RvsClpLan #Shorts",
-          "id": "KKKjPMCiV_A",
-          "date": "2026-11-04",
-          "views": "0"
         }
       ]
     },
@@ -76,6 +76,20 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 43561306586,
+          "number": 533,
+          "s": "success",
+          "t": "2026-11-14T05:23:42Z",
+          "started": "2026-11-14T05:23:31Z",
+          "created": "2026-11-14T05:23:31Z",
+          "d": 11,
+          "e": "schedule",
+          "n": "SG News18 - Auto Video Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/43561306586"
+        },
         {
           "id": 43530671191,
           "number": 532,
@@ -1461,32 +1475,18 @@
           "branch": "main",
           "actor": "bgsarkariresult",
           "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/41286883725"
-        },
-        {
-          "id": 41261143444,
-          "number": 433,
-          "s": "success",
-          "t": "2026-11-01T01:27:22Z",
-          "started": "2026-11-01T01:27:07Z",
-          "created": "2026-11-01T01:27:07Z",
-          "d": 15,
-          "e": "schedule",
-          "n": "SG News18 - Auto Video Bot",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/SG-News18/actions/runs/41261143444"
         }
       ],
-      "time": "2026-11-13T23:55:59Z",
-      "url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/43530671191",
-      "last_run_id": 43530671191,
-      "run_number": 532,
+      "time": "2026-11-14T05:23:42Z",
+      "url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/43561306586",
+      "last_run_id": 43561306586,
+      "run_number": 533,
       "branch": "main",
       "event": "schedule",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/43530671191",
+      "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/43561306586",
       "cron": "*/5 * * * *",
-      "next": "2026-11-14T02:55:00Z"
+      "next": "2026-11-14T09:50:00Z"
     },
     {
       "name": "TechGlow India",
@@ -1498,6 +1498,20 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 43568679549,
+          "number": 328,
+          "s": "success",
+          "t": "2026-11-14T06:55:59Z",
+          "started": "2026-11-14T06:55:49Z",
+          "created": "2026-11-14T06:55:49Z",
+          "d": 10,
+          "e": "schedule",
+          "n": "TechGlow India - Tech Review Auto Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/43568679549"
+        },
         {
           "id": 43534362480,
           "number": 327,
@@ -2883,32 +2897,18 @@
           "branch": "main",
           "actor": "bgsarkariresult",
           "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/40212711690"
-        },
-        {
-          "id": 40192849110,
-          "number": 228,
-          "s": "success",
-          "t": "2026-10-25T12:23:04Z",
-          "started": "2026-10-25T12:22:54Z",
-          "created": "2026-10-25T12:22:54Z",
-          "d": 10,
-          "e": "schedule",
-          "n": "TechGlow India - Tech Review Auto Bot",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/40192849110"
         }
       ],
-      "time": "2026-11-14T00:28:19Z",
-      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/43534362480",
-      "last_run_id": 43534362480,
-      "run_number": 327,
+      "time": "2026-11-14T06:55:59Z",
+      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/43568679549",
+      "last_run_id": 43568679549,
+      "run_number": 328,
       "branch": "main",
       "event": "schedule",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/43534362480",
+      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/43568679549",
       "cron": "*/5 * * * *",
-      "next": "2026-11-14T02:55:00Z"
+      "next": "2026-11-14T09:50:00Z"
     },
     {
       "name": "BK GrowUp",
@@ -7067,6 +7067,20 @@
       "status": "success",
       "runs": [
         {
+          "id": 43551961758,
+          "number": 71,
+          "s": "success",
+          "t": "2026-11-14T03:31:19Z",
+          "started": "2026-11-14T03:30:17Z",
+          "created": "2026-11-14T03:30:17Z",
+          "d": 62,
+          "e": "schedule",
+          "n": "Daily Auto Trending Run",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgtechlab/Trending-Topic-Finder/actions/runs/43551961758"
+        },
+        {
           "id": 43359752838,
           "number": 70,
           "s": "success",
@@ -8047,14 +8061,14 @@
           "u": "https://github.com/bgtechlab/Trending-Topic-Finder/actions/runs/36287311061"
         }
       ],
-      "time": "2026-11-13T03:34:28Z",
-      "url": "https://github.com/bgtechlab/Trending-Topic-Finder/actions/runs/43359752838",
-      "last_run_id": 43359752838,
-      "run_number": 70,
+      "time": "2026-11-14T03:31:19Z",
+      "url": "https://github.com/bgtechlab/Trending-Topic-Finder/actions/runs/43551961758",
+      "last_run_id": 43551961758,
+      "run_number": 71,
       "branch": "main",
       "event": "schedule",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgtechlab/Trending-Topic-Finder/actions/runs/43359752838",
+      "html_url": "https://github.com/bgtechlab/Trending-Topic-Finder/actions/runs/43551961758",
       "cron": "40 23 * * *",
       "next": "2026-11-14T23:40:00Z"
     },
@@ -8068,6 +8082,20 @@
       "kind": "video",
       "status": "success",
       "runs": [
+        {
+          "id": 43551843137,
+          "number": 304,
+          "s": "success",
+          "t": "2026-11-14T03:29:12Z",
+          "started": "2026-11-14T03:28:52Z",
+          "created": "2026-11-14T03:28:52Z",
+          "d": 20,
+          "e": "schedule",
+          "n": "BG Reels Bot - Multi-Platform Auto Publisher",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/43551843137"
+        },
         {
           "id": 43527337612,
           "number": 303,
@@ -9453,32 +9481,18 @@
           "branch": "main",
           "actor": "bgtechlab",
           "u": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/40238533697"
-        },
-        {
-          "id": 40227444160,
-          "number": 204,
-          "s": "success",
-          "t": "2026-10-25T19:44:43Z",
-          "started": "2026-10-25T19:44:21Z",
-          "created": "2026-10-25T19:44:21Z",
-          "d": 22,
-          "e": "schedule",
-          "n": "BG Reels Bot - Multi-Platform Auto Publisher",
-          "branch": "main",
-          "actor": "bgtechlab",
-          "u": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/40227444160"
         }
       ],
-      "time": "2026-11-13T23:28:34Z",
-      "url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/43527337612",
-      "last_run_id": 43527337612,
-      "run_number": 303,
+      "time": "2026-11-14T03:29:12Z",
+      "url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/43551843137",
+      "last_run_id": 43551843137,
+      "run_number": 304,
       "branch": "main",
       "event": "schedule",
       "actor": "bgtechlab",
-      "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/43527337612",
+      "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/43551843137",
       "cron": "*/5 * * * *",
-      "next": "2026-11-14T02:55:00Z"
+      "next": "2026-11-14T09:50:00Z"
     },
     {
       "name": "Job Page Auto Publisher",
@@ -15049,58 +15063,77 @@
       "url": "https://bgsarkariresult.github.io/bgsarkariresult/",
       "articles": [
         {
-          "t": "UP Police Constable Final Result 2026 (Out) - Download Merit List PDF | Download Link & Details 2026 - BG Sarkari Result",
-          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/up-police-constable-final-result-2026-out-download-merit-list-pdf.html",
-          "d": "2026-10-14"
+          "t": "rrb isolated category recruitment 2026 apply online for 191 posts.html",
+          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rrb-isolated-category-recruitment-2026-apply-online-for-191-posts.html",
+          "d": "2026-11-12"
         },
         {
-          "t": "RRB NTPC Graduate Recruitment 06/2026 Notification Out - Apply Online for 3,548 Posts | Download Link & Details 2026 - BG Sarkari Result",
-          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rrb-ntpc-graduate-recruitment-062026-notification-out-apply-online-for-3548-posts.html",
-          "d": "2026-10-14"
+          "t": "asrb icar recruitment 2026 apply online for 1393 technical assistant and senior technical assistant posts.html",
+          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/asrb-icar-recruitment-2026-apply-online-for-1393-technical-assistant-and-senior-technical-assistant-posts.html",
+          "d": "2026-11-12"
         },
         {
-          "t": "Supreme Court of India (SCI) Senior Personal Assistant Recruitment 2026 Notification Out – Apply Online for 65 Posts | Download Link & Details 2026 - BG Sarkari Result",
-          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/supreme-court-of-india-sci-senior-personal-assistant-recruitment-2026-notification-out-apply-online-for-65-posts.html",
-          "d": "2026-10-13"
+          "t": "ssc cgl tier 1 answer key 2026 out download response sheet objection link.html",
+          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/ssc-cgl-tier-1-answer-key-2026-out-download-response-sheet-objection-link.html",
+          "d": "2026-11-11"
         },
         {
-          "t": "LIC HFL Management Trainee Recruitment 2026 Notification Out – Apply Online for 50 Posts | Download Link & Details 2026 - BG Sarkari Result",
-          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/lic-hfl-management-trainee-recruitment-2026-notification-out-apply-online-for-50-posts.html",
-          "d": "2026-10-12"
+          "t": "mp police constable admit card 2026 download gd hall ticket at esbmpgovin.html",
+          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/mp-police-constable-admit-card-2026-download-gd-hall-ticket-at-esbmpgovin.html",
+          "d": "2026-11-10"
         },
         {
-          "t": "SSC MTS and Havaldar Result 2026 Out - Check Additional Result PDF | Download Link & Details 2026 - BG Sarkari Result",
-          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/ssc-mts-and-havaldar-result-2026-out-check-additional-result-pdf.html",
-          "d": "2026-10-11"
+          "t": "rrb alp cbat re exam city intimation slip 2026 out download exam city.html",
+          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rrb-alp-cbat-re-exam-city-intimation-slip-2026-out-download-exam-city.html",
+          "d": "2026-11-08"
         },
         {
-          "t": "BSF Sub Inspector Recruitment 2026 – Apply Offline for 34 Posts | Download Link & Details 2026 - BG Sarkari Result",
-          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/bsf-sub-inspector-recruitment-2026-apply-offline-for-34-posts.html",
-          "d": "2026-10-11"
+          "t": "rrc nr recruitment 2026 apply online for 4651 act apprentice posts.html",
+          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rrc-nr-recruitment-2026-apply-online-for-4651-act-apprentice-posts.html",
+          "d": "2026-11-07"
         },
         {
-          "t": "UPSC NDA 2 Result 2026 Out - Check Written Result and Roll Number List PDF for NDA & NA (II) | Download Link & Details 2026 - BG Sarkari Result",
-          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/upsc-nda-2-result-2026-out-check-written-result-and-roll-number-list-pdf-for-nda-na-ii.html",
-          "d": "2026-10-10"
+          "t": "dsssb recruitment 2026 notification out apply online for 1260 junior engineer mts posts.html",
+          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/dsssb-recruitment-2026-notification-out-apply-online-for-1260-junior-engineer-mts-posts.html",
+          "d": "2026-11-07"
         },
         {
-          "t": "India Post GDS Result 2026 - Check 1st Merit List Date, Circle-wise PDF and How to Check | Download Link & Details 2026 - BG Sarkari Result",
-          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/india-post-gds-result-2026-check-1st-merit-list-date-circle-wise-pdf-and-how-to-check.html",
-          "d": "2026-10-10"
+          "t": "sbi so it security officer recruitment 2026 notification out at sbibankin apply online for 60 posts.html",
+          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/sbi-so-it-security-officer-recruitment-2026-notification-out-at-sbibankin-apply-online-for-60-posts.html",
+          "d": "2026-11-06"
         },
         {
-          "t": "SBI Wealth Management SCO Recruitment 2026 - Apply Online for Specialist Cadre Officers Posts | Download Link & Details 2026 - BG Sarkari Result",
-          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/sbi-wealth-management-sco-recruitment-2026-apply-online-for-specialist-cadre-officers-posts.html",
-          "d": "2026-10-09"
+          "t": "rrc nr scouts and guides quota recruitment 2026 apply online for 27 group c and group d posts.html",
+          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rrc-nr-scouts-and-guides-quota-recruitment-2026-apply-online-for-27-group-c-and-group-d-posts.html",
+          "d": "2026-11-06"
         },
         {
-          "t": "RRB Section Controller Admit Card 2026 Out Today - Download Hall Ticket at rrb.indianrailways.gov.in | Download Link & Details 2026 - BG Sarkari Result",
-          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/rrb-section-controller-admit-card-2026-out-today-download-hall-ticket-at-rrbindianrailwaysgovin.html",
-          "d": "2026-10-09"
+          "t": "nlc india get recruitment 2026 apply online for 143 graduate executive trainee posts.html",
+          "u": "https://bgsarkariresult.github.io/bgsarkariresult/jobs/nlc-india-get-recruitment-2026-apply-online-for-143-graduate-executive-trainee-posts.html",
+          "d": "2026-11-06"
         }
       ],
       "days": {
-        "2026-10-14": 2,
+        "2026-11-12": 2,
+        "2026-11-11": 1,
+        "2026-11-10": 1,
+        "2026-11-08": 1,
+        "2026-11-07": 2,
+        "2026-11-06": 3,
+        "2026-11-05": 3,
+        "2026-11-04": 1,
+        "2026-10-31": 1,
+        "2026-10-29": 1,
+        "2026-10-28": 1,
+        "2026-10-27": 1,
+        "2026-10-24": 7,
+        "2026-10-23": 1,
+        "2026-10-19": 3,
+        "2026-10-18": 2,
+        "2026-10-17": 2,
+        "2026-10-16": 4,
+        "2026-10-15": 4,
+        "2026-10-14": 3,
         "2026-10-13": 1,
         "2026-10-12": 1,
         "2026-10-11": 2,
@@ -15135,6 +15168,7 @@
         "2026-09-10": 2,
         "2026-09-09": 1,
         "2026-09-08": 2,
+        "2026-09-07": 6,
         "2026-09-06": 2,
         "2026-09-05": 1,
         "2026-09-04": 1,
@@ -15146,9 +15180,7 @@
         "2026-08-27": 2,
         "2026-08-26": 7
       },
-      "total": 80,
-      "today": 0,
-      "week": 0
+      "total": 128
     },
     {
       "name": "SG News18",
