@@ -284,7 +284,7 @@ async function startBot(s,mode){
     parts:String(ps.parts),
     privacy:ps.privacy,
     part2_delay_hours:String(ps.delay),
-    force:ps.force?'true':'false'
+    force:ps.force
    };
   }else if(input&&link)payload.inputs={[input]:link};
  UI.busy[s]=true;if(btn){btn.disabled=true;btn.textContent='⏳ शुरू हो रहा…'}
