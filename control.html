@@ -73,7 +73,7 @@ function failureDetail(b){
  b.failed.reason&&String(b.failed.reason).replace(/_/g,' ')].filter(Boolean).join(' · ');
 }
 
-const UI={q:'',f:'all',open:new Set(),links:{},podcast:{},msgs:{},busy:{},log:{repo:null,workflow:'',timer:null,token:0,state:{}}};
+const UI={q:'',f:'all',open:new Set(),podcastOpen:new Set(),links:{},podcast:{},msgs:{},busy:{},log:{repo:null,workflow:'',timer:null,token:0,state:{}}};
 let REG={};
 function setMsg(id,v,isHtml){UI.msgs[id]={v,isHtml:!!isHtml,t:Date.now()};const e=document.getElementById(id);if(e){if(isHtml)e.innerHTML=v;else e.textContent=v}}
 function restoreMsgs(){for(const id in UI.msgs){const m=UI.msgs[id];if(Date.now()-m.t>60000){delete UI.msgs[id];continue}const e=document.getElementById(id);if(e){if(m.isHtml)e.innerHTML=m.v;else e.textContent=m.v}}}
@@ -180,9 +180,22 @@ function setPodcastSetting(s,k,v){
  const p=podcastState(s);
  if(k==='force')p.force=!!v;else p[k]=String(v);
 }
+function togglePodcastSettings(s){
+ if(UI.podcastOpen.has(s))UI.podcastOpen.delete(s);else UI.podcastOpen.add(s);
+ const panel=document.getElementById('pod_settings_'+s);
+ const arrow=document.getElementById('pod_arrow_'+s);
+ const btn=document.getElementById('pod_toggle_'+s);
+ const opened=UI.podcastOpen.has(s);
+ if(panel)panel.hidden=!opened;
+ if(arrow)arrow.textContent=opened?'⌃':'⌄';
+ if(btn)btn.setAttribute('aria-expanded',String(opened));
+}
 function podcastControls(s){
- const p=podcastState(s);
- return '<div class="podcast-settings" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:9px;margin:10px 0;padding:11px;border:1px solid var(--line);border-radius:10px">'+
+ const p=podcastState(s),opened=UI.podcastOpen.has(s);
+ return '<div style="margin:9px 0 5px">'+
+ '<button class="btn g" type="button" id="pod_toggle_'+s+'" onclick="togglePodcastSettings(\''+s+'\')" aria-controls="pod_settings_'+s+'" aria-expanded="'+opened+'" style="width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left">'+
+ '<span>⚙️ Advanced Settings <small style="opacity:.75;font-weight:normal">· Parts, Privacy, Delay, Force</small></span><b id="pod_arrow_'+s+'">'+(opened?'⌃':'⌄')+'</b></button>'+
+ '<div id="pod_settings_'+s+'" '+(opened?'':'hidden')+' class="podcast-settings" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:9px;margin:8px 0 10px;padding:11px;border:1px solid var(--line);border-radius:10px">'+
  '<label style="display:grid;gap:5px;font-size:12px">🎬 कितने पार्ट?'+
  '<select class="lk" id="pod_parts_'+s+'" onchange="setPodcastSetting(\''+s+'\',\'parts\',this.value)">'+
  ['1','2','3'].map(v=>'<option value="'+v+'" '+(p.parts===v?'selected':'')+'>'+v+' Part'+(v==='1'?'':'s')+'</option>').join('')+'</select></label>'+
@@ -192,9 +205,8 @@ function podcastControls(s){
  '<label style="display:grid;gap:5px;font-size:12px">⏱️ Part 2 / 3 Delay (hours)'+
  '<input class="lk" id="pod_delay_'+s+'" type="number" min="0" step="1" value="'+esc(p.delay)+'" onchange="setPodcastSetting(\''+s+'\',\'delay\',this.value)" oninput="setPodcastSetting(\''+s+'\',\'delay\',this.value)"></label>'+
  '<label style="display:flex;align-items:center;gap:7px;font-size:12px;align-self:end;padding:8px 0"><input id="pod_force_'+s+'" type="checkbox" '+(p.force?'checked':'')+' onchange="setPodcastSetting(\''+s+'\',\'force\',this.checked)"> Force regenerate (पहले बना वीडियो भी दोबारा बनाएँ)</label>'+
- '</div>';
+ '</div></div>';
 }
-
 function renderProjectCard(b){
  const s=slugOf(b);REG[s]=b;const wf=workflowFor(b),input=inputFor(b),multi=!!cfgFor(b).multi,runs=Array.isArray(b.runs)?b.runs:[],state=latestState(b),sm=stateMeta(state),detail=isFail(b)?failureDetail(b):'',busy=!!UI.busy[s],open=UI.open.has(s);
  const durs=runs.filter(r=>okRun(r)&&Number(r.d)>0).map(r=>Number(r.d)),avgM=durs.length?Math.max(1,Math.round(durs.reduce((a,x)=>a+x,0)/durs.length/60)):0,lastT=runs[0]&&runs[0].t,siteU=b.site?safeUrl(b.site):'#';
