@@ -24,11 +24,13 @@ const BOT_CONFIG={
  'bgtechlab/history-facts':{workflow:'history-facts-bot.yml',input:null},
  'bgtechlab/job-page-auto-publisher':{workflow:'job-page-publisher.yml',input:'job_url'},
  'bgtechlab/amazon_to_blogger':{workflow:'amazon_to_blogger.yml',input:'urls',multi:true},
- 'bgtechlab/news-blog-auto-publisher':{workflow:'news-blog-publisher.yml',input:'news_urls',multi:true}
+ 'bgtechlab/news-blog-auto-publisher':{workflow:'news-blog-publisher.yml',input:'news_urls',multi:true},
+ 'bgsarkariresult/bg-podcast-ai':{workflow:'podcast_summary.yml',input:'video_url'}
 };
 const YT_REPOS=[
  'bgsarkariresult/sg-news18','bgsarkariresult/techglow-india',
- 'bgsarkariresult/bk-growup-','bgtechlab/bg-reels-bot','bgtechlab/history-facts'
+ 'bgsarkariresult/bk-growup-','bgtechlab/bg-reels-bot','bgtechlab/history-facts',
+ 'bgsarkariresult/bg-podcast-ai'
 ];
 const SITES=[
  {name:'Job Page Auto Publisher',tag:'Website',repo:'bgtechlab/Job-Page-Auto-Publisher',url:'https://bgtechlab.github.io/Job-Page-Auto-Publisher/'},
@@ -114,8 +116,14 @@ const hasSgNewsMainChannel=bots.some(b=>
  lc(b.repo)==='bgsarkariresult/sg-news18' &&
  lc(b.workflow||cfgFor(b).workflow)!=='reels-bot.yml'
 );
-// SG News18 का main news workflow अलग कार्ड रहे; केवल Reels entry होने पर भी fallback जोड़ें।
-const youtubeBots=hasSgNewsMainChannel ? bots : [...bots,sgNewsBotFallback];
+const podcastBotFallback={
+ name:'BG Podcast AI',repo:'bgsarkariresult/BG-Podcast-AI',workflow:'podcast_summary.yml',input_name:'video_url',
+ site:'https://github.com/bgsarkariresult/BG-Podcast-AI/actions/workflows/podcast_summary.yml',
+ tag:'Podcast AI',kind:'video',status:'unknown',runs:[]
+};
+const hasPodcastBot=bots.some(b=>lc(b.repo)==='bgsarkariresult/bg-podcast-ai');
+// SG News18 और BG Podcast AI को YouTube Channels में रखें, भले live sync response में entry न हो।
+const youtubeBots=[...(hasSgNewsMainChannel?bots:[...bots,sgNewsBotFallback]),...(hasPodcastBot?[]:[podcastBotFallback])];
  const reelSource=bots.find(x=>lc(x.repo)==='bgsarkariresult/bk-growup-');
  const reelBot={...(reelSource||{}),name:'BK GrowUp Reel Bot',repo:'bgsarkariresult/bk-growup-',workflow:'run-job-reel-bot.yml',input_name:'post_url',control_id:'bk_growup_reel_bot',status:(reelSource&&reelSource.status)||'unknown',runs:Array.isArray(reelSource&&reelSource.runs)?reelSource.runs:[]};
   const sgReelSource=bots.find(x=>lc(x.repo)==='bgsarkariresult/sg-news18'&&lc(x.workflow)==='reels-bot.yml');
