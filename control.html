@@ -73,7 +73,7 @@ function failureDetail(b){
  b.failed.reason&&String(b.failed.reason).replace(/_/g,' ')].filter(Boolean).join(' · ');
 }
 
-const UI={q:'',f:'all',open:new Set(),links:{},msgs:{},busy:{},log:{repo:null,workflow:'',timer:null,token:0,state:{}}};
+const UI={q:'',f:'all',open:new Set(),links:{},podcast:{},msgs:{},busy:{},log:{repo:null,workflow:'',timer:null,token:0,state:{}}};
 let REG={};
 function setMsg(id,v,isHtml){UI.msgs[id]={v,isHtml:!!isHtml,t:Date.now()};const e=document.getElementById(id);if(e){if(isHtml)e.innerHTML=v;else e.textContent=v}}
 function restoreMsgs(){for(const id in UI.msgs){const m=UI.msgs[id];if(Date.now()-m.t>60000){delete UI.msgs[id];continue}const e=document.getElementById(id);if(e){if(m.isHtml)e.innerHTML=m.v;else e.textContent=m.v}}}
@@ -171,6 +171,30 @@ boot('control.html','GitHub Actions Control Center',renderControl);
 function setFilter(f){UI.f=f;if(LASTD)renderControl(LASTD)}
 function setQuery(v){UI.q=String(v||'').trim().toLowerCase();if(LASTD)renderControl(LASTD)}
 
+
+function podcastState(s){
+ if(!UI.podcast[s])UI.podcast[s]={parts:'2',privacy:'unlisted',delay:'0',force:false};
+ return UI.podcast[s];
+}
+function setPodcastSetting(s,k,v){
+ const p=podcastState(s);
+ if(k==='force')p.force=!!v;else p[k]=String(v);
+}
+function podcastControls(s){
+ const p=podcastState(s);
+ return '<div class="podcast-settings" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:9px;margin:10px 0;padding:11px;border:1px solid var(--line);border-radius:10px">'+
+ '<label style="display:grid;gap:5px;font-size:12px">🎬 कितने पार्ट?'+
+ '<select class="lk" id="pod_parts_'+s+'" onchange="setPodcastSetting(\''+s+'\',\'parts\',this.value)">'+
+ ['1','2','3'].map(v=>'<option value="'+v+'" '+(p.parts===v?'selected':'')+'>'+v+' Part'+(v==='1'?'':'s')+'</option>').join('')+'</select></label>'+
+ '<label style="display:grid;gap:5px;font-size:12px">🔒 Upload Privacy'+
+ '<select class="lk" id="pod_privacy_'+s+'" onchange="setPodcastSetting(\''+s+'\',\'privacy\',this.value)">'+
+ [['public','Public'],['unlisted','Unlisted'],['private','Private']].map(x=>'<option value="'+x[0]+'" '+(p.privacy===x[0]?'selected':'')+'>'+x[1]+'</option>').join('')+'</select></label>'+
+ '<label style="display:grid;gap:5px;font-size:12px">⏱️ Part 2 / 3 Delay (hours)'+
+ '<input class="lk" id="pod_delay_'+s+'" type="number" min="0" step="1" value="'+esc(p.delay)+'" onchange="setPodcastSetting(\''+s+'\',\'delay\',this.value)" oninput="setPodcastSetting(\''+s+'\',\'delay\',this.value)"></label>'+
+ '<label style="display:flex;align-items:center;gap:7px;font-size:12px;align-self:end;padding:8px 0"><input id="pod_force_'+s+'" type="checkbox" '+(p.force?'checked':'')+' onchange="setPodcastSetting(\''+s+'\',\'force\',this.checked)"> Force regenerate (पहले बना वीडियो भी दोबारा बनाएँ)</label>'+
+ '</div>';
+}
+
 function renderProjectCard(b){
  const s=slugOf(b);REG[s]=b;const wf=workflowFor(b),input=inputFor(b),multi=!!cfgFor(b).multi,runs=Array.isArray(b.runs)?b.runs:[],state=latestState(b),sm=stateMeta(state),detail=isFail(b)?failureDetail(b):'',busy=!!UI.busy[s],open=UI.open.has(s);
  const durs=runs.filter(r=>okRun(r)&&Number(r.d)>0).map(r=>Number(r.d)),avgM=durs.length?Math.max(1,Math.round(durs.reduce((a,x)=>a+x,0)/durs.length/60)):0,lastT=runs[0]&&runs[0].t,siteU=b.site?safeUrl(b.site):'#';
@@ -179,7 +203,7 @@ function renderProjectCard(b){
  const status='<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:5px"><span class="badge-s '+sm.c+'">'+sm.i+' '+sm.l+'</span>'+(detail?'<small style="color:var(--mu)">'+esc(detail)+'</small>':'')+'</div>'+(b.live_api_error?'<small style="display:block;color:var(--mu);margin-top:4px">⚠ Live API: '+esc(b.live_api_error)+'</small>':'');
  const items=runs.slice(0,5).map(r=>'<div class="run-item"><span class="dot s-'+esc(r.s)+'">'+st(r.s)+'</span><span class="run-info"><b>'+esc(r.n)+'</b><small>'+esc(r.s)+' • '+ago(r.t)+'</small></span>'+(safeUrl(r.u)!=='#'?'<a class="btn g t" href="'+esc(safeUrl(r.u))+'" target="_blank" rel="noopener">Log ↗</a>':'')+'</div>').join('')||'<small>कोई run नहीं।</small>';
  return '<div class="site"><div class="row"><div><b>'+esc(b.name)+'</b><br><small>'+okN+' सफल • '+failN+' असफल (पिछले '+runs.length+' run)'+(lastT?' • आख़िरी: '+ago(lastT):'')+(avgM?' • औसत ~'+avgM+' मिनट':'')+'</small>'+status+(siteU!=='#'?'<a class="btn g" style="margin-top:8px" href="'+esc(siteU)+'" target="_blank" rel="noopener">🌐 साइट खोलें</a>':'')+'</div></div>'+
- linkBox+'<div class="project-actions"><button class="btn g" type="button" onclick="showLiveLogs(\''+s+'\')">📋 Logs</button><button class="btn run-action" type="button" id="btn_'+s+'" onclick="startBot(\''+s+'\',\'run\')" '+(!wf||busy?'disabled':'')+'>'+ (busy?'⏳ शुरू हो रहा…':'▶ Run')+'</button><button class="btn g" type="button" onclick="tg(\''+s+'\')" aria-controls="rs_'+s+'" aria-expanded="'+open+'">↻ Runs</button></div>'+
+ linkBox+(lc(b.repo)==='bgsarkariresult/bg-podcast-ai'?podcastControls(s):'')+'<div class="project-actions"><button class="btn g" type="button" onclick="showLiveLogs(\''+s+'\')">📋 Logs</button><button class="btn run-action" type="button" id="btn_'+s+'" onclick="startBot(\''+s+'\',\'run\')" '+(!wf||busy?'disabled':'')+'>'+ (busy?'⏳ शुरू हो रहा…':'▶ Run')+'</button><button class="btn g" type="button" onclick="tg(\''+s+'\')" aria-controls="rs_'+s+'" aria-expanded="'+open+'">↻ Runs</button></div>'+
  '<small class="hn" id="hn_'+s+'" role="status" aria-live="polite"></small><div class="rs" id="rs_'+s+'" '+(open?'':'hidden')+'><div class="runs-heading">पिछले 5 रन</div>'+items+'</div></div>';
 }
 function addProject(type){const name=type==='website'?'Website':'YouTube Channel';if(confirm('नया '+name+' जोड़ने के लिए data/dashboard.json में project दर्ज करना होगा।\n\nGitHub का edit पेज खोलें?'))window.open(GH_EDIT_URL,'_blank','noopener')}
@@ -252,7 +276,17 @@ async function startBot(s,mode){
  const bad=input&&link?badUrls(link):[];
  if(bad.length){say('❌ यह लिंक सही नहीं है: '+bad[0].slice(0,80)+' (http:// या https:// से शुरू होना चाहिए)');return}
  const payload={repo:b.repo,workflow:wf,ref:'main'};
- if(input&&link)payload.inputs={[input]:link};
+ if(lc(b.repo)==='bgsarkariresult/bg-podcast-ai'){
+   if(!link){say('❌ पहले YouTube Podcast का लिंक डालें।');return}
+   const ps=podcastState(s);
+   payload.inputs={
+    video_url:link,
+    parts:String(ps.parts),
+    privacy:ps.privacy,
+    part2_delay_hours:String(ps.delay),
+    force:ps.force?'true':'false'
+   };
+  }else if(input&&link)payload.inputs={[input]:link};
  UI.busy[s]=true;if(btn){btn.disabled=true;btn.textContent='⏳ शुरू हो रहा…'}
  say('⏳ Cloudflare Worker → GitHub Actions…');
  let started=false;
@@ -261,6 +295,10 @@ async function startBot(s,mode){
   if(data.ok){
    started=true;
    if(input)rememberLink(s,link);
+   if(lc(b.repo)==='bgsarkariresult/bg-podcast-ai'){
+    const ps=podcastState(s);ps.force=false;
+    const forceBox=document.getElementById('pod_force_'+s);if(forceBox)forceBox.checked=false;
+   }
    say('✅ <b>GitHub Actions शुरू हो गया!</b>'+(rerun&&link&&!typed?' (पिछला लिंक दोबारा भेजा गया)':'')+' Worker + Master PAT से run भेजा गया।',true);
    if(btn)btn.textContent='✅ शुरू हो गया';
    setTimeout(()=>window.refreshDashboard&&window.refreshDashboard(),1200);
