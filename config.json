@@ -97,6 +97,12 @@
       "repo": "bgsarkariresult/SG-News18",
       "workflow": "reels-bot.yml",
       "tag": "Reels / Shorts"
+    },
+    {
+      "name": "BG Podcast AI",
+      "repo": "bgsarkariresult/BG-Podcast-AI",
+      "workflow": "podcast_summary.yml",
+      "tag": "Podcast AI"
     }
   ],
   "sites": [
