@@ -186,7 +186,7 @@ function togglePodcastSettings(s){
  const arrow=document.getElementById('pod_arrow_'+s);
  const btn=document.getElementById('pod_toggle_'+s);
  const opened=UI.podcastOpen.has(s);
- if(panel)panel.hidden=!opened;
+ if(panel){panel.hidden=!opened;panel.style.display=opened?'grid':'none';}
  if(arrow)arrow.textContent=opened?'⌃':'⌄';
  if(btn)btn.setAttribute('aria-expanded',String(opened));
 }
@@ -195,7 +195,7 @@ function podcastControls(s){
  return '<div style="margin:9px 0 5px">'+
  '<button class="btn g" type="button" id="pod_toggle_'+s+'" onclick="togglePodcastSettings(\''+s+'\')" aria-controls="pod_settings_'+s+'" aria-expanded="'+opened+'" style="width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left">'+
  '<span style="display:flex;align-items:center;gap:8px">⚙️ <b>अतिरिक्त सेटिंग्स</b></span><span id="pod_arrow_'+s+'" aria-hidden="true" style="font-size:18px;line-height:1">'+(opened?'⌃':'⌄')+'</span></button>'+
- '<div id="pod_settings_'+s+'" '+(opened?'':'hidden')+' class="podcast-settings" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:9px;margin:8px 0 10px;padding:11px;border:1px solid var(--line);border-radius:10px">'+
+ '<div id="pod_settings_'+s+'" '+(opened?'':'hidden')+' class="podcast-settings" style="display:'+(opened?'grid':'none')+';grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:9px;margin:8px 0 10px;padding:11px;border:1px solid var(--line);border-radius:10px">'+
  '<label style="display:grid;gap:5px;font-size:12px">🎬 कितने पार्ट?'+
  '<select class="lk" id="pod_parts_'+s+'" onchange="setPodcastSetting(\''+s+'\',\'parts\',this.value)">'+
  ['1','2','3'].map(v=>'<option value="'+v+'" '+(p.parts===v?'selected':'')+'>'+v+' Part'+(v==='1'?'':'s')+'</option>').join('')+'</select></label>'+
