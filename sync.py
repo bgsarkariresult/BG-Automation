@@ -1,5 +1,5 @@
 """GitHub Actions me chalta hai. Secrets: YT_API_KEY, GH_PAT (optional). Output: data/dashboard.json"""
-import os, re, json, datetime as dt, urllib.request, urllib.parse
+import os, re, json, html, datetime as dt, urllib.request, urllib.parse
 from email.utils import parsedate_to_datetime
 
 
@@ -38,19 +38,25 @@ with open(mp, "w", encoding="utf-8") as f:
 key = os.environ.get("YT_API_KEY", "")
 YT = "https://www.googleapis.com/youtube/v3/"
 channels = []
-ids = [c["id"] for c in cfg["channels"] if c.get("id")]
-prev_channels = []
+real_id = lambda i: bool(re.fullmatch(r"UC[\w-]{22}", i or ""))
+ids = [c["id"] for c in cfg["channels"] if real_id(c.get("id"))]
 try:
     with open("data/dashboard.json", encoding="utf-8") as _f:
-        prev_channels = json.load(_f).get("channels") or []
+        prev = json.load(_f)
 except Exception:
-    prev_channels = []
+    prev = {}
+prev_channels = prev.get("channels") or []
+prev_bots = {(b.get("repo"), b.get("workflow") or ""): b for b in prev.get("bots") or []}
+prev_sites = {s.get("name"): s for s in prev.get("sites") or []}
 try:
     if key and ids:
         q = urllib.parse.urlencode({"part": "snippet,statistics,contentDetails", "id": ",".join(ids), "key": key})
         found = {i["id"]: i for i in get(YT + "channels?" + q).get("items", [])}
         for c in cfg["channels"]:
             it = found.get(c["id"])
+            if not real_id(c.get("id")):
+                channels.append({"name": c["name"], "id": "", "error": "Channel ID अभी config.json में नहीं डाली गई"})
+                continue
             if not it:
                 channels.append({"name": c["name"], "id": c["id"], "error": "Channel ID galat ya nahi mila"})
                 continue
@@ -66,8 +72,9 @@ try:
                     sn = v["snippet"]; vid = sn["resourceId"]["videoId"]
                     latest.append({"title": sn["title"], "id": vid, "date": sn["publishedAt"][:10],
                                    "views": vs.get(vid, {}).get("viewCount")})
-            except Exception:
-                pass
+            except Exception as e:
+                print("latest videos error:", c["name"], e)
+                latest = next((p.get("latest", []) for p in prev_channels if p.get("id") == c["id"]), [])
             channels.append({"name": c["name"], "id": c["id"], "icon": it["snippet"]["thumbnails"]["default"]["url"],
                              "subs": s.get("subscriberCount"), "views": s.get("viewCount"),
                              "videos": s.get("videoCount"), "latest": latest})
@@ -100,7 +107,7 @@ def cron_next(expr):
 bots = []
 for b in cfg["bots"]:
     row = {k: b.get(k, "") for k in ("name", "repo", "workflow", "site", "tag", "cost")}
-    row["kind"] = b.get("kind") or ("video" if b.get("workflow") and "trending" not in b["repo"].lower() else "other")
+    row["kind"] = b.get("kind") or "other"
     row.update(status="unknown", runs=[])
     base = "https://api.github.com/repos/%s/actions/" % b["repo"]
     try:
@@ -124,13 +131,18 @@ for b in cfg["bots"]:
                        branch=r0.get("branch"), event=r0.get("e"),
                        actor=r0.get("actor"), html_url=r0["u"])
     except Exception as e:
+        # API fail ho to pichla data rakho, khali mat karo
+        old = prev_bots.get((b["repo"], b.get("workflow") or ""))
+        if old:
+            row.update({k: v for k, v in old.items() if k not in ("name", "repo", "workflow", "site", "tag", "cost", "kind")})
         row["api_error"] = str(e)[:300]
-    f = next((r for r in row["runs"][:10] if r["s"] == "failure"), None)
-    if f:
+    # "failed" sirf tab, jab sabse naya pura hua run fail ho (purani galti nahi)
+    f = next((r for r in row["runs"] if r["s"] in ("success", "failure", "timed_out", "startup_failure")), None)
+    if "api_error" not in row and f and f["s"] != "success":
         try:
             for j in get(base + "runs/%s/jobs" % f["id"], hdr).get("jobs", []):
                 for s_ in j.get("steps", []):
-                    if s_.get("conclusion") == "failure":
+                    if s_.get("conclusion") in ("failure", "timed_out"):
                         row["failed"] = {"job": j["name"], "step": s_["name"],
                                          "message": "Workflow step failed: " + s_["name"],
                                          "url": f["u"], "t": f["t"], "run_id": f["id"]}
@@ -158,6 +170,15 @@ def dday(s):
         return parsedate_to_datetime(s).strftime("%Y-%m-%d")
     except Exception:
         return ""
+
+
+def page_title(url, fallback):
+    try:
+        m = re.search(r"<title[^>]*>(.*?)</title>", get(url, raw=True), re.I | re.S)
+        t = " ".join(html.unescape(m.group(1)).split()) if m else ""
+        return t or fallback
+    except Exception:
+        return fallback
 
 
 sites = []
@@ -204,7 +225,8 @@ for s in cfg.get("sites", []):
                     continue
                 t = re.search(r"<title[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</title>", it, re.S)
                 d = re.search(r"<(?:lastmod|updated|published|pubDate)>(.*?)</", it, re.S)
-                arts.append({"t": (t.group(1).strip() if t else url.rstrip("/").split("/")[-1].replace("-", " ")),
+                arts.append({"t": (t.group(1).strip() if t else re.sub(r"\.html?$", "", url.rstrip("/").split("/")[-1]).replace("-", " ")),
+                             "slug": not t,
                              "u": url, "d": dday(d.group(1) if d else "")})
         # Remove home pages and duplicate URLs; never count a sitemap rebuild date as an article.
         unique = {}
@@ -218,8 +240,14 @@ for s in cfg.get("sites", []):
         for a in arts:
             if a["d"]:
                 row["days"][a["d"]] = row["days"].get(a["d"], 0) + 1
+        for a in arts[:10]:
+            if a.pop("slug", False):
+                a["t"] = page_title(a["u"], a["t"])
+        for a in arts:
+            a.pop("slug", None)
         row["articles"] = arts[:10]
     except Exception as e:
+        row.update(prev_sites.get(s["name"], {}))
         row["error"] = ("feed/data nahi mila: " + str(e))[:300]
     sites.append(row)
 

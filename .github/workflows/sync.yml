@@ -1,5 +1,8 @@
 name: Sync Dashboard
 on:
+  push:
+    branches: [main]
+    paths: ["sync.py", "config.json", ".github/workflows/sync.yml"]
   schedule:
     - cron: "*/5 * * * *"
   workflow_dispatch:

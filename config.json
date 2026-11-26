@@ -31,6 +31,7 @@
     },
     {
       "name": "SG News18",
+      "kind": "video",
       "repo": "bgsarkariresult/SG-News18",
       "workflow": "news-bot.yml",
       "site": "https://bgnewswab.github.io/sgnewswab/index.html",
@@ -38,6 +39,7 @@
     },
     {
       "name": "TechGlow India",
+      "kind": "video",
       "repo": "bgsarkariresult/TechGlow-India",
       "workflow": "tech-review-bot.yml",
       "site": "https://bgtechlab.github.io/bgtech/index.html",
@@ -45,6 +47,7 @@
     },
     {
       "name": "BK GrowUp",
+      "kind": "video",
       "repo": "bgsarkariresult/Bk-growup-",
       "workflow": "run-job-bot.yml",
       "tag": "Sarkari Job"
@@ -74,6 +77,7 @@
     },
     {
       "name": "BG Reels Bot",
+      "kind": "video",
       "repo": "bgtechlab/BG-Reels-Bot",
       "workflow": "reels-bot.yml",
       "tag": "Reels"
@@ -101,15 +105,24 @@
     },
     {
       "name": "SG News18 - Reels Maker",
+      "kind": "video",
       "repo": "bgsarkariresult/SG-News18",
       "workflow": "reels-bot.yml",
       "tag": "Reels / Shorts"
     },
     {
       "name": "BG Podcast AI",
+      "kind": "video",
       "repo": "bgsarkariresult/BG-Podcast-AI",
       "workflow": "podcast_summary.yml",
       "tag": "Podcast AI"
+    },
+    {
+      "name": "BK GrowUp Reel Bot",
+      "kind": "video",
+      "repo": "bgsarkariresult/Bk-growup-",
+      "workflow": "run-job-reel-bot.yml",
+      "tag": "Reels / Shorts"
     }
   ],
   "sites": [

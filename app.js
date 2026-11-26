@@ -72,14 +72,32 @@
         cache:'no-store', credentials:'omit', signal:controller.signal
       });
       if (!r.ok) throw new Error('HTTP ' + r.status);
-      const type = r.headers.get('content-type') || '';
-      if (!type.includes('json')) throw new Error('Invalid JSON response');
       return await r.json();
     } catch (e) {
       if (e && e.name === 'AbortError') throw new Error('Request timeout');
       throw e;
     } finally { clearTimeout(timer); }
   }
+
+  // एक repo में कई workflow हो सकते हैं, इसलिए पहचान repo + workflow से होती है।
+  const botKey = (b) => String((b.repo || '') + '|' + (b.workflow || '')).toLowerCase();
+  const DONE = ['success','failure','timed_out','startup_failure'];
+
+  function mergeBot(b, f) {
+    const byId = new Map();
+    [...(b.runs || []), ...(f.runs || [])].forEach((r) => byId.set(r.id, {...byId.get(r.id), ...r}));
+    const runs = [...byId.values()].sort((x,y) => Date.parse(y.created || y.t || 0) - Date.parse(x.created || x.t || 0)).slice(0,100);
+    const row = {...b, ...f, name:b.name, runs, live_api_error:null};
+    if (runs.length) Object.assign(row, {status:runs[0].s, time:runs[0].t, url:runs[0].u});
+    const done = runs.find((r) => DONE.includes(r.s));
+    const detail = [f.failed, b.failed].find((x) => x && done && x.run_id === done.id);
+    if (done && done.s !== 'success') row.failed = detail || {run_id:done.id, url:done.u, t:done.t};
+    else delete row.failed;
+    return row;
+  }
+
+  // वे automation जिनका सबसे नया पूरा हुआ run fail है
+  const failedCount = (bots) => bots.filter((b) => ['failure','timed_out','startup_failure'].includes((b.runs || []).find((r) => DONE.includes(r.s))?.s)).length;
 
   async function loadData(forceLiveRefresh = false) {
     let d;
@@ -91,23 +109,22 @@
       // Ask the Worker for a fresh check; the timestamp also avoids browser-side caching.
       const live = await getJson(forceLiveRefresh ? LIVE + '?refresh=1' : LIVE, 7000);
       if (live && live.ok && Array.isArray(live.bots) && live.bots.length) {
-        const map = new Map(live.bots.map((b) => [String(b.repo || '').toLowerCase(), b]));
+        const map = new Map(live.bots.map((b) => [botKey(b), b]));
         const good = live.bots.filter((b) => b && b.status !== 'api_error');
         const errors = live.bots.filter((b) => b && b.status === 'api_error');
         d.live_api_errors = errors.length;
         d.live_api_error_message = errors[0]?.api_error || '';
         d.bots = (d.bots || []).map((b) => {
-          const f = map.get(String(b.repo || '').toLowerCase());
+          const f = map.get(botKey(b));
           if (!f) return b;
           if (f.status === 'api_error') return {...b, live_api_error:f.api_error || 'Live API error'};
-          if (Array.isArray(f.runs) && !f.runs.length && (f.status === 'unknown' || (!['in_progress','queued'].includes(f.status) && (b.runs || []).length))) {
-            // Worker कभी-कभी unknown + empty runs देता है; पुराने cached runs/status न मिटाएँ।
-            return {...b, live_api_error:null};
-          }
-          return {...b, ...f, live_api_error:null, runs:Array.isArray(f.runs) ? f.runs : (b.runs || [])};
+          // Worker कभी-कभी खाली runs देता है; पुराने cached runs/status न मिटाएँ।
+          if (!Array.isArray(f.runs) || !f.runs.length) return b;
+          return mergeBot(b, f);
         });
+        const have = new Set(d.bots.map(botKey));
         for (const b of live.bots) {
-          if (b.status !== 'api_error' && !(d.bots || []).some((x) => String(x.repo || '').toLowerCase() === String(b.repo || '').toLowerCase())) d.bots.push(b);
+          if (b.status !== 'api_error' && !have.has(botKey(b))) d.bots.push(b);
         }
         d.live_updated = live.updated || live.checked_at || live.timestamp || new Date().toISOString();
         // Never label cached JSON as live when every GitHub Actions request failed.
@@ -118,6 +135,19 @@
     return d;
   }
 
+  // ऊपर की पट्टी और "System Online" — हर page पर
+  function paintStatus(d) {
+    const bots = Array.isArray(d.bots) ? d.bots : [];
+    const running = bots.reduce((n,b) => n + (b.runs || []).filter((r) => r.s === 'in_progress').length, 0);
+    const failed = failedCount(bots);
+    const isLive = ['live','partial'].includes(d.live_state);
+    const stamp = isLive ? (d.live_updated || d.updated) : d.updated;
+    const label = d.live_state === 'live' ? '🟢 Live' : d.live_state === 'partial' ? '🟡 Partial data' : '⚠ Cached / API unavailable';
+    const pill = $('#goalLive'), sys = $('#sysS');
+    if (pill) pill.textContent = label + ' · Last sync: ' + (stamp ? new Date(stamp).toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit'}) : '—') + ' · ' + running + ' running · ' + failed + ' failed';
+    if (sys) sys.textContent = (d.live_state === 'live' ? 'Cloudflare Live: ' : d.live_state === 'partial' ? 'Live API partial: ' : 'Dashboard sync: ') + (stamp ? new Date(stamp).toLocaleString('hi-IN') : '—');
+  }
+
   function render(d) {
     const channels = Array.isArray(d.channels) ? d.channels : [];
     const sites = Array.isArray(d.websites) ? d.websites : (Array.isArray(d.sites) ? d.sites : []);
@@ -126,21 +156,24 @@
     const runs = bots.flatMap((b) => (Array.isArray(b.runs) ? b.runs : []).map((r) => ({b,r}))).sort((a,b) => Date.parse(b.r.t || 0) - Date.parse(a.r.t || 0));
     const counts = {};
     runs.forEach((x) => { const s = String(x.r.s || 'unknown'); counts[s] = (counts[s] || 0) + 1; });
-    const success = counts.success || 0, failed = counts.failure || 0, running = counts.in_progress || 0, queued = counts.queued || 0;
-    const attention = failed + (counts.timed_out || 0) + (counts.action_required || 0);
-    const totalRuns = Number(d.total_runs) || runs.length;
+    const success = counts.success || 0, running = counts.in_progress || 0, queued = counts.queued || 0;
+    // Failed = वे automation जिनका सबसे नया पूरा हुआ run fail है (पुराने fail नहीं गिने जाते)।
+    const failed = failedCount(bots);
+    const attention = failed + bots.filter((b) => b.status === 'action_required').length;
+    const totalRuns = runs.length;
 
     const chRows = channels.map((c) =>
-      '<div class="list-row"><div class="list-av sq">▶</div><div class="list-info"><b>' + esc(c.name || 'Channel') +
-      '</b><small>' + esc(c.id || '') + '</small></div><div class="list-meta"><span class="subs">' + esc(c.subs || c.subscribers || 0) +
-      ' subs</span><span class="badge-s ' + (c.error ? 'paused' : 'success') + '">' + (c.error ? 'Paused' : 'Active') + '</span></div></div>'
+      '<div class="list-row">' + (c.icon ? '<img class="list-av sq" src="' + esc(c.icon) + '" alt="">' : '<div class="list-av sq">▶</div>') +
+      '<div class="list-info"><b>' + esc(c.name || 'Channel') + '</b><small>' + esc(c.error || c.id || '') + '</small></div><div class="list-meta"><span class="subs">' +
+      (c.error ? '—' : fmt(c.subs)) + ' subs</span><span class="badge-s ' + (c.error ? 'paused">ID बाकी' : 'success">Active') + '</span></div></div>'
     ).join('') || '<small class="mu">No channels yet</small>';
 
-    const siteSource = sites.length ? sites : bots.filter((b) => b.site).map((b) => ({name:b.name, url:b.site}));
-    const siteRows = siteSource.map((s) =>
-      '<div class="list-row"><div class="list-av sq">🌐</div><div class="list-info"><b>' + esc(s.name || 'Project') +
-      '</b><small>' + esc(s.url || '') + '</small></div><span class="badge-s live">Live</span></div>'
-    ).join('') || '<small class="mu">No websites</small>';
+    const siteSource = sites.length ? sites : bots.filter((b) => b.site).map((b) => ({name:b.name, url:b.site, repo:b.repo}));
+    const siteRows = siteSource.map((s) => {
+      const bot = bots.find((b) => String(b.repo || '').toLowerCase() === String(s.repo || '').toLowerCase());
+      return '<div class="list-row"><div class="list-av sq">🌐</div><div class="list-info"><b>' + esc(s.name || 'Project') +
+        '</b><small>' + esc(s.url || '') + '</small></div>' + chip(bot?.status) + '</div>';
+    }).join('') || '<small class="mu">No websites</small>';
 
     const activity = runs.slice(0,8).map((x) => {
       const s = String(x.r.s || 'unknown');
@@ -169,7 +202,7 @@
     $('#main').innerHTML =
       '<div class="kpi-row">' +
         '<div class="kpi red"><label>🟢 Successful Today</label><div class="num">' + stats(d, TD(), TD()).ok + '</div><div class="sub"><span>Jobs Completed Today</span><span class="up">✓ Success</span></div></div>' +
-        '<div class="kpi purple"><label>Total Runs</label><div class="num">' + totalRuns + '</div><div class="sub"><span>Automation Jobs</span><span class="up">✓ ' + success + ' · ✕ ' + failed + ' · ⏳ ' + running + '</span></div></div>' +
+        '<div class="kpi purple"><label>हाल के Runs</label><div class="num">' + totalRuns + '</div><div class="sub"><span>हर bot के पिछले 100 तक</span><span class="up">✓ ' + success + ' · ✕ ' + (counts.failure || 0) + ' · ⏳ ' + running + '</span></div></div>' +
         '<div class="kpi blue"><label>🔵 Running Now</label><div class="num">' + running + '</div><div class="sub"><span>' + (running ? runs.filter(x => ["in_progress","queued"].includes(String(x.r.s||""))).slice(0,2).map(x => esc(x.b.name || x.b.repo || "Automation")).join(" · ") : "कोई काम अभी नहीं चल रहा") + '</span><span class="up">● Live</span></div></div>' +
       '</div>' +
       '<div class="dash-grid"><div class="col">' +
@@ -190,11 +223,7 @@
       '<div class="footer"><div><b style="color:var(--ac2)">BG</b> Automation · AI + Automation | Grow Together</div><div class="status-ok">' +
       (d.live_state === 'live' ? '● Systems Operational' : '● Dashboard Online') + '</div></div>';
 
-    const stamp = ['live','partial'].includes(d.live_state) ? (d.live_updated || d.updated) : d.updated;
-    const liveLabel = d.live_state === 'live' ? '🟢 Live' : d.live_state === 'partial' ? '🟡 Partial data' : '⚠ Cached / API unavailable';
-    const syncedAt = d.live_state === 'live' || d.live_state === 'partial' ? (d.live_updated || d.updated) : d.updated;
-    $('#goalLive').textContent = liveLabel + ' · Last sync: ' + (syncedAt ? new Date(syncedAt).toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit'}) : '—') + ' · ' + running + ' running · ' + failed + ' failed';
-    $('#sysS').textContent = (d.live_state === 'live' ? 'Cloudflare Live: ' : d.live_state === 'partial' ? 'Live API partial: ' : 'Dashboard sync: ') + (stamp ? new Date(stamp).toLocaleString('hi-IN') : '—');
+    paintStatus(d);
     loadTrends();
   }
 
@@ -286,8 +315,9 @@
     if (!Number.isFinite(x)) return '0';
     return x.toLocaleString('en-IN');
   };
-  const dayOf = (t) => new Date(t).toISOString().slice(0,10);
-  const TD = () => new Date().toISOString().slice(0,10);
+  // तारीख़ हमेशा भारत के समय (IST) से
+  const dayOf = (t) => new Date(new Date(t).getTime() + 19800000).toISOString().slice(0,10);
+  const TD = () => dayOf(Date.now());
   const at = (t) => t ? new Date(t).toLocaleString('hi-IN') : '—';
   const st = (s) => ({success:'✓',failure:'✕',in_progress:'⏳',queued:'🟡',cancelled:'🚫',timed_out:'⏱️'}[String(s||'')] || '•');
   const chip = (s) => {
@@ -298,16 +328,16 @@
   const okRun = (r) => String(r?.s||'') === 'success';
   const stats = (d, start, end) => {
     const a=Array.isArray(d?.bots)?d.bots:[];
-    const from=start?new Date(start+'T00:00:00').getTime():-Infinity;
-    const to=end?new Date(end+'T23:59:59').getTime():Infinity;
+    const from=start?new Date(start+'T00:00:00+05:30').getTime():-Infinity;
+    const to=end?new Date(end+'T23:59:59.999+05:30').getTime():Infinity;
     let ok=0,bad=0,vid=0,min=0,cost=0;
     for(const b of a){
       for(const r of (Array.isArray(b.runs)?b.runs:[])){
         const tm=Date.parse(r.t||r.created||0);
         if(tm<from||tm>to) continue;
-        if(okRun(r)){ok++; if(b.video||b.type==='video'||/video|reel/i.test(String(r.n||'')))vid++; }
+        if(okRun(r)){ok++; if(b.kind==='video')vid++; }
         if(['failure','timed_out','action_required','startup_failure'].includes(String(r.s)))bad++;
-        if(r.t&&r.completed_at){min+=Math.max(0,Math.round((Date.parse(r.completed_at)-tm)/60000));}
+        if(Number(r.d)>0)min+=Math.ceil(r.d/60);
         cost += okRun(r) ? Number(b.cost||0) : 0;
       }
     }
@@ -325,15 +355,18 @@
     if(main) main.innerHTML='<div class="card"><h2>⏳ '+esc(pageTitle)+'</h2><small>Live data load ho raha hai…</small></div>';
     try {
       const d=await loadData();
+      paintStatus(d);
       if(typeof pageRenderer==='function') await pageRenderer(d);
       if(page==='control.html') {
         window.refreshDashboard = async (forceLiveRefresh = false) => {
           const fresh=await loadData(forceLiveRefresh);
+          paintStatus(fresh);
           if(typeof pageRenderer==='function') await pageRenderer(fresh);
         };
       } else {
         window.refreshDashboard = async (forceLiveRefresh = false) => {
           const fresh=await loadData(forceLiveRefresh);
+          paintStatus(fresh);
           if(typeof pageRenderer==='function') await pageRenderer(fresh);
         };
       }

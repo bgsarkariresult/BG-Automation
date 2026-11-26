@@ -10,14 +10,14 @@
 <link rel="stylesheet" href="app.css">
 </head>
 <body>
-<script src="app.js?v=20261126-title-updater"></script>
+<script src="app.js?v=20261126-data-fix"></script>
 <script>
 const WORKER_URL='https://bg-runf.garhwalbhavesh2002.workers.dev/';
 const GH_EDIT_URL='https://github.com/bgsarkariresult/BG-Automation/edit/main/data/dashboard.json';
 
 const BOT_CONFIG={
  'bgsarkariresult/sg-news18':{workflow:'news-bot.yml',input:'article_url'},
- 'bgsarkariresult/techglow-india':{workflow:'news_automation.yml',input:'article_url'},
+ 'bgsarkariresult/techglow-india':{workflow:'tech-review-bot.yml',input:'article_url'},
  'bgsarkariresult/bk-growup-':{workflow:'run-job-bot.yml',input:'post_url'},
  'bgtechlab/bg-reels-bot':{workflow:'reels-bot.yml',input:'product_url'},
  'bgtechlab/trending-topic-finder':{workflow:'daily-auto-run.yml',input:null},
@@ -45,7 +45,7 @@ const RUN_STATES=['in_progress','queued','waiting','pending','requested'];
 const FAIL_STATES=['failure','timed_out','action_required','startup_failure','stale'];
 
 const lc=s=>String(s||'').toLowerCase();
-const slugOf=b=>b.control_id||String(b.repo||b.name||'x').replace(/[^a-zA-Z0-9]/g,'_');
+const slugOf=b=>b.control_id||(String(b.repo||b.name||'x')+'_'+(b.workflow||'')).replace(/[^a-zA-Z0-9]/g,'_');
 const cfgFor=b=>BOT_CONFIG[lc(b.repo)]||{};
 const workflowFor=b=>b.workflow||cfgFor(b).workflow||'';
 const inputFor=b=>(b.input_name!==undefined?b.input_name:cfgFor(b).input)||null;
@@ -124,7 +124,7 @@ const podcastBotFallback={
 const hasPodcastBot=bots.some(b=>lc(b.repo)==='bgsarkariresult/bg-podcast-ai');
 // SG News18 और BG Podcast AI को YouTube Channels में रखें, भले live sync response में entry न हो।
 const youtubeBots=[...(hasSgNewsMainChannel?bots:[...bots,sgNewsBotFallback]),...(hasPodcastBot?[]:[podcastBotFallback])];
- const reelSource=bots.find(x=>lc(x.repo)==='bgsarkariresult/bk-growup-');
+ const reelSource=bots.find(x=>lc(x.repo)==='bgsarkariresult/bk-growup-'&&lc(x.workflow)==='run-job-reel-bot.yml');
  const reelBot={...(reelSource||{}),name:'BK GrowUp Reel Bot',repo:'bgsarkariresult/bk-growup-',workflow:'run-job-reel-bot.yml',input_name:'post_url',control_id:'bk_growup_reel_bot',status:(reelSource&&reelSource.status)||'unknown',runs:Array.isArray(reelSource&&reelSource.runs)?reelSource.runs:[]};
   const sgReelSource=bots.find(x=>lc(x.repo)==='bgsarkariresult/sg-news18'&&lc(x.workflow)==='reels-bot.yml');
  const sgReelBot={...(sgReelSource||{}),name:'SG News18 - Reels Maker',repo:'bgsarkariresult/SG-News18',workflow:'reels-bot.yml',input_name:'article_url',control_id:'sg_news18_reels_maker',status:(sgReelSource&&sgReelSource.status)||'unknown',runs:Array.isArray(sgReelSource&&sgReelSource.runs)?sgReelSource.runs:[],site:'https://github.com/bgsarkariresult/SG-News18/actions/workflows/reels-bot.yml'};
@@ -161,9 +161,8 @@ const youtubeBots=[...(hasSgNewsMainChannel?bots:[...bots,sgNewsBotFallback]),..
  }).join('')||'<small>कोई असफल run नहीं।</small>')+'<small id="rerunMsg" role="status" aria-live="polite" style="display:block;margin-top:6px"></small></div>'+
  '<div class="card" id="liveLogPanel" hidden><div class="hd"><h2>💻 Live Logs <small id="liveLogTitle"></small></h2><button class="btn g" type="button" onclick="closeLiveLogs()">✕ बंद करें</button></div><div id="liveLogBody"><small>प्रोजेक्ट चुनें।</small></div></div>'+
  '<div class="card"><h2>🌐 Websites <small>(वेबसाइट)</small></h2><div class="sites">'+(siteBots.filter(match).map(renderProjectCard).join('')||none)+'</div><button class="btn g" type="button" onclick="addProject(\'website\')">＋ Add Website</button></div>'+
- '<div class="card"><h2>▶ YouTube Channels <small>(यूट्यूब चैनल)</small></h2><div class="sites">'+(youtubeBots.filter(b=>YT_REPOS.includes(lc(b.repo))&&lc(b.workflow)!=='reels-bot.yml'&&match(b)).map(renderProjectCard).join('')||none)+'</div><button class="btn g" type="button" onclick="addProject(\'youtube\')">＋ Add YouTube Channel</button></div>'+
- '<div class="card"><h2>🎬 Reels / Shorts <small>(अलग Reel लिंक)</small></h2><small style="display:block;margin-bottom:10px">यहाँ Blogger पोस्ट का लिंक डालें और Run दबाएँ — केवल Shorts/Reel workflow चलेगा।</small><div class="sites">'+([reelBot,sgReelBot,techGlowReelBot].filter(match).map(renderProjectCard).join('')||none)+'</div></div>'+
- 
+ '<div class="card"><h2>▶ YouTube Channels <small>(यूट्यूब चैनल)</small></h2><div class="sites">'+(youtubeBots.filter(b=>YT_REPOS.includes(lc(b.repo))&&!/reel-?s?-bot\.yml$/.test(lc(b.workflow))&&match(b)).map(renderProjectCard).join('')||none)+'</div><button class="btn g" type="button" onclick="addProject(\'youtube\')">＋ Add YouTube Channel</button></div>'+
+ '<div class="card"><h2>🎬 Reels / Shorts <small>(अलग Reel लिंक)</small></h2><small style="display:block;margin-bottom:10px">यहाँ Blogger पोस्ट का लिंक डालें और Run दबाएँ — केवल Shorts/Reel workflow चलेगा।</small><div class="sites">'+([reelBot,sgReelBot,techGlowReelBot].filter(match).map(renderProjectCard).join('')||none)+'</div></div>';
  restoreMsgs();restoreLogs();
  if(aeId){const e=document.getElementById(aeId);if(e&&e.focus){e.focus();if(selS!==null&&e.setSelectionRange){try{e.setSelectionRange(selS,selS)}catch(_){}}}}
 }
@@ -224,7 +223,7 @@ function tg(s){const e=document.getElementById('rs_'+s);if(!e)return;e.hidden=!e
 const TERM_STYLE='background:#071426;color:#dce8fa;border:1px solid #22354f;border-radius:12px;padding:14px;max-height:420px;overflow:auto;font:13px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere';
 function logSkeleton(){const b=document.getElementById('liveLogBody');if(!b)return;b.innerHTML='<div id="logStatus" class="li"></div><small id="logHint"></small><div class="log-terminal" id="logTerminal" style="'+TERM_STYLE+'"></div><div id="logSteps" style="margin-top:10px"></div><small id="logMsg"></small>'}
 function paintLogs(){
- const L=UI.log,S=L,title=document.getElementById('liveLogTitle'),cur=(window.D&&Array.isArray(window.D.bots)?window.D.bots:[]).find(x=>lc(x.repo)===lc(L.repo));
+ const L=UI.log,S=L,title=document.getElementById('liveLogTitle'),cur=((LASTD&&LASTD.bots)||[]).find(x=>lc(x.repo)===lc(L.repo)&&lc(workflowFor(x))===lc(L.workflow));
  if(title)title.textContent='— '+(S.title||S.name||'');
  const stEl=document.getElementById('logStatus');if(stEl)stEl.innerHTML='<b>स्थिति</b>'+chip(cur?latestState(cur):'unknown');
  const h=document.getElementById('logHint');if(h)h.textContent=S.hint||'';
