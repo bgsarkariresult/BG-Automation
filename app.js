@@ -25,7 +25,7 @@
 
   const NAV = [
     ['index.html','⌂','Dashboard'], ['youtube.html','▶','YouTube Channels'],
-    ['sites.html','🌐','Websites'], ['control.html','⚙','Actions Control'],
+    ['sites.html','🌐','Websites'], ['control.html','⚙','Actions Control'], ['title-updater.html','📝','Title Updater'],
     ['logs.html','📋','Live Logs · Telegram'], ['trending.html','🔥','Trending'],
     ['reports.html','💰','Reports']
   ];

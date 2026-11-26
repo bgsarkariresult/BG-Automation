@@ -23,6 +23,13 @@
   ],
   "bots": [
     {
+      "name": "BG Title Updater",
+      "repo": "bgsarkariresult/BG-Automation",
+      "workflow": "title-updater.yml",
+      "site": "https://bgsarkariresult.github.io/BG-Automation/title-updater.html",
+      "tag": "YouTube Titles"
+    },
+    {
       "name": "SG News18",
       "repo": "bgsarkariresult/SG-News18",
       "workflow": "news-bot.yml",

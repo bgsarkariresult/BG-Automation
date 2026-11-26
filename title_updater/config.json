@@ -1,0 +1,26 @@
+{
+  "dry_run": true,
+  "include_unlisted": false,
+  "rules": {
+    "min_age_days": 14,
+    "observe_days": 7,
+    "max_recent_views_per_day": 2,
+    "max_lifetime_views_per_day": 5,
+    "protect_total_views": 500,
+    "cooldown_days": 14,
+    "max_changes_per_video": 3,
+    "new_proposals_per_channel_per_day": 3,
+    "max_updates_per_day": 20,
+    "proposal_expiry_days": 7,
+    "max_videos_per_channel": 300
+  },
+  "protected_videos": [],
+  "channels": [
+    {"key": "1", "name": "SG News24", "enabled": true, "style": "Cricket और Sports news. Title और intro Hindi (Devanagari) में, खिलाड़ी/टीम के नाम साफ़। कोई स्कोर या नतीजा अपनी तरफ़ से न जोड़ें।"},
+    {"key": "2", "name": "BGCraters (Products Review)", "enabled": true, "style": "Product review. Hinglish title, product का नाम और model साफ़। Price, discount या rating सिर्फ़ तब जब पुराने title/description में लिखी हो।"},
+    {"key": "3", "name": "BK GrowUp (Sarkari Naukri)", "enabled": true, "style": "सरकारी नौकरी updates. Hindi title, भर्ती/विभाग का नाम साफ़। तारीख़, पद-संख्या, वेतन सिर्फ़ पुराने title/description से। Result/Admit Card वीडियो में form भरने की बात न जोड़ें।"},
+    {"key": "4", "name": "History Facts", "enabled": true, "style": "इतिहास के रोचक तथ्य. Hindi title, जिज्ञासा जगाने वाला पर तथ्य के दायरे में।"},
+    {"key": "5", "name": "Podcast Summary", "enabled": true, "style": "Podcast summary. Title और description Hinglish (Roman) में, guest का नाम और मुख्य विषय।"},
+    {"key": "6", "name": "Channel 6", "enabled": true, "style": "वीडियो की भाषा में साफ़, सच्चा title।"}
+  ]
+}
