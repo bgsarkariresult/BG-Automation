@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-27T11:04:03Z",
-  "checked_at": "2026-11-27T11:04:03Z",
+  "updated": "2026-11-27T11:29:01Z",
+  "checked_at": "2026-11-27T11:29:01Z",
   "refresh_interval_seconds": 300,
   "source": "GitHub Actions API",
   "channels": [
@@ -254,7 +254,7 @@
       "actor": "bgsarkariresult",
       "html_url": "https://github.com/bgsarkariresult/BG-Automation/actions/runs/45985526041",
       "cron": "17 * * * *",
-      "next": "2026-11-27T11:17:00Z"
+      "next": "2026-11-27T12:17:00Z"
     },
     {
       "name": "SG News18",
@@ -1676,7 +1676,7 @@
       "actor": "bgsarkariresult",
       "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/45953862087",
       "cron": "*/5 * * * *",
-      "next": "2026-11-27T11:05:00Z"
+      "next": "2026-11-27T11:30:00Z"
     },
     {
       "name": "TechGlow India",
@@ -1686,8 +1686,22 @@
       "tag": "Tech Review",
       "cost": "",
       "kind": "video",
-      "status": "success",
+      "status": "in_progress",
       "runs": [
+        {
+          "id": 45990190873,
+          "number": 397,
+          "s": "in_progress",
+          "t": "2026-11-27T11:24:29Z",
+          "started": "2026-11-27T11:24:15Z",
+          "created": "2026-11-27T11:24:15Z",
+          "d": 14,
+          "e": "workflow_dispatch",
+          "n": "TechGlow India - Tech Review Auto Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/45990190873"
+        },
         {
           "id": 45936794873,
           "number": 396,
@@ -3073,32 +3087,18 @@
           "branch": "main",
           "actor": "bgsarkariresult",
           "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/42331296476"
-        },
-        {
-          "id": 42325985931,
-          "number": 297,
-          "s": "success",
-          "t": "2026-11-07T02:03:42Z",
-          "started": "2026-11-07T01:48:12Z",
-          "created": "2026-11-07T01:48:12Z",
-          "d": 930,
-          "e": "workflow_dispatch",
-          "n": "TechGlow India - Tech Review Auto Bot",
-          "branch": "main",
-          "actor": "bgsarkariresult",
-          "u": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/42325985931"
         }
       ],
-      "time": "2026-11-27T04:05:28Z",
-      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/45936794873",
-      "last_run_id": 45936794873,
-      "run_number": 396,
+      "time": "2026-11-27T11:24:29Z",
+      "url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/45990190873",
+      "last_run_id": 45990190873,
+      "run_number": 397,
       "branch": "main",
       "event": "workflow_dispatch",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/45936794873",
+      "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/45990190873",
       "cron": "*/5 * * * *",
-      "next": "2026-11-27T11:05:00Z"
+      "next": "2026-11-27T11:30:00Z"
     },
     {
       "name": "BK GrowUp",
@@ -10250,7 +10250,7 @@
       "actor": "bgtechlab",
       "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/45982428713",
       "cron": "*/5 * * * *",
-      "next": "2026-11-27T11:05:00Z"
+      "next": "2026-11-27T11:30:00Z"
     },
     {
       "name": "Job Page Auto Publisher",
@@ -15943,6 +15943,20 @@
       "status": "success",
       "runs": [
         {
+          "id": 45987424487,
+          "number": 18,
+          "s": "success",
+          "t": "2026-11-27T11:26:45Z",
+          "started": "2026-11-27T11:04:36Z",
+          "created": "2026-11-27T11:04:36Z",
+          "d": 1329,
+          "e": "workflow_dispatch",
+          "n": "Podcast Summary Bot",
+          "branch": "main",
+          "actor": "bgsarkariresult",
+          "u": "https://github.com/bgsarkariresult/BG-Podcast-AI/actions/runs/45987424487"
+        },
+        {
           "id": 45753649666,
           "number": 17,
           "s": "success",
@@ -16181,14 +16195,14 @@
           "u": "https://github.com/bgsarkariresult/BG-Podcast-AI/actions/runs/45313515041"
         }
       ],
-      "time": "2026-11-26T04:27:52Z",
-      "url": "https://github.com/bgsarkariresult/BG-Podcast-AI/actions/runs/45753649666",
-      "last_run_id": 45753649666,
-      "run_number": 17,
+      "time": "2026-11-27T11:26:45Z",
+      "url": "https://github.com/bgsarkariresult/BG-Podcast-AI/actions/runs/45987424487",
+      "last_run_id": 45987424487,
+      "run_number": 18,
       "branch": "main",
       "event": "workflow_dispatch",
       "actor": "bgsarkariresult",
-      "html_url": "https://github.com/bgsarkariresult/BG-Podcast-AI/actions/runs/45753649666"
+      "html_url": "https://github.com/bgsarkariresult/BG-Podcast-AI/actions/runs/45987424487"
     },
     {
       "name": "BK GrowUp Reel Bot",
@@ -17103,6 +17117,20 @@
       "status": "success",
       "runs": [
         {
+          "id": 45988188321,
+          "number": 6,
+          "s": "success",
+          "t": "2026-11-27T11:14:26Z",
+          "started": "2026-11-27T11:09:56Z",
+          "created": "2026-11-27T11:09:56Z",
+          "d": 270,
+          "e": "workflow_dispatch",
+          "n": "Documentary Bot",
+          "branch": "main",
+          "actor": "bgtechlab",
+          "u": "https://github.com/bgtechlab/documentary/actions/runs/45988188321"
+        },
+        {
           "id": 45932522157,
           "number": 5,
           "s": "success",
@@ -17173,14 +17201,14 @@
           "u": "https://github.com/bgtechlab/documentary/actions/runs/45182675733"
         }
       ],
-      "time": "2026-11-27T03:14:44Z",
-      "url": "https://github.com/bgtechlab/documentary/actions/runs/45932522157",
-      "last_run_id": 45932522157,
-      "run_number": 5,
+      "time": "2026-11-27T11:14:26Z",
+      "url": "https://github.com/bgtechlab/documentary/actions/runs/45988188321",
+      "last_run_id": 45988188321,
+      "run_number": 6,
       "branch": "main",
       "event": "workflow_dispatch",
       "actor": "bgtechlab",
-      "html_url": "https://github.com/bgtechlab/documentary/actions/runs/45932522157"
+      "html_url": "https://github.com/bgtechlab/documentary/actions/runs/45988188321"
     }
   ],
   "sites": [
