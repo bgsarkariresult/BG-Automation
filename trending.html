@@ -35,7 +35,7 @@ let SEL = null;
 
 function norm(data){
   const rows=[];
-  const category={'sg-news-automation':'Sports','tech-review-bot':'Tech','bg-auto-job-bot':'Jobs','history-facts-bot':'Entertainment','reels-bot':'Entertainment'};
+  const category={'sg-news-automation':'Sports','tech-review-bot':'Tech','bg-auto-job-bot':'Jobs','history-facts-bot':'Entertainment','reels-bot':'Entertainment','podcast-summary':'Entertainment','documentary':'Entertainment'};
   for(const [key,value] of Object.entries(data||{})){
     if(!value)continue;
     const list=Array.isArray(value.latest)?value.latest:[];
