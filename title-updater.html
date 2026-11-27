@@ -27,8 +27,21 @@ async function loadState(){
 boot('title-updater.html','Title Updater',async()=>{await loadState();paint()});
 
 function btn(label,act,id,ghost){return '<button type="button" class="btn '+(ghost?'g':'')+'" data-act="'+act+'" data-id="'+esc(id)+'">'+label+'</button>'}
+const manual=()=>TU.s&&TU.s.mode!=='auto';
+const COPY={};
+function copyBtn(label,key,text){COPY[key]=text;return btn('📋 '+label,'copy',key,true)}
+const studio=id=>'<a class="btn g" href="https://studio.youtube.com/video/'+encodeURIComponent(id)+'/edit" target="_blank" rel="noopener">✏️ Studio में बदलें</a>';
+function manualCard(p){
+ const q=TU.queue,sel=q[p.id]&&q[p.id][0];
+ return '<div class="tu-item"><img class="tu-thumb" src="https://i.ytimg.com/vi/'+encodeURIComponent(p.video_id)+'/mqdefault.jpg" alt=""><b>'+esc(p.channel_name)+'</b><br><small>'+esc(p.reason)+' · '+ago(p.created)+' · <a href="'+yt(p.video_id)+'" target="_blank" rel="noopener">वीडियो ↗</a></small><p><small>पुराना:</small> '+esc(p.old_title)+'</p>'+
+ p.titles.map((t,i)=>'<div class="li"><span style="flex:1">'+(i+1)+'. '+esc(t)+'</span>'+copyBtn('Copy',p.id+'t'+i,t)+'</div>').join('')+
+ '<div class="tu-acts">'+copyBtn('नई Description',p.id+'d',p.new_description||'')+copyBtn('Tags',p.id+'g',(p.new_tags||[]).join(', '))+studio(p.video_id)+'</div>'+
+ '<details><summary><small>नई description, playlist, thumbnail</small></summary><pre class="tu">'+esc(p.new_description||'')+'\n\nPlaylist: '+esc(p.playlist_name||'—')+'\nThumbnail सुझाव: '+esc(p.thumbnail_idea||'—')+'</pre></details>'+
+ '<div class="tu-acts">'+btn(sel==='done'?'✔ चुना':'✅ मैंने लगा दिया','done',p.id,sel!=='done')+btn(sel==='reject'?'✔ Reject चुना':'❌ Reject','reject',p.id,true)+btn(q[p.video_id]?'✔ सुरक्षित चुना':'🛡 कभी न छेड़ें','protect',p.video_id,true)+'</div></div>';
+}
 function pendingView(s,f){
  const list=(s.pending||[]).filter(f);
+ if(manual()&&list.length)return list.map(manualCard).join('');
  return list.map(p=>{
   const q=TU.queue[p.id],pick=TU.picks[p.id]||1;
   return '<div class="tu-item"><img class="tu-thumb" src="https://i.ytimg.com/vi/'+encodeURIComponent(p.video_id)+'/mqdefault.jpg" alt=""><b>'+esc(p.channel_name)+'</b><br><small>'+esc(p.reason)+' · '+ago(p.created)+' · <a href="'+yt(p.video_id)+'" target="_blank" rel="noopener">वीडियो ↗</a></small><p><small>पुराना:</small> '+esc(p.old_title)+'</p>'+
@@ -41,7 +54,7 @@ function historyView(s,f){
  return (s.history||[]).filter(f).map(h=>{
   const r=h.result,v=r&&VERDICT[r.verdict];
   const can=h.status==='applied'||h.status==='applying';
-  return '<div class="tu-item"><b>'+esc(h.channel_name)+'</b> <span class="badge-s '+(h.status==='applied'?'success':h.status==='failed'?'failure':'paused')+'">'+esc(h.status)+'</span>'+(v?' <span class="badge-s '+v[0]+'">'+v[1]+'</span>':'')+'<br><small>'+at(h.at)+' · <a href="'+yt(h.video_id)+'" target="_blank" rel="noopener">वीडियो ↗</a></small><p><small>पुराना:</small> '+esc(h.old.title)+'<br><small>नया:</small> '+esc(h.new.title)+'</p><small>पहले '+esc(h.rate_before)+' views/दिन'+(r?' → बाद में '+esc(r.after):' · नतीजा 14 दिन बाद')+(h.error?' · '+esc(h.error):'')+'</small><details><summary><small>पुरानी description (backup)</small></summary><pre class="tu">'+esc(h.old.description)+'</pre></details>'+(can?'<div class="tu-acts">'+btn(TU.queue[h.id]?'✔ Undo चुना':'↩️ Undo','undo',h.id,!TU.queue[h.id])+'</div>':'')+'</div>'
+  return '<div class="tu-item"><b>'+esc(h.channel_name)+'</b> <span class="badge-s '+(h.status==='applied'?'success':h.status==='failed'?'failure':'paused')+'">'+esc(h.status)+'</span>'+(v?' <span class="badge-s '+v[0]+'">'+v[1]+'</span>':'')+'<br><small>'+at(h.at)+' · <a href="'+yt(h.video_id)+'" target="_blank" rel="noopener">वीडियो ↗</a></small><p><small>पुराना:</small> '+esc(h.old.title)+'<br><small>नया:</small> '+esc(h.new.title)+'</p><small>पहले '+esc(h.rate_before)+' views/दिन'+(r?' → बाद में '+esc(r.after):' · नतीजा 14 दिन बाद')+(h.error?' · '+esc(h.error):'')+'</small><details><summary><small>पुरानी description (backup)</small></summary><pre class="tu">'+esc(h.old.description)+'</pre></details>'+(can?'<div class="tu-acts">'+(manual()?copyBtn('पुराना Title',h.id+'ot',h.old.title)+copyBtn('पुरानी Description',h.id+'od',h.old.description)+studio(h.video_id):btn(TU.queue[h.id]?'✔ Undo चुना':'↩️ Undo','undo',h.id,!TU.queue[h.id]))+'</div>':'')+'</div>'
  }).join('')||'<small>अभी कोई बदलाव नहीं हुआ।</small>';
 }
 function videoView(s,f){
@@ -51,7 +64,7 @@ function videoView(s,f){
 }
 function paint(){
  const s=TU.s;
- if(!s){$('#main').innerHTML='<div class="card"><h2>📝 Title Updater</h2><p>अभी data नहीं बना ('+esc(TU.err||'—')+')। Secrets जोड़कर पहला scan चलाएँ।</p><div class="tu-acts">'+btn('▶ अभी Scan करें','scan','')+'</div><small id="tuMsg">'+esc(TU.msg)+'</small></div>';return}
+ if(!s){$('#main').innerHTML='<div class="card"><h2>📝 Title Updater</h2><p>अभी data नहीं बना ('+esc(TU.err||'—')+')। पहला scan चलाएँ।</p><div class="tu-acts">'+btn('▶ अभी Scan करें','scan','')+'</div><small id="tuMsg">'+esc(TU.msg)+'</small></div>';return}
  const f=x=>TU.ch==='all'||x.channel===TU.ch;
  const vids=Object.values(s.videos||{}).filter(f),n=st=>vids.filter(v=>v.status===st).length;
  const T=(l,v)=>'<div class="stat"><div><small>'+l+'</small><b>'+v+'</b></div></div>';
@@ -59,11 +72,11 @@ function paint(){
  const count=Object.keys(TU.queue).length;
  const week=(s.history||[]).filter(h=>f(h)&&h.status==='applied'&&Date.now()-Date.parse(h.at)<7*864e5).length;
  const res=(s.history||[]).filter(h=>f(h)&&h.result).map(h=>h.result.verdict),rc=k=>res.filter(x=>x===k).length;
- const tabs=[['pending','⏳ Approve ('+(s.pending||[]).filter(f).length+')'],['history','🕘 History / Undo'],['videos','▶ वीडियो'],['report','📊 रिपोर्ट']];
+ const tabs=[['pending',(manual()?'💡 सुझाव (':'⏳ Approve (')+(s.pending||[]).filter(f).length+')'],['history','🕘 History / Undo'],['videos','▶ वीडियो'],['report','📊 रिपोर्ट']];
  let body=TU.tab==='pending'?pendingView(s,f):TU.tab==='history'?historyView(s,f):TU.tab==='videos'?videoView(s,f):
   '<p>पिछले 7 दिन में बदले: <b>'+week+'</b></p><p>नतीजे: बेहतर <b>'+rc('better')+'</b> · बराबर <b>'+rc('same')+'</b> · कम <b>'+rc('worse')+'</b></p>'+chans.map(([k,c])=>'<div class="li"><span><b>'+esc(c.youtube_name||c.name)+'</b><br><small>'+c.videos+' वीडियो · कमज़ोर '+c.weak+(c.hidden?' · '+c.hidden+' unlisted/private छोड़े':'')+(c.checked?' · '+ago(c.checked):'')+(c.error?' · ⚠ '+esc(c.error):'')+'</small></span></div>').join('')+'<h3>हाल की गतिविधि</h3>'+(s.log||[]).slice(0,20).map(l=>'<div class="li"><span>'+esc(l.text)+'</span><span class="t">'+ago(l.t)+'</span></div>').join('');
  $('#main').innerHTML=
- '<div class="card"><div class="hd"><h2>📝 Title Updater</h2><span class="badge-s '+(s.dry_run?'running':'success')+'">'+(s.dry_run?'🧪 Dry-run':'🟢 Live')+'</span></div><small>आख़िरी scan: '+at(s.last_scan)+'</small><div class="tu-acts">'+btn('▶ अभी Scan करें','scan','')+btn('📊 Telegram रिपोर्ट','report','',true)+btn('↻ Refresh','reload','',true)+'<a class="btn g" href="'+REPO_URL+'/edit/main/title_updater/config.json" target="_blank" rel="noopener">⚙️ नियम बदलें</a><a class="btn g" href="'+REPO_URL+'/actions/workflows/title-updater.yml" target="_blank" rel="noopener">Logs ↗</a></div><small id="tuMsg" role="status">'+esc(TU.msg)+'</small></div>'+
+ '<div class="card"><div class="hd"><h2>📝 Title Updater</h2><span class="badge-s '+(manual()||s.dry_run?'running':'success')+'">'+(manual()?'💡 सिर्फ़ सुझाव':s.dry_run?'🧪 Dry-run':'🟢 Live')+'</span></div><small>आख़िरी scan: '+at(s.last_scan)+'</small><div class="tu-acts">'+btn('▶ अभी Scan करें','scan','')+btn('📊 Telegram रिपोर्ट','report','',true)+btn('↻ Refresh','reload','',true)+'<a class="btn g" href="'+REPO_URL+'/edit/main/title_updater/config.json" target="_blank" rel="noopener">⚙️ नियम बदलें</a><a class="btn g" href="'+REPO_URL+'/actions/workflows/title-updater.yml" target="_blank" rel="noopener">Logs ↗</a></div><small id="tuMsg" role="status">'+esc(TU.msg)+'</small></div>'+
  '<div class="stats">'+T('कुल वीडियो',vids.length)+T('चल रहे (नहीं छेड़ेंगे)',n('running'))+T('कमज़ोर',n('weak'))+T('निगरानी',n('watching'))+'</div>'+
  '<div class="card"><select class="lk" data-ch aria-label="चैनल"><option value="all">सभी चैनल</option>'+chans.map(([k,c])=>'<option value="'+esc(k)+'" '+(TU.ch===k?'selected':'')+'>'+esc(c.youtube_name||c.name)+'</option>').join('')+'</select><div class="tu-tabs" style="margin-top:10px">'+tabs.map(t=>btn(t[1],'tab',t[0],TU.tab!==t[0])).join('')+'</div></div>'+
  (count?'<div class="card"><div class="tu-acts">'+btn(TU.busy?'⏳ भेज रहे हैं…':'🚀 '+count+' फ़ैसले भेजें','send','')+btn('रद्द करें','clear','',true)+'</div></div>':'')+
@@ -77,6 +90,7 @@ document.addEventListener('change',e=>{
 document.addEventListener('click',async e=>{
  const b=e.target.closest('[data-act]');if(!b)return;
  const a=b.dataset.act,id=b.dataset.id;
+ if(a==='copy'){try{await navigator.clipboard.writeText(COPY[id]||'');b.textContent='✔ Copy हुआ'}catch(_){prompt('यहाँ से copy करें',COPY[id]||'')}return}
  if(a==='tab'){TU.tab=id}
  else if(a==='clear'){TU.queue={}}
  else if(a==='reload'){await loadState();TU.msg='Refresh किया'}

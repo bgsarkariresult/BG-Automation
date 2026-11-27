@@ -43,6 +43,7 @@ jobs:
         run: python title_updater/bot.py
         env:
           PERSIST_GIT: "1"
+          YT_API_KEY: ${{ secrets.YT_API_KEY }}
           ACTION: ${{ inputs.action }}
           DECISIONS: ${{ inputs.decisions }}
           YT_CLIENT_ID: ${{ secrets.YT_UPDATER_CLIENT_ID }}

@@ -3,6 +3,7 @@
 सुरक्षा के नियम:
   * चल रहे वीडियो नहीं छेड़े जाते (observe_days तक views देखने के बाद ही सुझाव)
   * बिना Approve के कोई बदलाव नहीं
+  * mode "suggest": सिर्फ़ API key से पढ़ता है, YouTube पर कुछ नहीं लिखता
   * पुरानी description कभी हटाई नहीं जाती, नया intro उसके ऊपर जुड़ता है
   * बदलने से पहले backup repo में push होता है
 """
@@ -178,6 +179,51 @@ class YouTube:
 
     def remove_playlist_item(self, item_id):
         self.call("DELETE", "playlistItems", {"id": item_id})
+
+
+class PublicYouTube(YouTube):
+    """API key से सिर्फ़ public जानकारी पढ़ता है।"""
+
+    def __init__(self, api_key, channel):
+        self.h = {"x-goog-api-key": api_key}  # URL में key नहीं, ताकि error में न दिखे
+        self.id = channel
+
+    def call(self, method, path, params=None, body=None):
+        if method != "GET":
+            raise RuntimeError("सुझाव mode में YouTube पर कुछ बदला नहीं जाता")
+        return super().call(method, path, params, body)
+
+    def _who(self):
+        return {"forHandle": self.id} if self.id.startswith("@") else {"id": self.id}
+
+    def channel(self):
+        items = self.call("GET", "channels", {"part": "snippet,contentDetails", **self._who()}).get("items", [])
+        if not items:
+            raise RuntimeError(f"Channel नहीं मिला: {self.id}")
+        self.channel_id = items[0]["id"]
+        return items[0]
+
+    def playlists(self):
+        d = self.call("GET", "playlists", {"part": "snippet", "channelId": self.channel_id, "maxResults": 50})
+        return {p["id"]: p["snippet"]["title"] for p in d.get("items", [])}
+
+
+def suggest_only(cfg):
+    return cfg.get("mode", "suggest") != "auto"
+
+
+def reader(cfg, ch):
+    """scan के लिए YouTube client; ज़रूरी secret/ID न हो तो None।"""
+    if not suggest_only(cfg):
+        return client(ch["key"])
+    key, who = os.getenv("YT_API_KEY"), ch.get("youtube", "").strip()
+    return PublicYouTube(key, who) if key and who else None
+
+
+def reader_ready(cfg, ch):
+    if suggest_only(cfg):
+        return bool(os.getenv("YT_API_KEY") and ch.get("youtube", "").strip())
+    return bool(os.getenv(f"YT_REFRESH_TOKEN_{ch['key']}"))
 
 
 _clients = {}
@@ -417,16 +463,23 @@ def announce(p, cfg):
     e = html.escape
     lines = [f"📝 <b>{e(p['channel_name'])}</b> — {e(p['reason'])}",
              f"https://youtu.be/{p['video_id']}", f"पुराना: {e(p['old_title'])}", ""]
-    lines += [f"{i}. {e(t)}" for i, t in enumerate(p["titles"], 1)]
+    manual = suggest_only(cfg)
+    lines += [f"{i}. <code>{e(t)}</code>" if manual else f"{i}. {e(t)}" for i, t in enumerate(p["titles"], 1)]
     if p.get("playlist_name"):
         lines.append(f"📂 Playlist: {e(p['playlist_name'])}")
     if p.get("thumbnail_idea"):
         lines.append(f"🖼 {e(p['thumbnail_idea'])}")
-    if cfg["dry_run"]:
-        lines.append("\n🧪 Dry-run चालू है: Approve करने पर भी YouTube नहीं बदलेगा।")
     pid = p["id"]
-    say("\n".join(lines), [
-        [{"text": f"✅ {i}", "callback_data": f"approve|{pid}|{i}"} for i in range(1, len(p["titles"]) + 1)],
+    if manual:
+        lines.append(f'\n✏️ <a href="https://studio.youtube.com/video/{p["video_id"]}/edit">Studio में बदलें</a>'
+                     ' (title पर टैप करने से copy होगा)। Description dashboard से copy करें।')
+        first = [{"text": "✔ मैंने लगा दिया", "callback_data": f"done|{pid}"}]
+    else:
+        if cfg["dry_run"]:
+            lines.append("\n🧪 Dry-run चालू है: Approve करने पर भी YouTube नहीं बदलेगा।")
+        first = [{"text": f"✅ {i}", "callback_data": f"approve|{pid}|{i}"}
+                 for i in range(1, len(p["titles"]) + 1)]
+    say("\n".join(lines), [first,
         [{"text": "❌ Reject", "callback_data": f"reject|{pid}"},
          {"text": "🛡 कभी न छेड़ें", "callback_data": f"protect|{p['video_id']}"}]])
 
@@ -438,6 +491,53 @@ def protected_set(s, cfg):
         m = re.search(r"([A-Za-z0-9_-]{11})(?:[?&].*)?$", v)
         ids.add(m.group(1) if m else v)
     return ids
+
+
+def detect_manual(s, rec, sn, views):
+    """सुझाव mode: YouTube पर सच में क्या बदला, वही दर्ज करें। बदलाव मिला तो True।"""
+    vid, title = rec["id"], sn["title"]
+    for h in s["history"]:  # हाथ से पुराना title वापस लगाया गया
+        if h["video_id"] == vid and h["status"] == "applied":
+            if title == h["old"]["title"]:
+                h.update(status="undone", undone_at=iso())
+                rec.update(title=title, block=h["old"]["block"], changed_at=iso())
+                note(s, f"↩️ पुराना title वापस लगा मिला: {title}")
+                return True
+            break
+    p = next((x for x in s["pending"] if x["video_id"] == vid), None)
+    if not p or title == p["old_title"]:
+        return False
+    desc = sn.get("description", "")
+    block = p.get("block", "")
+    block = block if block and desc.startswith(block) else ""
+    rate, _ = recent_per_day(rec)
+    s["history"].insert(0, {
+        "id": p["id"], "video_id": vid, "channel": p["channel"], "channel_name": p["channel_name"], "at": iso(),
+        "status": "applied", "manual": True, "views_at_change": views, "rate_before": round(rate or 0, 2),
+        "old": {"title": p["old_title"], "description": p["old_description"], "tags": p["old_tags"],
+                "block": rec.get("block", "")},
+        "new": {"title": title, "description": desc, "tags": sn.get("tags", [])},
+        "playlist_item": None, "result": None})
+    s["pending"].remove(p)
+    rec.update(title=title, block=block, changes=rec.get("changes", 0) + 1, changed_at=iso())
+    note(s, f"✔ हाथ से किया बदलाव दर्ज: {title}")
+    return True
+
+
+def done(s, cfg, pid):
+    p = next((x for x in s["pending"] if x["id"] == pid), None)
+    if not p:
+        return "यह सुझाव अब pending में नहीं है (शायद पहले ही दर्ज हो चुका)"
+    ch = next((c for c in cfg["channels"] if c["key"] == p["channel"]), None)
+    yt = ch and reader(cfg, ch)
+    if not yt:
+        return "इस चैनल की जानकारी या YT_API_KEY नहीं मिली"
+    live = yt.video(p["video_id"])
+    rec = s["videos"][p["video_id"]]
+    views = int(live.get("statistics", {}).get("viewCount", rec["views"]))
+    if detect_manual(s, rec, live["snippet"], views):
+        return f"✔ दर्ज किया: {live['snippet']['title']}"
+    return "YouTube पर title अभी पुराना ही दिख रहा है, इसलिए दर्ज नहीं किया। कुछ मिनट बाद दोबारा दबाएँ।"
 
 
 def spend_update(s, cfg):
@@ -538,7 +638,11 @@ def undo(s, cfg, hid):
 
 def decide(s, cfg, action, target, choice=1):
     try:
-        if action == "approve":
+        if action in ("approve", "undo") and suggest_only(cfg):
+            msg = "सुझाव mode में बदलाव YouTube Studio में हाथ से करें"
+        elif action == "done":
+            msg = done(s, cfg, target)
+        elif action == "approve":
             msg = approve(s, cfg, target, int(choice))
         elif action == "undo":
             msg = undo(s, cfg, target)
@@ -588,13 +692,13 @@ def poll_telegram(s, cfg):
 
 # ---------------------------------------------------------------- scan
 def scan_channel(s, cfg, ch, all_trends):
-    yt = client(ch["key"])
+    yt = reader(cfg, ch)
     if not yt:
         return False
     rules = cfg["rules"]
     info = yt.channel()
     ids = yt.upload_ids(info["contentDetails"]["relatedPlaylists"]["uploads"], rules["max_videos_per_channel"])
-    allowed = {"public", "unlisted"} if cfg["include_unlisted"] else {"public"}
+    allowed = {"public", "unlisted"} if cfg["include_unlisted"] and not suggest_only(cfg) else {"public"}
     protected = protected_set(s, cfg)
     seen, weak, hidden = set(), [], 0
     for v in yt.videos(ids):
@@ -606,6 +710,8 @@ def scan_channel(s, cfg, ch, all_trends):
         seen.add(vid)
         rec = s["videos"].setdefault(vid, {"id": vid, "snaps": [], "changes": 0})
         views = int(v.get("statistics", {}).get("viewCount", 0))
+        if suggest_only(cfg):
+            detect_manual(s, rec, sn, views)
         rec.update(channel=ch["key"], title=sn["title"], published=sn["publishedAt"], views=views)
         snaps = [x for x in rec["snaps"] if x[0][:10] != iso()[:10] and days_since(x[0]) <= 35]
         rec["snaps"] = snaps + [[iso(), views]]
@@ -647,6 +753,10 @@ def scan_channel(s, cfg, ch, all_trends):
              "created": iso(), "reason": rec["why"], "old_title": sn["title"], **ai,
              "playlist_id": pl, "playlist_name": playlists.get(pl, "")}
         p.pop("playlist", None)
+        # copy-paste के लिए पूरा नया text; पुराना text backup के लिए
+        new_desc, block = build_description(old_desc, p["intro"], p["hashtags"], rec.get("block", ""))
+        p.update(old_description=old_desc, old_tags=sn.get("tags", []), new_description=new_desc, block=block,
+                 new_tags=merge_tags(sn.get("tags", []), p["tags"]))
         s["pending"].append(p)
         room -= 1
         announce(p, cfg)
@@ -664,8 +774,9 @@ def check_results(s, cfg):
         verdict = "better" if after > before * 1.2 + 0.1 else "worse" if after < before * 0.8 - 0.1 else "same"
         h["result"] = {"checked": iso(), "after": round(after, 2), "verdict": verdict}
         if verdict == "worse":
-            say(f"📉 {html.escape(h['new']['title'])}\nपहले {before} → अब {after:.2f} views/दिन। Undo पर विचार करें।",
-                [[{"text": "↩️ Undo", "callback_data": f"undo|{h['id']}"}]])
+            say(f"📉 {html.escape(h['new']['title'])}\nपहले {before} → अब {after:.2f} views/दिन। "
+                f"पुराना title वापस लगाने पर विचार करें:\n<code>{html.escape(h['old']['title'])}</code>",
+                None if suggest_only(cfg) else [[{"text": "↩️ Undo", "callback_data": f"undo|{h['id']}"}]])
 
 
 def weekly_report(s):
@@ -692,7 +803,7 @@ def scan(s, cfg):
             note(s, f"{ch['name']}: {clean_error(e)}")
             say(f"⚠️ {html.escape(ch['name'])}: {html.escape(clean_error(e))}")
     if not done:
-        note(s, "कोई channel scan नहीं हुआ। YouTube secrets जाँचें।")
+        note(s, "कोई channel scan नहीं हुआ। YouTube secret और config.json की channel जानकारी जाँचें।")
     else:
         s["last_scan"] = iso()
         note(s, f"Scan पूरा: {done} channel, {len(s['pending'])} सुझाव इंतज़ार में")
@@ -704,12 +815,13 @@ def main():
     with open(CONFIG, encoding="utf-8") as f:
         cfg = json.load(f)
     action = (os.getenv("ACTION") or "auto").strip()
-    if action == "auto" and not any(os.getenv(f"YT_REFRESH_TOKEN_{c['key']}") for c in cfg["channels"]):
-        print("अभी कोई YouTube token secret नहीं है। title_updater/README.md देखें।")
+    if action == "auto" and not any(c.get("enabled") and reader_ready(cfg, c) for c in cfg["channels"]):
+        print("YouTube secret या channel जानकारी नहीं है। title_updater/README.md देखें।")
         return
     s = load_state()
     before = json.dumps(s, sort_keys=True)
     s["dry_run"] = cfg["dry_run"]
+    s["mode"] = "suggest" if suggest_only(cfg) else "auto"
     ok = True
     if action == "decide":
         # "approve:p3:2,reject:p4,undo:p1,protect:VIDEOID"

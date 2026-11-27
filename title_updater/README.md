@@ -3,6 +3,17 @@
 कम चलने वाले YouTube वीडियो के title/description के सुझाव बनाता है। आपके **Approve** के बाद ही बदलता है।
 Dashboard: https://bgsarkariresult.github.io/BG-Automation/title-updater.html
 
+## 💡 सुझाव mode (अभी चालू: `"mode": "suggest"`)
+OAuth token की ज़रूरत नहीं। Bot YouTube पर **कुछ नहीं बदलता**।
+- Secrets: `YT_API_KEY`, कम से कम एक `GEMINI_API_KEY_1` (या `GROQ_API_KEY`)। Telegram वैकल्पिक।
+- `config.json` में हर चैनल का `youtube` (जैसे `@SGNews18` या `UC...` ID)। खाली हो तो चैनल छोड़ा जाता है।
+- Dashboard से title/description copy करें, **Studio में बदलें**, फिर **मैंने लगा दिया → फ़ैसले भेजें**।
+  न दबाएँ तब भी, सुझाव pending रहते, अगला scan बदला हुआ title पहचान लेता है।
+- Undo: History से पुराना title/description copy करके Studio में लगाएँ।
+- सिर्फ़ Public वीडियो दिखते हैं।
+
+नीचे के step 1-3 सिर्फ़ `"mode": "auto"` के लिए हैं।
+
 ## 1. Google Cloud (एक बार)
 1. console.cloud.google.com पर project चुनें और **YouTube Data API v3** चालू करें।
 2. OAuth consent screen भरें और Publishing status **In production** करें।
