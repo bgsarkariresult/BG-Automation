@@ -123,6 +123,13 @@
       "repo": "bgsarkariresult/Bk-growup-",
       "workflow": "run-job-reel-bot.yml",
       "tag": "Reels / Shorts"
+    },
+    {
+      "name": "Documentary",
+      "kind": "video",
+      "repo": "bgtechlab/documentary",
+      "workflow": "documentary.yml",
+      "tag": "Documentary"
     }
   ],
   "sites": [

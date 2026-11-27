@@ -26,11 +26,12 @@ const BOT_CONFIG={
  'bgtechlab/amazon_to_blogger':{workflow:'amazon_to_blogger.yml',input:'urls',multi:true},
  'bgtechlab/news-blog-auto-publisher':{workflow:'news-blog-publisher.yml',input:'news_urls',multi:true},
  'bgsarkariresult/bg-podcast-ai':{workflow:'podcast_summary.yml',input:'video_url'},
+ 'bgtechlab/documentary':{workflow:'documentary.yml',input:null}
 };
 const YT_REPOS=[
  'bgsarkariresult/sg-news18','bgsarkariresult/techglow-india',
  'bgsarkariresult/bk-growup-','bgtechlab/bg-reels-bot','bgtechlab/history-facts',
-'bgsarkariresult/bg-podcast-ai'
+'bgsarkariresult/bg-podcast-ai','bgtechlab/documentary'
 ];
 const SITES=[
  {name:'Job Page Auto Publisher',tag:'Website',repo:'bgtechlab/Job-Page-Auto-Publisher',url:'https://bgtechlab.github.io/Job-Page-Auto-Publisher/'},
@@ -73,7 +74,7 @@ function failureDetail(b){
  b.failed.reason&&String(b.failed.reason).replace(/_/g,' ')].filter(Boolean).join(' · ');
 }
 
-const UI={q:'',f:'all',open:new Set(),podcastOpen:new Set(),links:{},podcast:{},msgs:{},busy:{},log:{repo:null,workflow:'',timer:null,token:0,state:{}}};
+const UI={q:'',f:'all',open:new Set(),podcastOpen:new Set(),docOpen:new Set(),links:{},podcast:{},documentary:{},msgs:{},busy:{},log:{repo:null,workflow:'',timer:null,token:0,state:{}}};
 let REG={};
 function setMsg(id,v,isHtml){UI.msgs[id]={v,isHtml:!!isHtml,t:Date.now()};const e=document.getElementById(id);if(e){if(isHtml)e.innerHTML=v;else e.textContent=v}}
 function restoreMsgs(){for(const id in UI.msgs){const m=UI.msgs[id];if(Date.now()-m.t>60000){delete UI.msgs[id];continue}const e=document.getElementById(id);if(e){if(m.isHtml)e.innerHTML=m.v;else e.textContent=m.v}}}
@@ -221,6 +222,24 @@ function podcastControls(s){
  '<label style="display:flex;align-items:center;gap:7px;font-size:12px;align-self:end;padding:8px 0"><input id="pod_force_'+s+'" type="checkbox" '+(p.force?'checked':'')+' onchange="setPodcastSetting(\''+s+'\',\'force\',this.checked)"> Force regenerate (पहले बना वीडियो भी दोबारा बनाएँ)</label>'+
  '</div></div>';
 }
+function documentaryState(s){if(!UI.documentary[s])UI.documentary[s]={topic:'auto',minutes:'7',privacy:'private'};return UI.documentary[s]}
+function setDocumentarySetting(s,k,v){documentaryState(s)[k]=String(v)}
+function toggleDocumentarySettings(s){
+ if(UI.docOpen.has(s))UI.docOpen.delete(s);else UI.docOpen.add(s);
+ const panel=document.getElementById('doc_settings_'+s),arrow=document.getElementById('doc_arrow_'+s),btn=document.getElementById('doc_toggle_'+s),opened=UI.docOpen.has(s);
+ if(panel){panel.hidden=!opened;panel.style.display=opened?'grid':'none'}
+ if(arrow)arrow.textContent=opened?'⌃':'⌄';
+ if(btn)btn.setAttribute('aria-expanded',String(opened));
+}
+function documentaryControls(s){
+ const p=documentaryState(s),opened=UI.docOpen.has(s);
+ return '<div style="margin:9px 0 5px"><button class="btn g" type="button" id="doc_toggle_'+s+'" onclick="toggleDocumentarySettings(\''+s+'\')" aria-controls="doc_settings_'+s+'" aria-expanded="'+opened+'" style="width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left"><span>⚙️ <b>अतिरिक्त सेटिंग्स</b></span><span id="doc_arrow_'+s+'">'+(opened?'⌃':'⌄')+'</span></button>'+
+ '<div id="doc_settings_'+s+'" '+(opened?'':'hidden')+' style="display:'+(opened?'grid':'none')+';grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:9px;margin:8px 0 10px;padding:11px;border:1px solid var(--line);border-radius:10px">'+
+ '<label style="display:grid;gap:5px;font-size:12px">🎯 Topic<input class="lk" id="doc_topic_'+s+'" value="'+esc(p.topic)+'" oninput="setDocumentarySetting(\''+s+'\',\'topic\',this.value)" placeholder="auto"></label>'+
+ '<label style="display:grid;gap:5px;font-size:12px">⏱️ Video Length<select class="lk" id="doc_minutes_'+s+'" onchange="setDocumentarySetting(\''+s+'\',\'minutes\',this.value)">'+['5','6','7','8','9','10'].map(v=>'<option value="'+v+'" '+(p.minutes===v?'selected':'')+'>'+v+' मिनट</option>').join('')+'</select></label>'+
+ '<label style="display:grid;gap:5px;font-size:12px">🔒 YouTube Privacy<select class="lk" id="doc_privacy_'+s+'" onchange="setDocumentarySetting(\''+s+'\',\'privacy\',this.value)">'+[['private','Private'],['unlisted','Unlisted'],['public','Public']].map(x=>'<option value="'+x[0]+'" '+(p.privacy===x[0]?'selected':'')+'>'+x[1]+'</option>').join('')+'</select></label>'+
+ '</div></div>';
+}
 function renderProjectCard(b){
  const s=slugOf(b);REG[s]=b;const wf=workflowFor(b),input=inputFor(b),multi=!!cfgFor(b).multi,runs=Array.isArray(b.runs)?b.runs:[],state=latestState(b),sm=stateMeta(state),detail=isFail(b)?failureDetail(b):'',busy=!!UI.busy[s],open=UI.open.has(s);
  const durs=runs.filter(r=>okRun(r)&&Number(r.d)>0).map(r=>Number(r.d)),avgM=durs.length?Math.max(1,Math.round(durs.reduce((a,x)=>a+x,0)/durs.length/60)):0,lastT=runs[0]&&runs[0].t,siteU=b.site?safeUrl(b.site):'#';
@@ -229,7 +248,7 @@ function renderProjectCard(b){
  const status='<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:5px"><span class="badge-s '+sm.c+'">'+sm.i+' '+sm.l+'</span>'+(detail?'<small style="color:var(--mu)">'+esc(detail)+'</small>':'')+'</div>'+(b.live_api_error?'<small style="display:block;color:var(--mu);margin-top:4px">⚠ Live API: '+esc(b.live_api_error)+'</small>':'');
  const items=runs.slice(0,5).map(r=>'<div class="run-item"><span class="dot s-'+esc(r.s)+'">'+st(r.s)+'</span><span class="run-info"><b>'+esc(r.n)+'</b><small>'+esc(r.s)+' • '+ago(r.t)+'</small></span>'+(safeUrl(r.u)!=='#'?'<a class="btn g t" href="'+esc(safeUrl(r.u))+'" target="_blank" rel="noopener">Log ↗</a>':'')+'</div>').join('')||'<small>कोई run नहीं।</small>';
  return '<div class="site"><div class="row"><div><b>'+esc(b.name)+'</b><br><small>'+okN+' सफल • '+failN+' असफल (पिछले '+runs.length+' run)'+(lastT?' • आख़िरी: '+ago(lastT):'')+(avgM?' • औसत ~'+avgM+' मिनट':'')+'</small>'+status+(siteU!=='#'?'<a class="btn g" style="margin-top:8px" href="'+esc(siteU)+'" target="_blank" rel="noopener">🌐 साइट खोलें</a>':'')+'</div></div>'+
- linkBox+(lc(b.repo)==='bgsarkariresult/bg-podcast-ai'?podcastControls(s):'')+'<div class="project-actions"><button class="btn g" type="button" onclick="showLiveLogs(\''+s+'\')">📋 Logs</button><button class="btn run-action" type="button" id="btn_'+s+'" onclick="startBot(\''+s+'\',\'run\')" '+(!wf||busy?'disabled':'')+'>'+ (busy?'⏳ शुरू हो रहा…':'▶ Run')+'</button><button class="btn g" type="button" onclick="tg(\''+s+'\')" aria-controls="rs_'+s+'" aria-expanded="'+open+'">↻ Runs</button></div>'+
+ linkBox+(lc(b.repo)==='bgsarkariresult/bg-podcast-ai'?podcastControls(s):lc(b.repo)==='bgtechlab/documentary'?documentaryControls(s):'')+'<div class="project-actions"><button class="btn g" type="button" onclick="showLiveLogs(\''+s+'\')">📋 Logs</button><button class="btn run-action" type="button" id="btn_'+s+'" onclick="startBot(\''+s+'\',\'run\')" '+(!wf||busy?'disabled':'')+'>'+ (busy?'⏳ शुरू हो रहा…':'▶ Run')+'</button><button class="btn g" type="button" onclick="tg(\''+s+'\')" aria-controls="rs_'+s+'" aria-expanded="'+open+'">↻ Runs</button></div>'+
  '<small class="hn" id="hn_'+s+'" role="status" aria-live="polite"></small><div class="rs" id="rs_'+s+'" '+(open?'':'hidden')+'><div class="runs-heading">पिछले 5 रन</div>'+items+'</div></div>';
 }
 function addProject(type){const name=type==='website'?'Website':'YouTube Channel';if(confirm('नया '+name+' जोड़ने के लिए config.json में दर्ज करना होगा।\n\nGitHub का edit पेज खोलें?'))window.open(GH_EDIT_URL,'_blank','noopener')}
@@ -304,7 +323,10 @@ async function startBot(s,mode){
  const err=input&&link?inputError(link,!!cfgFor(b).multi,isPod,isPod?podcastState(s):null):'';
  if(err){say('❌ '+esc(err),true);return}
  const payload={repo:b.repo,workflow:wf,ref:'main'};
- if(lc(b.repo)==='bgsarkariresult/bg-podcast-ai'){
+ if(lc(b.repo)==='bgtechlab/documentary'){
+   const ds=documentaryState(s);
+   payload.inputs={topic:ds.topic.trim()||'auto',minutes:ds.minutes,privacy:ds.privacy};
+  }else if(lc(b.repo)==='bgsarkariresult/bg-podcast-ai'){
    if(!link){say('❌ पहले YouTube Podcast का लिंक डालें।');return}
    const ps=podcastState(s);
    payload.inputs={
