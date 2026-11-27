@@ -11,6 +11,8 @@ OAuth token की ज़रूरत नहीं। Bot YouTube पर **क�
   न दबाएँ तब भी, सुझाव pending रहते, अगला scan बदला हुआ title पहचान लेता है।
 - Undo: History से पुराना title/description copy करके Studio में लगाएँ।
 - सिर्फ़ Public वीडियो दिखते हैं।
+- `old_video_days` (60) से पुराने कम views वाले वीडियो के सुझाव निगरानी से पहले ही आते हैं, सबसे पुराने पहले।
+  बाकी के लिए `observe_days` (2) दिन views देखे जाते हैं।
 
 नीचे के step 1-3 सिर्फ़ `"mode": "auto"` के लिए हैं।
 
@@ -48,14 +50,14 @@ OAuth token की ज़रूरत नहीं। Bot YouTube पर **क�
 
 ## 4. चलाना
 - Dashboard पर **अभी Scan करें**, या Actions → BG Title Updater → Run (action = `scan`)।
-- पहले लगभग **7 दिन सिर्फ़ views की निगरानी** होती है, उसके बाद सुझाव आते हैं।
+- auto mode में पहले `observe_days` दिन **सिर्फ़ views की निगरानी** होती है, उसके बाद सुझाव आते हैं।
 - Telegram बटन अगले run में लागू होते हैं (घंटे में एक बार तय है; GitHub देर भी कर सकता है)।
 - Dashboard पर फ़ैसले चुनें, फिर **फ़ैसले भेजें** दबाएँ।
 - शुरू में `config.json` में `"dry_run": true` है। सुझाव ठीक लगें तो `false` करें।
 
 ## वीडियो कब "कमज़ोर" माना जाता है (config.json → rules)
 ये सभी बातें हों: 14 दिन से पुराना, कुल views 500 से कम, औसत 5 views/दिन से कम,
-और देखे गए पिछले ~7 दिन में रोज़ 2 views या उससे कम।
+और देखे गए हाल के दिनों में रोज़ 2 views या उससे कम।
 
 ## ध्यान दें
 - सिर्फ़ **Public** वीडियो देखे जाते हैं। `include_unlisted: true` करने पर unlisted वीडियो के link

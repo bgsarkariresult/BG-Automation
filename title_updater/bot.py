@@ -257,7 +257,7 @@ def recent_per_day(rec):
     return max(0, last_v - base[1]) / span, span
 
 
-def classify(rec, rules, protected):
+def classify(rec, rules, protected, old_ok=False):
     """(status, कारण). सिर्फ़ 'weak' वीडियो के लिए सुझाव बनता है।"""
     vid, views = rec["id"], rec["views"]
     age = days_since(rec["published"])
@@ -272,7 +272,9 @@ def classify(rec, rules, protected):
     rate, span = recent_per_day(rec)
     if rate is not None and span >= 1 and rate > rules["max_recent_views_per_day"]:
         return "running", f"हाल में {rate:.1f} views/दिन"
-    if rate is None or span < rules["observe_days"] - 0.3:
+    observed = rate is not None and span >= rules["observe_days"] - 0.3
+    old = old_ok and age >= rules.get("old_video_days", 10 ** 9)
+    if not observed and not old:
         return "watching", f"views देख रहे हैं ({int(span)}/{rules['observe_days']} दिन)"
     if rec.get("changes", 0) >= rules["max_changes_per_video"]:
         return "limit", "अधिकतम बदलाव हो चुके"
@@ -280,6 +282,8 @@ def classify(rec, rules, protected):
         return "cooldown", "पिछले बदलाव का असर देख रहे हैं"
     if rec.get("skip_until") and rec["skip_until"] > iso():
         return "skipped", "आपने Reject किया था"
+    if not observed:
+        return "weak", f"पुराना वीडियो ({int(age)} दिन), औसत {views / max(age, 1):.2f} views/दिन; हाल के views अभी जाँचे नहीं"
     return "weak", f"हाल में {rate:.1f} views/दिन"
 
 
@@ -511,6 +515,8 @@ def detect_manual(s, rec, sn, views):
     block = p.get("block", "")
     block = block if block and desc.startswith(block) else ""
     rate, _ = recent_per_day(rec)
+    if rate is None:  # हाल का data न हो तो पूरी उम्र का औसत
+        rate = views / max(days_since(rec["published"]), 1)
     s["history"].insert(0, {
         "id": p["id"], "video_id": vid, "channel": p["channel"], "channel_name": p["channel_name"], "at": iso(),
         "status": "applied", "manual": True, "views_at_change": views, "rate_before": round(rate or 0, 2),
@@ -715,7 +721,7 @@ def scan_channel(s, cfg, ch, all_trends):
         rec.update(channel=ch["key"], title=sn["title"], published=sn["publishedAt"], views=views)
         snaps = [x for x in rec["snaps"] if x[0][:10] != iso()[:10] and days_since(x[0]) <= 10]
         rec["snaps"] = snaps + [[iso(), views]]
-        rec["status"], rec["why"] = classify(rec, rules, protected)
+        rec["status"], rec["why"] = classify(rec, rules, protected, suggest_only(cfg))
         if rec["status"] == "weak":
             weak.append((rec, sn))
     for vid in [k for k, r in s["videos"].items() if r.get("channel") == ch["key"] and k not in seen]:
@@ -727,7 +733,7 @@ def scan_channel(s, cfg, ch, all_trends):
     waiting = {p["video_id"] for p in s["pending"]}
     made_today = sum(1 for p in s["pending"] if p["channel"] == ch["key"] and p["day"] == today())
     room = rules["new_proposals_per_channel_per_day"] - made_today
-    weak = sorted((w for w in weak if w[0]["id"] not in waiting), key=lambda w: (w[0].get("changes", 0), w[0]["views"]))
+    weak = sorted((w for w in weak if w[0]["id"] not in waiting), key=lambda w: (w[0].get("changes", 0), w[0]["published"]))  # सबसे पुराने पहले
     playlists = yt.playlists() if weak and room > 0 else {}
     failures = 0
     for rec, sn in weak:

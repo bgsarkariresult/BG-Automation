@@ -4,7 +4,8 @@
   "include_unlisted": false,
   "rules": {
     "min_age_days": 14,
-    "observe_days": 7,
+    "observe_days": 2,
+    "old_video_days": 60,
     "max_recent_views_per_day": 2,
     "max_lifetime_views_per_day": 5,
     "protect_total_views": 500,
