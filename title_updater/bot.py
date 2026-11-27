@@ -713,7 +713,7 @@ def scan_channel(s, cfg, ch, all_trends):
         if suggest_only(cfg):
             detect_manual(s, rec, sn, views)
         rec.update(channel=ch["key"], title=sn["title"], published=sn["publishedAt"], views=views)
-        snaps = [x for x in rec["snaps"] if x[0][:10] != iso()[:10] and days_since(x[0]) <= 35]
+        snaps = [x for x in rec["snaps"] if x[0][:10] != iso()[:10] and days_since(x[0]) <= 10]
         rec["snaps"] = snaps + [[iso(), views]]
         rec["status"], rec["why"] = classify(rec, rules, protected)
         if rec["status"] == "weak":

@@ -13,7 +13,7 @@
     "new_proposals_per_channel_per_day": 3,
     "max_updates_per_day": 20,
     "proposal_expiry_days": 7,
-    "max_videos_per_channel": 300
+    "max_videos_per_channel": 2000
   },
   "protected_videos": [],
   "channels": [
