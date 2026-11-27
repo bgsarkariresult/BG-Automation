@@ -85,7 +85,11 @@
 
   function mergeBot(b, f) {
     const byId = new Map();
-    [...(b.runs || []), ...(f.runs || [])].forEach((r) => byId.set(r.id, {...byId.get(r.id), ...r}));
+    // एक ही run दो जगह से मिले तो नया (बाद के समय वाला) रखें
+    [...(b.runs || []), ...(f.runs || [])].forEach((r) => {
+      const o = byId.get(r.id);
+      byId.set(r.id, o && Date.parse(o.t || 0) > Date.parse(r.t || 0) ? {...r, ...o} : {...o, ...r});
+    });
     const runs = [...byId.values()].sort((x,y) => Date.parse(y.created || y.t || 0) - Date.parse(x.created || x.t || 0)).slice(0,100);
     const row = {...b, ...f, name:b.name, runs, live_api_error:null};
     if (runs.length) Object.assign(row, {status:runs[0].s, time:runs[0].t, url:runs[0].u});
@@ -98,6 +102,27 @@
 
   // वे automation जिनका सबसे नया पूरा हुआ run fail है
   const failedCount = (bots) => bots.filter((b) => ['failure','timed_out','startup_failure'].includes((b.runs || []).find((r) => DONE.includes(r.s))?.s)).length;
+
+  // पहले दिख चुके पिछले 2 दिन के run याद रखें, ताकि Live API न मिलने पर गिनती घटे नहीं।
+  const SEEN_KEY = 'bg_seen_runs';
+  let seen = {};
+  try { seen = JSON.parse(localStorage.getItem(SEEN_KEY) || '{}') || {}; } catch (_) {}
+
+  function keepSeen(d) {
+    const since = Date.now() - 2 * 86400000;
+    const recent = (r) => Date.parse(r.t || 0) >= since;
+    const next = {};
+    d.bots = (d.bots || []).map((b) => {
+      const k = botKey(b);
+      const old = (Array.isArray(seen[k]) ? seen[k] : []).filter(recent);
+      const row = old.length ? mergeBot({...b, runs:old}, b) : b;
+      if (old.length) row.live_api_error = b.live_api_error;
+      next[k] = (row.runs || []).filter(recent);
+      return row;
+    });
+    seen = next;
+    try { localStorage.setItem(SEEN_KEY, JSON.stringify(seen)); } catch (_) {}
+  }
 
   async function loadData(forceLiveRefresh = false) {
     // Pages वाली copy सिर्फ़ deploy पर बदलती है, इसलिए दोनों में से नई वाली लें।
@@ -136,6 +161,7 @@
       }
     } catch (_) {}
     d.live_state = liveState;
+    keepSeen(d);
     return d;
   }
 
@@ -205,7 +231,7 @@
 
     $('#main').innerHTML =
       '<div class="kpi-row">' +
-        '<div class="kpi red"><label>🟢 Successful Today</label><div class="num">' + stats(d, TD(), TD()).ok + '</div><div class="sub"><span>Jobs Completed Today</span><span class="up">✓ Success</span></div></div>' +
+        '<div class="kpi red"><label>🟢 Successful Today</label><div class="num">' + stats(d, TD(), TD()).ok + '</div><div class="sub"><span>आज (रात 12 बजे से) सफल</span><span class="up">' + (d.live_state === 'live' ? '✓ Live' : '⚠ ' + time(d.updated) + ' का data' + (d.live_state === 'partial' ? ' + आंशिक Live' : '')) + '</span></div></div>' +
         '<div class="kpi purple"><label>हाल के Runs</label><div class="num">' + totalRuns + '</div><div class="sub"><span>हर bot के पिछले 100 तक</span><span class="up">✓ ' + success + ' · ✕ ' + (counts.failure || 0) + ' · ⏳ ' + running + '</span></div></div>' +
         '<div class="kpi blue"><label>🔵 Running Now</label><div class="num">' + running + '</div><div class="sub"><span>' + (running ? runs.filter(x => ["in_progress","queued"].includes(String(x.r.s||""))).slice(0,2).map(x => esc(x.b.name || x.b.repo || "Automation")).join(" · ") : "कोई काम अभी नहीं चल रहा") + '</span><span class="up">● Live</span></div></div>' +
       '</div>' +
