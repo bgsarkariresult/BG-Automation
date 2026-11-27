@@ -10,10 +10,10 @@
 <link rel="stylesheet" href="app.css">
 </head>
 <body>
-<script src="app.js?v=20261126-data-fix"></script>
+<script src="app.js?v=20261127-valid"></script>
 <script>
 const WORKER_URL='https://bg-runf.garhwalbhavesh2002.workers.dev/';
-const GH_EDIT_URL='https://github.com/bgsarkariresult/BG-Automation/edit/main/data/dashboard.json';
+const GH_EDIT_URL='https://github.com/bgsarkariresult/BG-Automation/edit/main/config.json';
 
 const BOT_CONFIG={
  'bgsarkariresult/sg-news18':{workflow:'news-bot.yml',input:'article_url'},
@@ -83,6 +83,21 @@ const LASTLINK_KEY='bg_lastlinks';
 function lastLinks(){try{return JSON.parse(localStorage.getItem(LASTLINK_KEY)||'{}')||{}}catch(_){return{}}}
 function rememberLink(s,v){try{const m=lastLinks();if(v)m[s]=v;else delete m[s];localStorage.setItem(LASTLINK_KEY,JSON.stringify(m))}catch(_){}}
 function badUrls(v){return String(v||'').split(/[\s,]+/).filter(Boolean).filter(u=>{try{const x=new URL(u);return x.protocol!=='https:'&&x.protocol!=='http:'}catch(_){return true}})}
+
+/* गलत input GitHub तक न जाए और याद भी न रहे; खाली string = सब सही */
+function inputError(link,multi,podcast,ps){
+ const list=String(link||'').split(/[\s,]+/).filter(Boolean);
+ if(!multi&&list.length>1)return 'यहाँ सिर्फ़ एक लिंक डालें।';
+ const bad=badUrls(link);
+ if(bad.length)return 'यह लिंक सही नहीं है: '+bad[0].slice(0,80)+' (http:// या https:// से शुरू होना चाहिए)';
+ if(list.some(u=>!new URL(u).hostname.includes('.')))return 'लिंक का domain सही नहीं है।';
+ if(podcast){
+  const h=new URL(list[0]).hostname.replace(/^(www|m)\./,'');
+  if(h!=='youtube.com'&&h!=='youtu.be')return 'Podcast के लिए सिर्फ़ YouTube का लिंक डालें।';
+  if(!/^\d+$/.test(String(ps.delay).trim()))return 'Delay (hours) में 0 या पूरी संख्या डालें।';
+ }
+ return '';
+}
 
 /* PIN के लिए छुपा हुआ (password) input — prompt() में PIN साफ़ दिखता था */
 function askPin(){
@@ -217,7 +232,7 @@ function renderProjectCard(b){
  linkBox+(lc(b.repo)==='bgsarkariresult/bg-podcast-ai'?podcastControls(s):'')+'<div class="project-actions"><button class="btn g" type="button" onclick="showLiveLogs(\''+s+'\')">📋 Logs</button><button class="btn run-action" type="button" id="btn_'+s+'" onclick="startBot(\''+s+'\',\'run\')" '+(!wf||busy?'disabled':'')+'>'+ (busy?'⏳ शुरू हो रहा…':'▶ Run')+'</button><button class="btn g" type="button" onclick="tg(\''+s+'\')" aria-controls="rs_'+s+'" aria-expanded="'+open+'">↻ Runs</button></div>'+
  '<small class="hn" id="hn_'+s+'" role="status" aria-live="polite"></small><div class="rs" id="rs_'+s+'" '+(open?'':'hidden')+'><div class="runs-heading">पिछले 5 रन</div>'+items+'</div></div>';
 }
-function addProject(type){const name=type==='website'?'Website':'YouTube Channel';if(confirm('नया '+name+' जोड़ने के लिए data/dashboard.json में project दर्ज करना होगा।\n\nGitHub का edit पेज खोलें?'))window.open(GH_EDIT_URL,'_blank','noopener')}
+function addProject(type){const name=type==='website'?'Website':'YouTube Channel';if(confirm('नया '+name+' जोड़ने के लिए config.json में दर्ज करना होगा।\n\nGitHub का edit पेज खोलें?'))window.open(GH_EDIT_URL,'_blank','noopener')}
 function tg(s){const e=document.getElementById('rs_'+s);if(!e)return;e.hidden=!e.hidden;if(e.hidden)UI.open.delete(s);else UI.open.add(s);const b=e.parentElement.querySelector('[aria-controls="rs_'+s+'"]');if(b)b.setAttribute('aria-expanded',String(!e.hidden))}
 
 const TERM_STYLE='background:#071426;color:#dce8fa;border:1px solid #22354f;border-radius:12px;padding:14px;max-height:420px;overflow:auto;font:13px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere';
@@ -257,14 +272,14 @@ function getPin(){try{return localStorage.getItem('bg_pin')||''}catch(_){return'
 function savePin(p){try{localStorage.setItem('bg_pin',p)}catch(_){}}
 function clearPin(){try{localStorage.removeItem('bg_pin')}catch(_){}}
 async function callWorker(payload,retried,silent){
- const body=Object.assign({},payload||{}),pin=getPin();if(pin)body.pin=pin;
+ const body=Object.assign({},payload||{}),pin=retried||getPin();if(pin)body.pin=pin;
  const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
  let data={};try{data=await res.json()}catch(_){data={ok:false,error:'Invalid response',status:res.status}}
  const pinNeeded=(res.status===401||data.status===401)&&/pin/i.test(String(data.error||''));
  if(pinNeeded){
   clearPin(); /* गलत/पुराना PIN हटाएँ ताकि अटका न रहे */
-  if(!retried&&!silent){const p=await askPin();if(p){savePin(p);return callWorker(payload,true,silent)}}
- }
+  if(!retried&&!silent){const p=await askPin();if(p)return callWorker(payload,p,silent)}
+ }else if(retried&&data.ok)savePin(retried); /* PIN तभी save, जब Worker उसे मान ले */
  return data;
 }
 async function runSync(){
@@ -284,8 +299,10 @@ async function startBot(s,mode){
  /* link: बॉक्स > याद रखा गया (सिर्फ़ re-run में) */
  const typed=(linkEl&&linkEl.value||UI.links[s]||'').trim();
  const link=typed||(rerun?(lastLinks()[s]||''):'');
- const bad=input&&link?badUrls(link):[];
- if(bad.length){say('❌ यह लिंक सही नहीं है: '+bad[0].slice(0,80)+' (http:// या https:// से शुरू होना चाहिए)');return}
+  const isPod=lc(b.repo)==='bgsarkariresult/bg-podcast-ai';
+ if(isPod&&!link){say('❌ पहले YouTube Podcast का लिंक डालें।');return}
+ const err=input&&link?inputError(link,!!cfgFor(b).multi,isPod,isPod?podcastState(s):null):'';
+ if(err){say('❌ '+esc(err),true);return}
  const payload={repo:b.repo,workflow:wf,ref:'main'};
  if(lc(b.repo)==='bgsarkariresult/bg-podcast-ai'){
    if(!link){say('❌ पहले YouTube Podcast का लिंक डालें।');return}

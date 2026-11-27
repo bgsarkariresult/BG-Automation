@@ -21,9 +21,11 @@ try:
     with open(mp, encoding="utf-8") as f:
         msgs = json.load(f)
     if not isinstance(msgs, list):
-        msgs = []
-except (FileNotFoundError, json.JSONDecodeError, TypeError, ValueError):
+        raise SystemExit(mp + " खराब है (list नहीं) - कुछ भी save नहीं किया")
+except FileNotFoundError:
     msgs = []
+except ValueError:
+    raise SystemExit(mp + " खराब JSON है - कुछ भी save नहीं किया")
 
 text = os.environ.get("MSG_TEXT", "").strip()
 if text:
@@ -31,8 +33,12 @@ if text:
 
 # Keep Telegram messages in their own persistent file so other dashboard
 # sync jobs cannot accidentally erase them.
-with open(mp, "w", encoding="utf-8") as f:
-    json.dump(msgs[:50], f, ensure_ascii=False, indent=2)
+def save_json(path, data):
+    """पहले temp file, फिर replace: आधी लिखी file कभी save नहीं होती"""
+    with open(path + ".tmp", "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+    os.replace(path + ".tmp", path)
+
 
 # --- YouTube channels ---
 key = os.environ.get("YT_API_KEY", "")
@@ -48,42 +54,59 @@ except Exception:
 prev_channels = prev.get("channels") or []
 prev_bots = {(b.get("repo"), b.get("workflow") or ""): b for b in prev.get("bots") or []}
 prev_sites = {s.get("name"): s for s in prev.get("sites") or []}
+prev_by_id = {p["id"]: p for p in prev_channels if p.get("id") and not p.get("error")}
+is_count = lambda v: str(v).isdigit()
+found = None  # None = API से जवाब नहीं मिला
 try:
     if key and ids:
         q = urllib.parse.urlencode({"part": "snippet,statistics,contentDetails", "id": ",".join(ids), "key": key})
         found = {i["id"]: i for i in get(YT + "channels?" + q).get("items", [])}
-        for c in cfg["channels"]:
-            it = found.get(c["id"])
-            if not real_id(c.get("id")):
-                channels.append({"name": c["name"], "id": "", "error": "Channel ID अभी config.json में नहीं डाली गई"})
-                continue
-            if not it:
-                channels.append({"name": c["name"], "id": c["id"], "error": "Channel ID galat ya nahi mila"})
-                continue
-            s, latest = it["statistics"], []
-            try:
-                up = it["contentDetails"]["relatedPlaylists"]["uploads"]
-                pl = get(YT + "playlistItems?" + urllib.parse.urlencode(
-                    {"part": "snippet", "playlistId": up, "maxResults": 5, "key": key})).get("items", [])
-                vid_ids = [v["snippet"]["resourceId"]["videoId"] for v in pl]
-                vs = {v["id"]: v["statistics"] for v in get(YT + "videos?" + urllib.parse.urlencode(
-                    {"part": "statistics", "id": ",".join(vid_ids), "key": key})).get("items", [])}
-                for v in pl:
-                    sn = v["snippet"]; vid = sn["resourceId"]["videoId"]
-                    latest.append({"title": sn["title"], "id": vid, "date": sn["publishedAt"][:10],
-                                   "views": vs.get(vid, {}).get("viewCount")})
-            except Exception as e:
-                print("latest videos error:", c["name"], e)
-                latest = next((p.get("latest", []) for p in prev_channels if p.get("id") == c["id"]), [])
-            channels.append({"name": c["name"], "id": c["id"], "icon": it["snippet"]["thumbnails"]["default"]["url"],
-                             "subs": s.get("subscriberCount"), "views": s.get("viewCount"),
-                             "videos": s.get("videoCount"), "latest": latest})
 except Exception as e:
     print("YouTube API error:", e)
-    channels = []
-# Key na mile ya API fail ho to pichla achha data rakho (channels khali na ho)
-if not channels and prev_channels:
-    channels = prev_channels
+
+for c in cfg["channels"]:
+    cid = c.get("id") or ""
+    if not real_id(cid):
+        channels.append({"name": c["name"], "id": "", "error": "Channel ID अभी config.json में नहीं डाली गई"})
+        continue
+    old = prev_by_id.get(cid)
+    # जवाब न मिले या अधूरा हो तो पिछला सही data ही रखें
+    keep = dict(old, name=c["name"], stale=True) if old else None
+    it = (found or {}).get(cid)
+    if not it:
+        msg = "YouTube से data अभी नहीं मिला" if found is None else "Channel ID galat ya nahi mila"
+        channels.append(keep or {"name": c["name"], "id": cid, "error": msg})
+        continue
+    try:
+        s = it["statistics"]
+        row = {"name": c["name"], "id": cid, "icon": it["snippet"]["thumbnails"]["default"]["url"],
+               "subs": s.get("subscriberCount"), "views": s.get("viewCount"), "videos": s.get("videoCount")}
+        if not (is_count(row["views"]) and is_count(row["videos"])
+                and (s.get("hiddenSubscriberCount") or is_count(row["subs"]))):
+            raise ValueError("अधूरे आँकड़े")
+    except Exception as e:
+        print("channel data invalid:", c["name"], e)
+        channels.append(keep or {"name": c["name"], "id": cid, "error": "YouTube से अधूरा data मिला"})
+        continue
+    latest = []
+    try:
+        up = it["contentDetails"]["relatedPlaylists"]["uploads"]
+        pl = get(YT + "playlistItems?" + urllib.parse.urlencode(
+            {"part": "snippet", "playlistId": up, "maxResults": 5, "key": key})).get("items", [])
+        if not pl and int(row["videos"]) > 0:
+            raise ValueError("video list खाली मिली")
+        vid_ids = [v["snippet"]["resourceId"]["videoId"] for v in pl]
+        vs = {v["id"]: v["statistics"] for v in get(YT + "videos?" + urllib.parse.urlencode(
+            {"part": "statistics", "id": ",".join(vid_ids), "key": key})).get("items", [])}
+        for v in pl:
+            sn = v["snippet"]; vid = sn["resourceId"]["videoId"]
+            latest.append({"title": sn["title"], "id": vid, "date": sn["publishedAt"][:10],
+                           "views": vs.get(vid, {}).get("viewCount")})
+    except Exception as e:
+        print("latest videos error:", c["name"], e)
+        latest = (old or {}).get("latest", [])
+    row["latest"] = latest
+    channels.append(row)
 
 # --- Bots: runs, failed step, next schedule ---
 hdr = {"Accept": "application/vnd.github+json"}
@@ -112,7 +135,11 @@ for b in cfg["bots"]:
     base = "https://api.github.com/repos/%s/actions/" % b["repo"]
     try:
         u = base + ("workflows/%s/runs" % b["workflow"] if b.get("workflow") else "runs") + "?per_page=100"
-        for r in get(u, hdr).get("workflow_runs", []):
+        found_runs = get(u, hdr).get("workflow_runs")
+        old_runs = (prev_bots.get((b["repo"], b.get("workflow") or "")) or {}).get("runs")
+        if not isinstance(found_runs, list) or (not found_runs and old_runs):
+            raise ValueError("GitHub से खाली/गलत जवाब मिला")
+        for r in found_runs:
             d = 0
             try:
                 d = int((P(r["updated_at"]) - P(r["run_started_at"])).total_seconds())
@@ -172,6 +199,15 @@ def dday(s):
         return ""
 
 
+def real_date(d):
+    """सिर्फ़ असली तारीख़ (भविष्य की नहीं); वरना खाली"""
+    try:
+        x = dt.datetime.strptime(d, "%Y-%m-%d").date()
+    except (TypeError, ValueError):
+        return ""
+    return d if x <= (NOW + dt.timedelta(hours=5, minutes=30)).date() else ""
+
+
 def page_title(url, fallback):
     try:
         m = re.search(r"<title[^>]*>(.*?)</title>", get(url, raw=True), re.I | re.S)
@@ -191,8 +227,12 @@ for s in cfg.get("sites", []):
         if "sg news" in name:
             base = s["feed"].split("/sitemap.xml")[0]
             data = get(base + "/data/news.json")
+            if not isinstance(data, list):
+                raise ValueError("news.json का format गलत है")
             arts = []
-            for a in data if isinstance(data, list) else []:
+            for a in data:
+                if not isinstance(a, dict) or a.get("id") in (None, ""):
+                    continue
                 date = str(a.get("publishedDate") or a.get("date") or "")
                 parsed = re.search(r"\d{4}-\d{2}-\d{2}", date)
                 if not parsed:
@@ -208,8 +248,12 @@ for s in cfg.get("sites", []):
         elif "techglow" in name:
             base = s["feed"].split("/sitemap.xml")[0]
             data = get(base + "/data/products.json")
+            if not isinstance(data, list):
+                raise ValueError("products.json का format गलत है")
             arts = []
-            for a in data if isinstance(data, list) else []:
+            for a in data:
+                if not isinstance(a, dict) or not a.get("id"):
+                    continue
                 arts.append({"t": a.get("title") or a.get("short_name") or "शीर्षक उपलब्ध नहीं",
                              "u": base + "/products/" + str(a.get("id", "")) + "/",
                              "d": dday(str(a.get("date") or ""))})
@@ -235,6 +279,10 @@ for s in cfg.get("sites", []):
                 continue
             unique[a["u"]] = a
         arts = list(unique.values())
+        if not arts and (prev_sites.get(s["name"]) or {}).get("total"):
+            raise ValueError("feed से एक भी article नहीं मिला")
+        for a in arts:
+            a["d"] = real_date(a["d"])
         arts.sort(key=lambda a: (a["d"] or "", a["u"]), reverse=True)
         row["total"] = len(arts)
         for a in arts:
@@ -251,7 +299,11 @@ for s in cfg.get("sites", []):
         row["error"] = ("feed/data nahi mila: " + str(e))[:300]
     sites.append(row)
 
-json.dump({"updated": now, "checked_at": now, "refresh_interval_seconds": 300,
-          "source": "GitHub Actions API", "channels": channels, "bots": bots, "sites": sites,
-          "websites": cfg.get("websites", []), "messages": msgs},
-          open("data/dashboard.json", "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+out = {"updated": now, "checked_at": now, "refresh_interval_seconds": 300,
+       "source": "GitHub Actions API", "channels": channels, "bots": bots, "sites": sites,
+       "websites": cfg.get("websites", []), "messages": msgs}
+# आख़िरी जाँच: config से मेल न खाए तो कुछ भी save न करें
+if (len(channels), len(bots), len(sites)) != (len(cfg["channels"]), len(cfg["bots"]), len(cfg.get("sites", []))):
+    raise SystemExit("data अधूरा है - कुछ भी save नहीं किया")
+save_json(mp, msgs[:50])
+save_json("data/dashboard.json", out)

@@ -100,9 +100,13 @@
   const failedCount = (bots) => bots.filter((b) => ['failure','timed_out','startup_failure'].includes((b.runs || []).find((r) => DONE.includes(r.s))?.s)).length;
 
   async function loadData(forceLiveRefresh = false) {
-    let d;
-    try { d = await getJson('data/dashboard.json'); }
-    catch (_) { d = await getJson(RAW); }
+    // Pages वाली copy सिर्फ़ deploy पर बदलती है, इसलिए दोनों में से नई वाली लें।
+    const got = (await Promise.allSettled([getJson(RAW), getJson('data/dashboard.json')]))
+      .filter((x) => x.status === 'fulfilled' && x.value && Array.isArray(x.value.bots) && x.value.bots.length)
+      .map((x) => x.value)
+      .sort((a, b) => (Date.parse(b.updated) || 0) - (Date.parse(a.updated) || 0));
+    if (!got.length) throw new Error('Dashboard data nahi mila');
+    const d = got[0];
 
     let liveState = 'cached';
     try {

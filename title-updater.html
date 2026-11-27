@@ -8,7 +8,7 @@
 .tu-thumb{width:96px;border-radius:8px;float:right;margin:0 0 6px 8px}
 #main{min-width:0}.card{min-width:0}
 pre.tu{white-space:pre-wrap;font:12px/1.5 inherit;color:var(--mu);max-height:220px;overflow:auto}
-</style></head><body><script src="app.js?v=20261126-data-fix"></script>
+</style></head><body><script src="app.js?v=20261127-valid"></script>
 <script>
 const WORKER_URL='https://bg-runf.garhwalbhavesh2002.workers.dev/';
 const STATE_URL='https://raw.githubusercontent.com/bgsarkariresult/BG-Automation/main/data/title_updater.json';
@@ -94,14 +94,16 @@ async function dispatch(inputs,retried){
  let ok=false;
  try{
   const body={repo:'bgsarkariresult/BG-Automation',workflow:'title-updater.yml',ref:'main',inputs};
-  if(pin())body.pin=pin();
+  const used=retried||pin();if(used)body.pin=used;
   const r=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
   const data=await r.json().catch(()=>({ok:false,error:'Invalid response'}));
   if((r.status===401||data.status===401)&&!retried){
    const p=prompt('PIN डालें');
-   if(p){try{localStorage.setItem('bg_pin',p)}catch(_){}return await dispatch(inputs,true)}
+   if(p)return await dispatch(inputs,p);
   }
   ok=!!data.ok;
+  const rejected=r.status===401||data.status===401;
+  try{if(rejected)localStorage.removeItem('bg_pin');else if(retried&&ok)localStorage.setItem('bg_pin',retried)}catch(_){}
   TU.msg=ok?'✅ GitHub Actions शुरू हो गया। 1-3 मिनट बाद Refresh दबाएँ।':'❌ '+(data.error||data.status||r.status);
  }catch(err){TU.msg='❌ Network error: '+err.message}
  TU.busy=false;paint();return ok;
