@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-27T03:23:49Z",
-  "checked_at": "2026-11-27T03:23:49Z",
+  "updated": "2026-11-27T03:32:02Z",
+  "checked_at": "2026-11-27T03:32:02Z",
   "refresh_interval_seconds": 300,
   "source": "GitHub Actions API",
   "channels": [
@@ -1662,7 +1662,7 @@
       "actor": "bgsarkariresult",
       "html_url": "https://github.com/bgsarkariresult/SG-News18/actions/runs/45933629300",
       "cron": "*/5 * * * *",
-      "next": "2026-11-27T03:25:00Z"
+      "next": "2026-11-27T03:35:00Z"
     },
     {
       "name": "TechGlow India",
@@ -3084,7 +3084,7 @@
       "actor": "bgsarkariresult",
       "html_url": "https://github.com/bgsarkariresult/TechGlow-India/actions/runs/45900760839",
       "cron": "*/5 * * * *",
-      "next": "2026-11-27T03:25:00Z"
+      "next": "2026-11-27T03:35:00Z"
     },
     {
       "name": "BK GrowUp",
@@ -10202,7 +10202,7 @@
       "actor": "bgtechlab",
       "html_url": "https://github.com/bgtechlab/BG-Reels-Bot/actions/runs/45925259101",
       "cron": "*/5 * * * *",
-      "next": "2026-11-27T03:25:00Z"
+      "next": "2026-11-27T03:35:00Z"
     },
     {
       "name": "Job Page Auto Publisher",
@@ -17029,96 +17029,6 @@
       "event": "workflow_dispatch",
       "actor": "bgsarkariresult",
       "html_url": "https://github.com/bgsarkariresult/Bk-growup-/actions/runs/45098759966"
-    },
-    {
-      "name": "Documentary",
-      "repo": "bgtechlab/documentary",
-      "workflow": "documentary.yml",
-      "site": "https://github.com/bgtechlab/documentary/actions/workflows/documentary.yml",
-      "tag": "Documentary",
-      "cost": "",
-      "kind": "video",
-      "status": "success",
-      "runs": [
-        {
-          "id": 45932522157,
-          "number": 5,
-          "s": "success",
-          "t": "2026-11-27T03:14:44Z",
-          "started": "2026-11-27T03:09:37Z",
-          "created": "2026-11-27T03:09:37Z",
-          "d": 307,
-          "e": "workflow_dispatch",
-          "n": "Documentary Bot",
-          "branch": "main",
-          "actor": "bgtechlab",
-          "u": "https://github.com/bgtechlab/documentary/actions/runs/45932522157"
-        },
-        {
-          "id": 45842546184,
-          "number": 4,
-          "s": "success",
-          "t": "2026-11-26T14:55:35Z",
-          "started": "2026-11-26T14:47:31Z",
-          "created": "2026-11-26T14:47:31Z",
-          "d": 484,
-          "e": "workflow_dispatch",
-          "n": "Documentary Bot",
-          "branch": "main",
-          "actor": "bgtechlab",
-          "u": "https://github.com/bgtechlab/documentary/actions/runs/45842546184"
-        },
-        {
-          "id": 45834697327,
-          "number": 3,
-          "s": "success",
-          "t": "2026-11-26T14:10:22Z",
-          "started": "2026-11-26T14:00:39Z",
-          "created": "2026-11-26T14:00:39Z",
-          "d": 583,
-          "e": "workflow_dispatch",
-          "n": "Documentary Bot",
-          "branch": "main",
-          "actor": "bgtechlab",
-          "u": "https://github.com/bgtechlab/documentary/actions/runs/45834697327"
-        },
-        {
-          "id": 45187405105,
-          "number": 2,
-          "s": "failure",
-          "t": "2026-11-23T13:49:59Z",
-          "started": "2026-11-23T13:47:25Z",
-          "created": "2026-11-23T13:47:25Z",
-          "d": 154,
-          "e": "workflow_dispatch",
-          "n": "Documentary Bot",
-          "branch": "main",
-          "actor": "bgtechlab",
-          "u": "https://github.com/bgtechlab/documentary/actions/runs/45187405105"
-        },
-        {
-          "id": 45182675733,
-          "number": 1,
-          "s": "failure",
-          "t": "2026-11-23T13:29:59Z",
-          "started": "2026-11-23T13:18:48Z",
-          "created": "2026-11-23T13:18:48Z",
-          "d": 671,
-          "e": "workflow_dispatch",
-          "n": "Documentary Bot",
-          "branch": "main",
-          "actor": "bgtechlab",
-          "u": "https://github.com/bgtechlab/documentary/actions/runs/45182675733"
-        }
-      ],
-      "time": "2026-11-27T03:14:44Z",
-      "url": "https://github.com/bgtechlab/documentary/actions/runs/45932522157",
-      "last_run_id": 45932522157,
-      "run_number": 5,
-      "branch": "main",
-      "event": "workflow_dispatch",
-      "actor": "bgtechlab",
-      "html_url": "https://github.com/bgtechlab/documentary/actions/runs/45932522157"
     }
   ],
   "sites": [
